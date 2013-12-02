@@ -17,6 +17,7 @@ pub enum PcapNextExError {
 }
 
 pub enum PcapFilterError {
+    DeviceClosed, // this is a dup of the above?
     CompileError,
     SetError
 }
@@ -51,14 +52,16 @@ impl PcapDevice {
     pub fn SetFilter(&self, dev: &str, filter_str: &str) -> Result<(), PcapFilterError> {
         unsafe {
             if self.closed {
-                //Err(BadState) // uncommenting this causes the following error:
-                /*
-                rustpcap.rs:53:27: 55:13 error: mismatched types: expected `()` but found `std::result::Result<<V17>,rustpcap::PcapFilterError>` (expected () but found enum std::result::Result)
-                rustpcap.rs:53             if self.closed {
-                rustpcap.rs:54                 Err(BadState)
-                rustpcap.rs:55             }
-                error: aborting due to previous error
-                */
+                Err(DeviceClosed) // uncommenting this causes the following error:
+/*
+rustpcap.rs:54:27: 56:13 error: mismatched types: expected `()` but found `std::result::Result<<V17>,rustpcap::PcapFilterError>` (expected () but found enum std::result::Result)
+rustpcap.rs:54             if self.closed {
+rustpcap.rs:55                 Err(DeviceClosed) // uncommenting this causes the following error:
+rustpcap.rs:56             }
+error: aborting due to previous error
+task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
+task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:393
+*/
             }
             let mut errbuf = vec::with_capacity(256);
             let eb = vec::raw::to_ptr(errbuf);
