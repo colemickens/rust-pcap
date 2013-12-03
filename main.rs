@@ -1,12 +1,6 @@
 #[feature(globs)];
 
-extern mod std;
-extern mod extra;
-
-use std::{cast,io,os,ptr,task};
 use rustpcap::*;
-use std::str;
-
 mod rustpcap;
 
 fn main() {
@@ -28,7 +22,7 @@ fn main() {
                     Ok(pkt) => {
                         println(format!("{:?}", pkt.payload));
 
-                        let strings = pkt.payload.map(|&e| if e >= 0 && e < 128 { e } else { 0 });
+                        let strings = pkt.payload.map(|&e| if e < 128 { e } else { 0 });
                         let strings = strings.into_ascii();
                         let strings = strings.as_str_ascii();
                         println("-----");
@@ -37,7 +31,7 @@ fn main() {
                     Err(Timeout) => {
 
                     }
-                    Err(err) => {
+                    Err(_) => {
                         println("failed to set capture next packet");
                     }
                 }

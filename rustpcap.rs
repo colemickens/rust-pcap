@@ -3,7 +3,7 @@
 extern mod std;
 
 use std::libc::{c_char,c_int,c_ulonglong};
-use std::{cast,ptr,str,vec};
+use std::{ptr,vec};
 
 pub enum pcap_t {}
 pub enum bpf_program { Empty }
@@ -35,7 +35,7 @@ pub struct PcapPacket {
 
 // expand this to take more of the args for open_live?
 pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
-    let mut errbuf = vec::with_capacity(256);
+    let errbuf = vec::with_capacity(256);
     let eb = vec::raw::to_ptr(errbuf);
     let c_dev = unsafe { dev.to_c_str().unwrap() };
     let handle = unsafe { pcap_open_live(c_dev, 65535, 0, 1000, eb) };
@@ -54,7 +54,7 @@ impl PcapDevice {
             if self.closed {
                 return Err(DeviceClosed)
             }
-            let mut errbuf = vec::with_capacity(256);
+            let errbuf = vec::with_capacity(256);
             let eb = vec::raw::to_ptr(errbuf);
             let netp: c_int = 0;
             let maskp: c_int = 0;
