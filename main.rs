@@ -11,7 +11,7 @@ mod rustpcap;
 
 fn main() {
     let dev = "enp3s0";
-    let filter = "";
+    let filter = "tcp dst port 80";
  
     let cap_dev = PcapOpenDevice(dev);
     match cap_dev {
@@ -22,15 +22,17 @@ fn main() {
                 Ok(()) => {}
             }
             loop {
+                println("=======================================================");
                 let pkt = cap_dev.NextPacketEx();
                 match pkt {
                     Ok(pkt) => {
                         println(format!("{:?}", pkt.payload));
 
-                        let sy1 = pkt.payload.map(|&e| if e >= 0 && e < 128 { e } else { 0 });
-                        let sy2 = sy1.into_ascii();
-                        let sy3 = sy2.as_str_ascii();
-                        println(sy3);
+                        let strings = pkt.payload.map(|&e| if e >= 0 && e < 128 { e } else { 0 });
+                        let strings = strings.into_ascii();
+                        let strings = strings.as_str_ascii();
+                        println("-----");
+                        println(strings);
                     },
                     Err(Timeout) => {
 
