@@ -38,7 +38,7 @@ pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
     let errbuf = vec::with_capacity(256);
     let eb = vec::raw::to_ptr(errbuf);
     let c_dev = unsafe { dev.to_c_str().unwrap() };
-    let handle = unsafe { pcap_open_live(c_dev, 65535, 0, 1000, eb) };
+    let handle = unsafe { pcap_open_live(c_dev, 65536, 0, 1000, eb) };
     // should probably do something with error buffer?
     if handle == ptr::null() {
         None
@@ -106,6 +106,7 @@ impl PcapDevice {
         }
     }
 
+    // Should this be impl Drop for PcapDevice?
     pub fn Close(&mut self) {
         unsafe {
             self.closed = true;
@@ -125,15 +126,14 @@ pub struct timeval {
     tv_usec: c_ulonglong
 }
 
-#[link_args = "-lpcap"]
+#[link(name = "pcap")]
 extern {
+    pub fn pcap_close(p: *pcap_t);
+    pub fn pcap_compile(p: *pcap_t, filter_program: *bpf_program, filter_str: *c_char, optimize: c_int, netp: *c_int) -> u8;    
     pub fn pcap_lookupdev(errbuf: *c_char) -> *c_char;
-    pub fn pcap_open_live(dev: *c_char, snaplen: c_int, promisc: c_int, to_ms: c_int, ebuf: *c_char) -> *pcap_t;
+    pub fn pcap_lookupnet(dev: *c_char, netp: *c_int, maskp: *c_int, ebuf: *c_char);
     pub fn pcap_next(p: *pcap_t, h: &mut pcap_pkthdr) -> *u8;
     pub fn pcap_next_ex(p: *pcap_t, hdr: **pcap_pkthdr, pkt: **u8) -> c_int;
-    pub fn pcap_close(p: *pcap_t);
-
-    pub fn pcap_lookupnet(dev: *c_char, netp: *c_int, maskp: *c_int, ebuf: *c_char);
-    pub fn pcap_compile(p: *pcap_t, filter_program: *bpf_program, filter_str: *c_char, optimize: c_int, netp: *c_int) -> u8;
+    pub fn pcap_open_live(dev: *c_char, snaplen: c_int, promisc: c_int, to_ms: c_int, ebuf: *c_char) -> *pcap_t;
     pub fn pcap_setfilter(p: *pcap_t, filter_program: *bpf_program) -> u8;
 }
