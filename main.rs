@@ -62,7 +62,18 @@ fn main() {
     do spawn { internal_packet_router(chan.clone()); }
     do spawn { packet_capture_loop(dev, filter, chan.clone()); }
 
-    This doesn't work, why do I have to do the clones separately?
+    This doesn't work, why do I have to do the clones separately? Error:
+
+    main.rs:67:7: 67:64 error: capture of moved value: `chan`
+    main.rs:67     do spawn { packet_capture_loop(dev, filter, chan.clone()); }
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    main.rs:66:7: 66:54 note: `chan` moved into closure environment here because it has type `proc:Send()`, which is non-copyable (perhaps you meant to use clone()?)
+    main.rs:66     do spawn { internal_packet_router(chan.clone()); }
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    error: aborting due to previous error
+    task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
+    task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:394
+
     */
   
     let cchan1 = chan.clone();
