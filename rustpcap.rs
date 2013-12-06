@@ -33,6 +33,19 @@ pub struct PcapPacket {
     payload: ~[u8]
 }
 
+impl PcapPacket {
+    pub fn get_source_mac() -> [u8, ..6] {
+        // figure out the offset
+        // wowsers I've got a headache, do this later
+        // TODO: finish tomorrow
+        [01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
+    }
+
+    pub fn get_destination_mac() -> [u8, ..6] {
+        [01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
+    }
+}
+
 // expand this to take more of the args for open_live?
 pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
     let errbuf = vec::with_capacity(256);
