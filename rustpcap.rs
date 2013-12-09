@@ -34,15 +34,15 @@ pub struct PcapPacket {
 }
 
 impl PcapPacket {
-    pub fn get_source_mac() -> [u8, ..6] {
+    pub fn get_source_mac() -> ~[u8] {
         // figure out the offset
         // wowsers I've got a headache, do this later
-        // TODO: finish tomorrow
-        [01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
+        // TODO: finish tomorrow 
+        ~[01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
     }
 
-    pub fn get_destination_mac() -> [u8, ..6] {
-        [01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
+    pub fn get_destination_mac() -> ~[u8] {
+        ~[01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
     }
 }
 
