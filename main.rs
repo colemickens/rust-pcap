@@ -92,6 +92,8 @@ fn main() {
     if args.opt_present("host") && args.opt_present("join") {
         fail!("Can't host and join.")
     }
+
+    /*
  
     let dev = args.opt_str("dev").expect("device is required");
     let filter = "tcp dst port 80";
@@ -108,6 +110,8 @@ fn main() {
         packet_capture_loop(dev, filter, packet_chan2);
     });
 
+    */
+    
     if args.opt_present("host") {
         // host
         let saddr = SocketAddr {ip: Ipv4Addr(0,0,0,0), port: 8602 };
@@ -131,11 +135,15 @@ fn main() {
             // </lolwut>
 
             do spawn {
+                println("unwrapping stream");
                 let mut stream = BufferedStream::new(optstream.unwrap());
-                let mut decoder = json::Decoder::new(&mut stream);
+                let mut json = match json::from_reader(&mut stream as &mut std::io::Reader) { // not sure if this is right
+                    Ok(j) => { println!("okay"); j } // never gets here.
+                    Err(e) => { fail!("asdfasdf") } // (well, or here for that matter)
+                };
+                let mut decoder = json::Decoder::new(json);
                 loop {
-                    let mut map: HashMap<~[u8], ~str> = HashMap::new();
-                    map.decode(&mut decoder);
+                    let map: HashMap<~[u8], ~str> = Decodable::decode(&mut decoder);
                     println!("decoded {:?}", map);
                 }
             }
@@ -143,13 +151,13 @@ fn main() {
 
     } else if args.opt_present("join") {
         let remote_host = args.opt_str("join").expect("join requires an argument");
-        //let saddr = SocketAddr::from_str(remote_host).expect("failed to parse the remote host");
-        let saddr = SocketAddr {ip: Ipv4Addr(127,0,0,1), port: 8602 };
-        let conn = TcpStream::connect(saddr).expect("failed to connect");
-        let mut encoder = json::Encoder::new(&mut conn);
+        let saddr: SocketAddr = from_str(remote_host).expect("failed to parse the remote host");
+        let mut conn = TcpStream::connect(saddr).expect("failed to connect");
+        let mut encoder = json::Encoder::new(&mut conn as &mut std::io::Writer);
         loop {
             let mut map: HashMap<~[u8], ~str> = HashMap::new();
             map.encode(&mut encoder);
+            println("sent, sleeping");
             timer::sleep(2000);
         }
         println!("{:?}", remote_host);
