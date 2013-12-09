@@ -135,15 +135,15 @@ fn main() {
             // </lolwut>
 
             do spawn {
-                println("unwrapping stream");
                 let mut stream = BufferedStream::new(optstream.unwrap());
+                println("about to match");
                 let mut json = match json::from_reader(&mut stream as &mut std::io::Reader) { // not sure if this is right
                     Ok(j) => { println!("okay"); j } // never gets here.
-                    Err(e) => { fail!("asdfasdf") } // (well, or here for that matter)
+                    Err(e) => { println!("failing"); fail!("asdfasdf") } // (well, or here for that matter)
                 };
                 let mut decoder = json::Decoder::new(json);
                 loop {
-                    let map: HashMap<~[u8], ~str> = Decodable::decode(&mut decoder);
+                    let map: HashMap<~str, ~str> = Decodable::decode(&mut decoder);
                     println!("decoded {:?}", map);
                 }
             }
@@ -153,9 +153,13 @@ fn main() {
         let remote_host = args.opt_str("join").expect("join requires an argument");
         let saddr: SocketAddr = from_str(remote_host).expect("failed to parse the remote host");
         let mut conn = TcpStream::connect(saddr).expect("failed to connect");
+        //let mut stream = BufferedStream::new(conn);
+        //let mut encoder = json::Encoder::new(&mut stream as &mut std::io::Writer);
         let mut encoder = json::Encoder::new(&mut conn as &mut std::io::Writer);
         loop {
-            let mut map: HashMap<~[u8], ~str> = HashMap::new();
+            let mut map: HashMap<~str, ~str> = HashMap::new();
+            map.insert(~"test", ~"test2");
+            map.insert(~"test3", ~"test4");
             map.encode(&mut encoder);
             println("sent, sleeping");
             timer::sleep(2000);
