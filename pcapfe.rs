@@ -1,11 +1,14 @@
-#[link(name="rustpcap", vers="0.0.1")];
+#[feature(globs)];
+
+#[link(name="pcapfe", vers="0.0.1")];
 
 extern mod std;
-extern mod pcap;
 
 use std::libc::{c_char,c_int,c_ulonglong};
 use std::{ptr,vec};
+
 use pcap::*;
+mod pcap;
 
 pub enum PcapNextExError {
     BadState,
@@ -27,7 +30,7 @@ pub struct PcapDevice {
 }
 
 pub struct PcapPacket {
-    timestamp: timeval,
+    timestamp: Struct_timeval,
     len: uint,
     payload: ~[u8]
 }
@@ -70,7 +73,8 @@ impl PcapDevice {
             let eb = vec::raw::to_ptr(errbuf);
             let netp: c_int = 0;
             let maskp: c_int = 0;
-            let filter_program: bpf_program = std::unstable::intrinsics::uninit();
+            //let filter_program: Struct_bpf_program = std::unstable::intrinsics::uninit(); //wut why not *Struct_bpf_program
+            let filter_program: Struct_bpf_program = std::unstable::intrinsics::uninit();
             let c_dev = dev.to_c_str().unwrap();
             let c_filter_str = filter_str.to_c_str().unwrap();
             
@@ -94,7 +98,7 @@ impl PcapDevice {
             Err(BadState) // will this fail too?
         } else {
             unsafe {
-                let pkthdr_ptr: *pcap_pkthdr = std::unstable::intrinsics::uninit();
+                let pkthdr_ptr: Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
                 let pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
 
                 let result = pcap_next_ex(self.pcap_dev, &pkthdr_ptr, &pkt_data_ptr);

@@ -429,7 +429,7 @@ pub struct Struct___va_list_tag {
     overflow_arg_area: *mut c_void,
     reg_save_area: *mut c_void,
 }
-#[link(name = "pcap")]
+#[link(name = "pcap", vers="0.0.1")]
 extern "C" {
     pub static mut _IO_2_1_stdin_: Struct__IO_FILE_plus;
     pub static mut _IO_2_1_stdout_: Struct__IO_FILE_plus;
