@@ -1,12 +1,11 @@
 #[link(name="rustpcap", vers="0.0.1")];
 
 extern mod std;
+extern mod pcap;
 
 use std::libc::{c_char,c_int,c_ulonglong};
 use std::{ptr,vec};
-
-pub enum pcap_t {}
-pub enum bpf_program { Empty }
+use pcap::*;
 
 pub enum PcapNextExError {
     BadState,
@@ -126,27 +125,4 @@ impl PcapDevice {
             pcap_close(self.pcap_dev);
         }
     }
-}
-
-pub struct pcap_pkthdr {
-    ts: timeval, // time stamp
-    caplen: u32, // length of portion present
-    len: u32     // length this packet (off wire)
-}
-
-pub struct timeval {
-    tv_sec: c_ulonglong,
-    tv_usec: c_ulonglong
-}
-
-#[link(name = "pcap")]
-extern {
-    pub fn pcap_close(p: *pcap_t);
-    pub fn pcap_compile(p: *pcap_t, filter_program: *bpf_program, filter_str: *c_char, optimize: c_int, netp: *c_int) -> u8;    
-    pub fn pcap_lookupdev(errbuf: *c_char) -> *c_char;
-    pub fn pcap_lookupnet(dev: *c_char, netp: *c_int, maskp: *c_int, ebuf: *c_char);
-    pub fn pcap_next(p: *pcap_t, h: &mut pcap_pkthdr) -> *u8;
-    pub fn pcap_next_ex(p: *pcap_t, hdr: **pcap_pkthdr, pkt: **u8) -> c_int;
-    pub fn pcap_open_live(dev: *c_char, snaplen: c_int, promisc: c_int, to_ms: c_int, ebuf: *c_char) -> *pcap_t;
-    pub fn pcap_setfilter(p: *pcap_t, filter_program: *bpf_program) -> u8;
 }
