@@ -4,7 +4,7 @@
 
 extern mod std;
 
-use std::libc::{c_char,c_int,c_ulonglong};
+use std::libc::{c_char,c_int,c_ulonglong,c_uint,c_schar};
 use std::{ptr,vec};
 
 use pcap::*;
@@ -25,7 +25,7 @@ pub enum PcapFilterError {
 }
 
 pub struct PcapDevice {
-    pcap_dev: *pcap_t,
+    pcap_dev: *mut  pcap_t,
     closed: bool
 }
 
@@ -50,8 +50,8 @@ impl PcapPacket {
 
 // expand this to take more of the args for open_live?
 pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
-    let errbuf = vec::with_capacity(256);
-    let eb = vec::raw::to_ptr(errbuf);
+    let mut errbuf: ~[c_schar] = vec::with_capacity(256);
+    let mut eb = vec::raw::to_ptr(errbuf);
     let c_dev = unsafe { dev.to_c_str().unwrap() };
     let handle = unsafe { pcap_open_live(c_dev, 65536, 0, 1000, eb) };
     // should probably do something with error buffer?
@@ -69,21 +69,21 @@ impl PcapDevice {
             if self.closed {
                 return Err(DeviceClosed)
             }
-            let errbuf = vec::with_capacity(256);
-            let eb = vec::raw::to_ptr(errbuf);
-            let netp: c_int = 0;
-            let maskp: c_int = 0;
-            //let filter_program: Struct_bpf_program = std::unstable::intrinsics::uninit(); //wut why not *Struct_bpf_program
-            let filter_program: Struct_bpf_program = std::unstable::intrinsics::uninit();
+            let mut errbuf: ~[c_schar] = vec::with_capacity(256);
+            let mut eb = vec::raw::to_ptr(errbuf);
+            let mut netp: c_uint = 0;
+            let mut maskp: c_uint = 0;
+            let filter_program: Struct_bpf_program;// = std::unstable::intrinsics::uninit(); // this doesn't seem right
+
             let c_dev = dev.to_c_str().unwrap();
             let c_filter_str = filter_str.to_c_str().unwrap();
             
-            pcap_lookupnet(c_dev, &netp, &maskp, eb);
-            let res = pcap_compile(self.pcap_dev, &filter_program, c_filter_str, 0, &netp);
+            pcap_lookupnet(c_dev, netp, &maskp, eb);
+            let res = pcap_compile(self.pcap_dev, filter_program, c_filter_str, 0, netp);
             if res != 0 {
                 Err(CompileError)
             } else {
-                let res = pcap_setfilter(self.pcap_dev, &filter_program);
+                let res = pcap_setfilter(self.pcap_dev, filter_program);
                 if res != 0 {
                     Err(SetError) // how to set the errorbuf msg in the SetError somehow?
                 } else {
@@ -99,10 +99,10 @@ impl PcapDevice {
         } else {
             unsafe {
                 let pkthdr_ptr: Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
-                let pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
+                let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
 
                 let result = pcap_next_ex(self.pcap_dev, &pkthdr_ptr, &pkt_data_ptr);
-                let pkt_len: uint = (*pkthdr_ptr).len as uint;
+                let pkt_len: uint = pkthdr_ptr.len as uint;
                 match result {
                     -2 => { Err(EndOfCaptureFile) }
                     -1 => { Err(ReadError) } // call pcap_geterr() or pcap_perror()
@@ -110,7 +110,7 @@ impl PcapDevice {
                     1 => {
                         let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // this probably doesn't copy as I need
                         let pkt = PcapPacket{
-                            timestamp: (*pkthdr_ptr).ts,
+                            timestamp: pkthdr_ptr.ts,
                             len: pkt_len,
                             payload: payload
                         };
