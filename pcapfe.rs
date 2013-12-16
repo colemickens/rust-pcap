@@ -4,7 +4,7 @@
 
 extern mod std;
 
-use std::libc::{c_char,c_int,c_ulonglong,c_uint,c_schar};
+use std::libc::{c_uint,c_schar};
 use std::{ptr,vec};
 
 use pcap::*;
@@ -109,6 +109,7 @@ impl PcapDevice {
                     -1 => { Err(ReadError) } // call pcap_geterr() or pcap_perror()
                     0 => { Err(Timeout) }
                     1 => {
+                        println!("cap length: {:?}", pkt_len);
                         let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // does this copy? pkt_data_ptr's location is reused
                         let pkt = PcapPacket{
                             timestamp: pkthdr_ptr.ts,

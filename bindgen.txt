@@ -1,1 +1,0 @@
-./bindgen -builtins -l pcap -match pcap.h -o pcap.rs /usr/include/pcap/pcap.h -I/usr/lib/clang/3.3/include/
