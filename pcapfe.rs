@@ -98,7 +98,7 @@ impl PcapDevice {
             Err(BadState) // will this fail too?
         } else {
             unsafe {
-                let mut pkthdr_ptr: *Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
+                let mut pkthdr_ptr: Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
                 let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
 
                 let result = pcap_next_ex(self.pcap_dev, &mut (&mut pkthdr_ptr as *mut Struct_pcap_pkthdr), &mut pkt_data_ptr);
