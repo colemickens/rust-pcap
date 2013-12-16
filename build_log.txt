@@ -1,12 +1,6 @@
 pcapfe.rs:104:57: 104:72 error: mismatched types: expected `*mut *mut pcap::Struct_pcap_pkthdr` but found `&mut pcap::Struct_pcap_pkthdr` (expected *-ptr but found struct pcap::Struct_pcap_pkthdr)
 pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
                                                                        ^~~~~~~~~~~~~~~
-pcapfe.rs:104:74: 104:91 error: mismatched types: expected `*mut *u8` but found `&mut u8` (expected *-ptr but found u8)
-pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
-                                                                                        ^~~~~~~~~~~~~~~~~
-pcapfe.rs:111:57: 111:69 error: mismatched types: expected `*<V20>` but found `u8` (expected *-ptr but found u8)
-pcapfe.rs:111                         let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // this probably doesn't copy as I need
-                                                                       ^~~~~~~~~~~~
-error: aborting due to 3 previous errors
+error: aborting due to previous error
 task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
 task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:398

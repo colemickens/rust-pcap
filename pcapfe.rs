@@ -98,17 +98,18 @@ impl PcapDevice {
             Err(BadState) // will this fail too?
         } else {
             unsafe {
-                let pkthdr_ptr: Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
-                let mut pkt_data_ptr: u8 = std::unstable::intrinsics::uninit();
+                let mut pkthdr_ptr: Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
+                let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
 
                 let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
+                //let pkthdr_ptr = *pkthdr_ptr;
                 let pkt_len: uint = pkthdr_ptr.len as uint;
                 match result {
                     -2 => { Err(EndOfCaptureFile) }
                     -1 => { Err(ReadError) } // call pcap_geterr() or pcap_perror()
                     0 => { Err(Timeout) }
                     1 => {
-                        let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // this probably doesn't copy as I need
+                        let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // does this copy? pkt_data_ptr's location is reused
                         let pkt = PcapPacket{
                             timestamp: pkthdr_ptr.ts,
                             len: pkt_len,
