@@ -50,16 +50,17 @@ impl PcapPacket {
 
 // expand this to take more of the args for open_live?
 pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
-    let mut errbuf: ~[c_schar] = vec::with_capacity(256);
-    let mut eb = vec::raw::to_ptr(errbuf);
-    let c_dev = unsafe { dev.to_c_str().unwrap() };
-    let handle = unsafe { pcap_open_live(c_dev, 65536, 0, 1000, &mut eb) };
-    // should probably do something with error buffer?
-    if handle == ptr::null() {
-        None
-    } else {
-        let pd: PcapDevice = PcapDevice { pcap_dev: handle, closed: false };
-        Some(pd)
+    unsafe {
+        let mut errbuf: ~[c_schar] = vec::with_capacity(256);
+        let c_dev = dev.to_c_str().unwrap();
+        let handle = pcap_open_live(c_dev, 65536, 0, 1000, errbuf.as_mut_ptr());
+        // should probably do something with error buffer?
+        if handle == ptr::mut_null() {
+            None
+        } else {
+            let pd: PcapDevice = PcapDevice { pcap_dev: handle, closed: false };
+            Some(pd)
+        }
     }
 }
 
@@ -70,7 +71,6 @@ impl PcapDevice {
                 return Err(DeviceClosed)
             }
             let mut errbuf: ~[c_schar] = vec::with_capacity(256);
-            let mut eb = vec::raw::to_ptr(errbuf);
             let mut netp: c_uint = 0;
             let mut maskp: c_uint = 0;
             let mut filter_program: Struct_bpf_program;// = std::unstable::intrinsics::uninit(); // this doesn't seem right
@@ -78,7 +78,7 @@ impl PcapDevice {
             let c_dev = dev.to_c_str().unwrap();
             let c_filter_str = filter_str.to_c_str().unwrap();
             
-            pcap_lookupnet(c_dev, &mut netp, &mut maskp, eb);
+            pcap_lookupnet(c_dev, &mut netp, &mut maskp, errbuf.as_mut_ptr());
             let res = pcap_compile(self.pcap_dev, &mut filter_program, c_filter_str, 0, netp);
             if res != 0 {
                 Err(CompileError)

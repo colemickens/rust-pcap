@@ -1,12 +1,3 @@
-pcapfe.rs:56:64: 56:71 error: mismatched types: expected `*mut i8` but found `&mut *i8` (expected i8 but found *-ptr)
-pcapfe.rs:56     let handle = unsafe { pcap_open_live(c_dev, 65536, 0, 1000, &mut eb) };
-                                                                             ^~~~~~~
-pcapfe.rs:58:17: 58:30 error: mismatched types: expected `*mut std::libc::types::common::c95::c_void` but found `*<V12>` (values differ in mutability)
-pcapfe.rs:58     if handle == ptr::null() {
-                              ^~~~~~~~~~~~~
-pcapfe.rs:81:57: 81:59 error: mismatched types: expected `*mut i8` but found `*i8` (values differ in mutability)
-pcapfe.rs:81             pcap_lookupnet(c_dev, &mut netp, &mut maskp, eb);
-                                                                      ^~
 pcapfe.rs:104:57: 104:72 error: mismatched types: expected `*mut *mut pcap::Struct_pcap_pkthdr` but found `&mut pcap::Struct_pcap_pkthdr` (expected *-ptr but found struct pcap::Struct_pcap_pkthdr)
 pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
                                                                        ^~~~~~~~~~~~~~~
@@ -16,6 +7,6 @@ pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &mut pkth
 pcapfe.rs:111:57: 111:69 error: mismatched types: expected `*<V20>` but found `u8` (expected *-ptr but found u8)
 pcapfe.rs:111                         let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // this probably doesn't copy as I need
                                                                        ^~~~~~~~~~~~
-error: aborting due to 6 previous errors
+error: aborting due to 3 previous errors
 task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
 task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:398
