@@ -1,6 +1,12 @@
-pcapfe.rs:104:57: 104:72 error: mismatched types: expected `*mut *mut pcap::Struct_pcap_pkthdr` but found `&mut pcap::Struct_pcap_pkthdr` (expected *-ptr but found struct pcap::Struct_pcap_pkthdr)
-pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
-                                                                       ^~~~~~~~~~~~~~~
-error: aborting due to previous error
+pcapfe.rs:104:63: 104:78 error: mismatched types: expected `*mut pcap::Struct_pcap_pkthdr` but found `&mut *pcap::Struct_pcap_pkthdr` (expected struct pcap::Struct_pcap_pkthdr but found *-ptr)
+pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &mut (&mut pkthdr_ptr as *mut Struct_pcap_pkthdr), &mut pkt_data_ptr);
+                                                                             ^~~~~~~~~~~~~~~
+pcapfe.rs:106:36: 106:50 error: attempted access of field `len` on type `*pcap::Struct_pcap_pkthdr`, but no field with that name was found
+pcapfe.rs:106                 let pkt_len: uint = pkthdr_ptr.len as uint;
+                                                  ^~~~~~~~~~~~~~
+pcapfe.rs:114:39: 114:52 error: attempted access of field `ts` on type `*pcap::Struct_pcap_pkthdr`, but no field with that name was found
+pcapfe.rs:114                             timestamp: pkthdr_ptr.ts,
+                                                     ^~~~~~~~~~~~~
+error: aborting due to 3 previous errors
 task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
 task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:398
