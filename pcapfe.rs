@@ -73,7 +73,7 @@ impl PcapDevice {
             let mut errbuf: ~[c_schar] = vec::with_capacity(256);
             let mut netp: c_uint = 0;
             let mut maskp: c_uint = 0;
-            let mut filter_program: Struct_bpf_program;// = std::unstable::intrinsics::uninit(); // this doesn't seem right
+            let mut filter_program: Struct_bpf_program = std::unstable::intrinsics::uninit();
 
             let c_dev = dev.to_c_str().unwrap();
             let c_filter_str = filter_str.to_c_str().unwrap();
