@@ -1,60 +1,30 @@
-pcapfe.rs:56:64: 56:66 error: mismatched types: expected `*mut i8` but found `*<V11>` (values differ in mutability)
+pcapfe.rs:56:64: 56:66 error: mismatched types: expected `*mut i8` but found `*i8` (values differ in mutability)
 pcapfe.rs:56     let handle = unsafe { pcap_open_live(c_dev, 65536, 0, 1000, eb) };
                                                                              ^~
-pcapfe.rs:58:17: 58:30 error: mismatched types: expected `*mut std::libc::types::common::c95::c_void` but found `*<V13>` (values differ in mutability)
+pcapfe.rs:58:17: 58:30 error: mismatched types: expected `*mut std::libc::types::common::c95::c_void` but found `*<V12>` (values differ in mutability)
 pcapfe.rs:58     if handle == ptr::null() {
                               ^~~~~~~~~~~~~
-pcapfe.rs:61:52: 61:58 error: mismatched types: expected `*std::libc::types::common::c95::c_void` but found `*mut std::libc::types::common::c95::c_void` (values differ in mutability)
-pcapfe.rs:61         let pd: PcapDevice = PcapDevice { pcap_dev: handle, closed: false };
-                                                                 ^~~~~~
-pcapfe.rs:53:8: 53:40 error: cannot determine a type for this local variable: unconstrained type
-pcapfe.rs:53     let errbuf = vec::with_capacity(256);
-                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pcapfe.rs:81:34: 81:39 error: mismatched types: expected `*mut u32` but found `&i32` (values differ in mutability)
-pcapfe.rs:81             pcap_lookupnet(c_dev, &netp, &maskp, eb);
-                                               ^~~~~
-pcapfe.rs:81:41: 81:47 error: mismatched types: expected `*mut u32` but found `&i32` (values differ in mutability)
-pcapfe.rs:81             pcap_lookupnet(c_dev, &netp, &maskp, eb);
-                                                      ^~~~~~
-pcapfe.rs:81:49: 81:51 error: mismatched types: expected `*mut i8` but found `*<V20>` (values differ in mutability)
-pcapfe.rs:81             pcap_lookupnet(c_dev, &netp, &maskp, eb);
-                                                              ^~
-pcapfe.rs:82:35: 82:48 error: mismatched types: expected `*mut std::libc::types::common::c95::c_void` but found `*std::libc::types::common::c95::c_void` (values differ in mutability)
-pcapfe.rs:82             let res = pcap_compile(self.pcap_dev, &filter_program, c_filter_str, 0, &netp);
-                                                ^~~~~~~~~~~~~
-pcapfe.rs:82:50: 82:65 error: mismatched types: expected `*mut pcap::Struct_bpf_program` but found `&pcap::Struct_bpf_program` (values differ in mutability)
-pcapfe.rs:82             let res = pcap_compile(self.pcap_dev, &filter_program, c_filter_str, 0, &netp);
-                                                               ^~~~~~~~~~~~~~~
-pcapfe.rs:82:84: 82:89 error: mismatched types: expected `u32` but found `&i32` (expected u32 but found &-ptr)
-pcapfe.rs:82             let res = pcap_compile(self.pcap_dev, &filter_program, c_filter_str, 0, &netp);
-                                                                                                 ^~~~~
-pcapfe.rs:86:41: 86:54 error: mismatched types: expected `*mut std::libc::types::common::c95::c_void` but found `*std::libc::types::common::c95::c_void` (values differ in mutability)
-pcapfe.rs:86                 let res = pcap_setfilter(self.pcap_dev, &filter_program);
-                                                      ^~~~~~~~~~~~~
-pcapfe.rs:86:56: 86:71 error: mismatched types: expected `*mut pcap::Struct_bpf_program` but found `&pcap::Struct_bpf_program` (values differ in mutability)
-pcapfe.rs:86                 let res = pcap_setfilter(self.pcap_dev, &filter_program);
-                                                                     ^~~~~~~~~~~~~~~
-pcapfe.rs:72:16: 72:48 error: cannot determine a type for this local variable: unconstrained type
-pcapfe.rs:72             let errbuf = vec::with_capacity(256);
-                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pcapfe.rs:104:42: 104:55 error: mismatched types: expected `*mut std::libc::types::common::c95::c_void` but found `*std::libc::types::common::c95::c_void` (values differ in mutability)
-pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &pkthdr_ptr, &pkt_data_ptr);
-                                                        ^~~~~~~~~~~~~
+pcapfe.rs:81:34: 81:38 error: mismatched types: expected `*mut u32` but found `u32` (expected *-ptr but found u32)
+pcapfe.rs:81             pcap_lookupnet(c_dev, netp, &maskp, eb);
+                                               ^~~~
+pcapfe.rs:81:40: 81:46 error: mismatched types: expected `*mut u32` but found `&u32` (values differ in mutability)
+pcapfe.rs:81             pcap_lookupnet(c_dev, netp, &maskp, eb);
+                                                     ^~~~~~
+pcapfe.rs:81:48: 81:50 error: mismatched types: expected `*mut i8` but found `*i8` (values differ in mutability)
+pcapfe.rs:81             pcap_lookupnet(c_dev, netp, &maskp, eb);
+                                                             ^~
+pcapfe.rs:82:50: 82:64 error: mismatched types: expected `*mut pcap::Struct_bpf_program` but found `pcap::Struct_bpf_program` (expected *-ptr but found struct pcap::Struct_bpf_program)
+pcapfe.rs:82             let res = pcap_compile(self.pcap_dev, filter_program, c_filter_str, 0, netp);
+                                                               ^~~~~~~~~~~~~~
+pcapfe.rs:86:56: 86:70 error: mismatched types: expected `*mut pcap::Struct_bpf_program` but found `pcap::Struct_bpf_program` (expected *-ptr but found struct pcap::Struct_bpf_program)
+pcapfe.rs:86                 let res = pcap_setfilter(self.pcap_dev, filter_program);
+                                                                     ^~~~~~~~~~~~~~
 pcapfe.rs:104:57: 104:68 error: mismatched types: expected `*mut *mut pcap::Struct_pcap_pkthdr` but found `&pcap::Struct_pcap_pkthdr` (values differ in mutability)
 pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &pkthdr_ptr, &pkt_data_ptr);
                                                                        ^~~~~~~~~~~
 pcapfe.rs:104:70: 104:83 error: mismatched types: expected `*mut *u8` but found `&*u8` (values differ in mutability)
 pcapfe.rs:104                 let result = pcap_next_ex(self.pcap_dev, &pkthdr_ptr, &pkt_data_ptr);
                                                                                     ^~~~~~~~~~~~~
-pcapfe.rs:105:37: 105:48 error: can only dereference structs with one anonymous field
-pcapfe.rs:105                 let pkt_len: uint = (*pkthdr_ptr).len as uint;
-                                                   ^~~~~~~~~~~
-pcapfe.rs:113:40: 113:51 error: can only dereference structs with one anonymous field
-pcapfe.rs:113                             timestamp: (*pkthdr_ptr).ts,
-                                                      ^~~~~~~~~~~
-pcapfe.rs:129:23: 129:36 error: mismatched types: expected `*mut std::libc::types::common::c95::c_void` but found `*std::libc::types::common::c95::c_void` (values differ in mutability)
-pcapfe.rs:129             pcap_close(self.pcap_dev);
-                                     ^~~~~~~~~~~~~
-error: aborting due to 19 previous errors
+error: aborting due to 9 previous errors
 task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
-task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:393
+task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:398
