@@ -53,7 +53,7 @@ pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
     let mut errbuf: ~[c_schar] = vec::with_capacity(256);
     let mut eb = vec::raw::to_ptr(errbuf);
     let c_dev = unsafe { dev.to_c_str().unwrap() };
-    let handle = unsafe { pcap_open_live(c_dev, 65536, 0, 1000, eb) };
+    let handle = unsafe { pcap_open_live(c_dev, 65536, 0, 1000, &mut eb) };
     // should probably do something with error buffer?
     if handle == ptr::null() {
         None
@@ -73,17 +73,17 @@ impl PcapDevice {
             let mut eb = vec::raw::to_ptr(errbuf);
             let mut netp: c_uint = 0;
             let mut maskp: c_uint = 0;
-            let filter_program: Struct_bpf_program;// = std::unstable::intrinsics::uninit(); // this doesn't seem right
+            let mut filter_program: Struct_bpf_program;// = std::unstable::intrinsics::uninit(); // this doesn't seem right
 
             let c_dev = dev.to_c_str().unwrap();
             let c_filter_str = filter_str.to_c_str().unwrap();
             
-            pcap_lookupnet(c_dev, netp, &maskp, eb);
-            let res = pcap_compile(self.pcap_dev, filter_program, c_filter_str, 0, netp);
+            pcap_lookupnet(c_dev, &mut netp, &mut maskp, eb);
+            let res = pcap_compile(self.pcap_dev, &mut filter_program, c_filter_str, 0, netp);
             if res != 0 {
                 Err(CompileError)
             } else {
-                let res = pcap_setfilter(self.pcap_dev, filter_program);
+                let res = pcap_setfilter(self.pcap_dev, &mut filter_program);
                 if res != 0 {
                     Err(SetError) // how to set the errorbuf msg in the SetError somehow?
                 } else {
@@ -99,9 +99,9 @@ impl PcapDevice {
         } else {
             unsafe {
                 let pkthdr_ptr: Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
-                let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
+                let mut pkt_data_ptr: u8 = std::unstable::intrinsics::uninit();
 
-                let result = pcap_next_ex(self.pcap_dev, &pkthdr_ptr, &pkt_data_ptr);
+                let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
                 let pkt_len: uint = pkthdr_ptr.len as uint;
                 match result {
                     -2 => { Err(EndOfCaptureFile) }
