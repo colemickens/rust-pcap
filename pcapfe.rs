@@ -6,6 +6,7 @@ extern mod std;
 
 use std::libc::{c_uint,c_schar};
 use std::{ptr,vec};
+use std::io::net::ip;
 
 use std::cast;
 
@@ -26,21 +27,20 @@ pub enum PcapFilterError {
     SetError
 }
 
-pub struct EthernetHeader {
-    DestMac:    [u8, ..6],
-    SrcMac:     [u8, ..6],
+pub struct MacAddress {
+    // there must be a better way!
+    Address: [u8, ..6]
 }
 
-pub struct ArpHeader {
-    Addrtype:        uint,
-    Protocol:        uint,
-    HwAddressSize:   uint,
-    ProtAddressSize: uint,
-    Operation:       uint,
-    SourceHwAddr:    [u8, ..6],
-    SourceProtAddr:  [u8, ..6],
-    DestHwAddr:      [u8, ..6],
-    DestProtAddr:    [u8, ..6],
+pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
+    MacAddress{
+        Address: [ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 ],
+    }
+}
+
+pub struct EthernetHeader {
+    DstMac:     MacAddress,
+    SrcMac:     MacAddress,
 }
 
 pub struct IpHeader {
@@ -54,13 +54,13 @@ pub struct IpHeader {
     Ttl:         uint,
     Protocol:    uint,
     Checksum:    uint,
-    SrcIp:       [u8, ..6],
-    DstIp:       [u8, ..6],
+    SrcIp:       ip::IpAddr,
+    DstIp:       ip::IpAddr,
 }
 
 pub struct TcpHeader {
-    SrcPort:     uint,
-    DestPort:    uint,
+    SrcPort:     ip::Port,
+    DstPort:     ip::Port,
     Seq:         uint,
     Ack:         uint,
     DataOffset:  uint,
@@ -68,32 +68,68 @@ pub struct TcpHeader {
     Window:      uint,
     Checksum:    uint,
     Urgent:      uint,
-    Data:        uint,
 }
 
 pub struct UdpHeader {
-    SrcPort:     uint,
-    DestPort:    uint,
+    SrcPort:     ip::Port,
+    DstPort:     ip::Port,
     Length:      uint,
     Checksum:    uint,
 }
 
 pub enum DecodedPacket {
-    EthernetPacket(EthernetHeader, ~[u8]),
-    ArpPacket(EthernetHeader, ArpHeader, ~[u8]),
-    IpPacket(EthernetHeader, IpHeader, ~[u8]),
-    TcpPacket(EthernetHeader, IpHeader, TcpHeader, ~[u8]),
-    UdpPacket(EthernetHeader, IpHeader, UdpHeader, ~[u8]),
+    InvalidPacket,
+    EthernetPacket(EthernetHeader, &[u8]),
+    IpPacket(EthernetHeader, IpHeader, &[u8]),
+    TcpPacket(EthernetHeader, IpHeader, TcpHeader, &[u8]),
+    UdpPacket(EthernetHeader, IpHeader, UdpHeader, &[u8]),
 }
 
+
+const SIZE_ETHERNET_HEADER = 14;
+const SIZE_IP_HEADER_MIN = 20;
+const SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
+const SIZE TCP_HEADER = ;
+const SIZE UDP_HEADER = ;
+
 pub fn DecodePacket(pkt: &PcapPacket) -> DecodedPacket {
-    EthernetPacket(
-        EthernetHeader{
-            DestMac: pkt.payload.slice(0,6),
-            SrcMac: pkt.payload.slide(6,12)
-        },
-        pkt.payload.slice(12)
-    )
+    let payload: &[u8];
+    let mut size = pkt.length;
+
+    if size > SIZE_ETHERNET_HEADER { // make these consts
+        size = size - SIZE_ETHERNET_HEADER;
+        let ethernet_hdr = decode_ethernet_header();
+
+        if size > SIZE_IP_HEADER_MIN {
+            let ip_hdr = decode_ip_header();
+            if ip_hdr.total_length > SIZE_IP_HEADER_MAX {
+                InvalidPacket // give better feedback somehow?
+            }
+            size = size - ip_hdr.total_length;
+            match ip_hdr.protocol {
+                tcp: {
+                    if size > SIZE_TCP_HEADER {
+                        let tcp_hdr = decode_tcp_header();
+                        TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
+                    }
+                }
+                udp: {
+                    if size > SIZE_UDP_HEADER {
+                        let udp_hdr = decode_tcp_header();
+                        TcpPacket(ethernet_hdr, ip_hdr, udp_hdr, payload)
+                    }
+                }
+                _: {
+                    // ignore these as unsupported for now, esp INIP
+                    InvalidPacket
+                }
+            }
+        } else {
+            EthernetPacket(ethernet_hdr, payload)
+        }
+    } else {
+        InvalidPacket
+    }    
 }
 
 // pcap wrapper

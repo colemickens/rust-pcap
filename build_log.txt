@@ -1,15 +1,15 @@
-pcapfe.rs:92:21: 92:44 error: mismatched types: expected `[u8, .. 6]` but found `&[u8]` ([] storage differs: expected 6 but found &)
-pcapfe.rs:92             DestMac: pkt.payload.slice(0,6),
-                                  ^~~~~~~~~~~~~~~~~~~~~~~
-pcapfe.rs:93:20: 94:9 error: type `~[u8]` does not implement any method in scope named `slide`
-pcapfe.rs:93             SrcMac: pkt.payload.slide(6,12)
-pcapfe.rs:94         },
-pcapfe.rs:95:8: 96:5 error: this function takes 2 parameters but 1 parameter was supplied
-pcapfe.rs:95         pkt.payload.slice(12)
-pcapfe.rs:96     )
-pcapfe.rs:95:8: 96:5 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
-pcapfe.rs:95         pkt.payload.slice(12)
-pcapfe.rs:96     )
+pcapfe.rs:81:35: 81:40 error: missing lifetime specifier
+pcapfe.rs:81     EthernetPacket(EthernetHeader, &[u8]),
+                                                ^~~~~
+pcapfe.rs:82:39: 82:44 error: missing lifetime specifier
+pcapfe.rs:82     IpPacket(EthernetHeader, IpHeader, &[u8]),
+                                                    ^~~~~
+pcapfe.rs:83:51: 83:56 error: missing lifetime specifier
+pcapfe.rs:83     TcpPacket(EthernetHeader, IpHeader, TcpHeader, &[u8]),
+                                                                ^~~~~
+pcapfe.rs:84:51: 84:56 error: missing lifetime specifier
+pcapfe.rs:84     UdpPacket(EthernetHeader, IpHeader, UdpHeader, &[u8]),
+                                                                ^~~~~
 error: aborting due to 4 previous errors
 task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
 task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:391
