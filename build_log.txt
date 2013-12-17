@@ -1,36 +1,15 @@
-examples/tufe/main.rs:8:4: 8:20 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:8 use std::hashmap::*;
-                            ^~~~~~~~~~~~~~~~
-examples/tufe/main.rs:12:4: 12:25 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:12 use std::io::buffered::*;
-                             ^~~~~~~~~~~~~~~~~~~~~
-examples/tufe/main.rs:13:4: 13:18 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:13 use std::io::timer;
-                             ^~~~~~~~~~~~~~
-examples/tufe/main.rs:14:4: 14:25 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:14 use std::io::net::tcp::*;
-                             ^~~~~~~~~~~~~~~~~~~~~
-examples/tufe/main.rs:15:23: 15:33 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:15 use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
-                                                ^~~~~~~~~~
-examples/tufe/main.rs:15:34: 15:40 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:15 use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
-                                                           ^~~~~~
-examples/tufe/main.rs:15:41: 15:49 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:15 use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
-                                                                  ^~~~~~~~
-examples/tufe/main.rs:17:4: 17:15 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:17 use extra::json;
-                             ^~~~~~~~~~~
-examples/tufe/main.rs:19:23: 19:32 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:19 use extra::serialize::{Encodable, Decodable, Decoder};
-                                                ^~~~~~~~~
-examples/tufe/main.rs:19:34: 19:43 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:19 use extra::serialize::{Encodable, Decodable, Decoder};
-                                                           ^~~~~~~~~
-examples/tufe/main.rs:19:45: 19:52 warning: unused import, #[warn(unused_imports)] on by default
-examples/tufe/main.rs:19 use extra::serialize::{Encodable, Decodable, Decoder};
-                                                                      ^~~~~~~
-examples/tufe/main.rs:105:8: 105:20 warning: unused variable: `packet_chan1`, #[warn(unused_variable)] on by default
-examples/tufe/main.rs:105     let packet_chan1 = pchan.clone();
-                                  ^~~~~~~~~~~~
+pcapfe.rs:92:21: 92:44 error: mismatched types: expected `[u8, .. 6]` but found `&[u8]` ([] storage differs: expected 6 but found &)
+pcapfe.rs:92             DestMac: pkt.payload.slice(0,6),
+                                  ^~~~~~~~~~~~~~~~~~~~~~~
+pcapfe.rs:93:20: 94:9 error: type `~[u8]` does not implement any method in scope named `slide`
+pcapfe.rs:93             SrcMac: pkt.payload.slide(6,12)
+pcapfe.rs:94         },
+pcapfe.rs:95:8: 96:5 error: this function takes 2 parameters but 1 parameter was supplied
+pcapfe.rs:95         pkt.payload.slice(12)
+pcapfe.rs:96     )
+pcapfe.rs:95:8: 96:5 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
+pcapfe.rs:95         pkt.payload.slice(12)
+pcapfe.rs:96     )
+error: aborting due to 4 previous errors
+task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
+task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:391

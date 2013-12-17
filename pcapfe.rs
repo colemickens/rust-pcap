@@ -21,13 +21,85 @@ pub enum PcapNextExError {
 }
 
 pub enum PcapFilterError {
-    DeviceClosed, // this is a dup of the above?
+    DeviceClosed, // FIX: this is a dup of the above error. Consolidate these enums?
     CompileError,
     SetError
 }
 
+pub struct EthernetHeader {
+    DestMac:    [u8, ..6],
+    SrcMac:     [u8, ..6],
+}
+
+pub struct ArpHeader {
+    Addrtype:        uint,
+    Protocol:        uint,
+    HwAddressSize:   uint,
+    ProtAddressSize: uint,
+    Operation:       uint,
+    SourceHwAddr:    [u8, ..6],
+    SourceProtAddr:  [u8, ..6],
+    DestHwAddr:      [u8, ..6],
+    DestProtAddr:    [u8, ..6],
+}
+
+pub struct IpHeader {
+    Version:     uint,
+    Ihl:         uint,
+    Tos:         uint,
+    Length:      uint,
+    Id:          uint,
+    Flags:       uint,
+    FragOffset:  uint,
+    Ttl:         uint,
+    Protocol:    uint,
+    Checksum:    uint,
+    SrcIp:       [u8, ..6],
+    DstIp:       [u8, ..6],
+}
+
+pub struct TcpHeader {
+    SrcPort:     uint,
+    DestPort:    uint,
+    Seq:         uint,
+    Ack:         uint,
+    DataOffset:  uint,
+    Flags:       uint,
+    Window:      uint,
+    Checksum:    uint,
+    Urgent:      uint,
+    Data:        uint,
+}
+
+pub struct UdpHeader {
+    SrcPort:     uint,
+    DestPort:    uint,
+    Length:      uint,
+    Checksum:    uint,
+}
+
+pub enum DecodedPacket {
+    EthernetPacket(EthernetHeader, ~[u8]),
+    ArpPacket(EthernetHeader, ArpHeader, ~[u8]),
+    IpPacket(EthernetHeader, IpHeader, ~[u8]),
+    TcpPacket(EthernetHeader, IpHeader, TcpHeader, ~[u8]),
+    UdpPacket(EthernetHeader, IpHeader, UdpHeader, ~[u8]),
+}
+
+pub fn DecodePacket(pkt: &PcapPacket) -> DecodedPacket {
+    EthernetPacket(
+        EthernetHeader{
+            DestMac: pkt.payload.slice(0,6),
+            SrcMac: pkt.payload.slide(6,12)
+        },
+        pkt.payload.slice(12)
+    )
+}
+
+// pcap wrapper
+
 pub struct PcapDevice {
-    pcap_dev: *mut  pcap_t,
+    pcap_dev: *mut pcap_t,
     closed: bool
 }
 
@@ -37,20 +109,6 @@ pub struct PcapPacket {
     payload: ~[u8]
 }
 
-impl PcapPacket {
-    pub fn get_source_mac() -> ~[u8] {
-        // figure out the offset
-        // wowsers I've got a headache, do this later
-        // TODO: finish tomorrow 
-        ~[01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
-    }
-
-    pub fn get_destination_mac() -> ~[u8] {
-        ~[01u8, 01u8, 01u8, 01u8, 01u8, 01u8]
-    }
-}
-
-// expand this to take more of the args for open_live?
 pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
     PcapOpenDeviceAdv(dev, 65536, 0, 1000)
 }
@@ -101,7 +159,7 @@ impl PcapDevice {
 
     pub fn NextPacketEx(&self) -> Result<PcapPacket, PcapNextExError> {
         if self.closed {
-            Err(BadState) // will this fail too?
+            Err(BadState)
         } else {
             unsafe {
                 let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
