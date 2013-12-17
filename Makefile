@@ -3,3 +3,4 @@ all:
 	# somehow that broke all of the sudden?
 	# gotta revert the pcap.rs generated to a good one, check this later, I guess
 	rustc --lib pcapfe.rs > build_log.txt 2>&1
+	rustc -L . examples/tufe/main.rs -o tufe > build_log.txt 2>&1

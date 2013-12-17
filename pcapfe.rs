@@ -7,6 +7,8 @@ extern mod std;
 use std::libc::{c_uint,c_schar};
 use std::{ptr,vec};
 
+use std::cast;
+
 use pcap::*;
 mod pcap;
 
@@ -50,10 +52,14 @@ impl PcapPacket {
 
 // expand this to take more of the args for open_live?
 pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
+    PcapOpenDeviceAdv(dev, 65536, 0, 1000)
+}
+
+pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Option<PcapDevice> {
     unsafe {
         let mut errbuf: ~[c_schar] = vec::with_capacity(256);
         let c_dev = dev.to_c_str().unwrap();
-        let handle = pcap_open_live(c_dev, 65536, 0, 1000, errbuf.as_mut_ptr());
+        let handle = pcap_open_live(c_dev, size as i32, flag as i32, mtu as i32, errbuf.as_mut_ptr());
         // should probably do something with error buffer?
         if handle == ptr::mut_null() {
             None
@@ -98,25 +104,29 @@ impl PcapDevice {
             Err(BadState) // will this fail too?
         } else {
             unsafe {
-                let mut pkthdr_ptr: Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
+                let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
                 let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
 
-                let result = pcap_next_ex(self.pcap_dev, &mut (&mut pkthdr_ptr as *mut Struct_pcap_pkthdr), &mut pkt_data_ptr);
-                //let pkthdr_ptr = *pkthdr_ptr;
-                let pkt_len: uint = pkthdr_ptr.len as uint;
+                let result = pcap_next_ex( self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
+
+                let pkt_len: uint = (*pkthdr_ptr).len as uint;
                 match result {
                     -2 => { Err(EndOfCaptureFile) }
                     -1 => { Err(ReadError) } // call pcap_geterr() or pcap_perror()
                     0 => { Err(Timeout) }
                     1 => {
-                        println!("cap length: {:?}", pkt_len);
-                        let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // does this copy? pkt_data_ptr's location is reused
-                        let pkt = PcapPacket{
-                            timestamp: pkthdr_ptr.ts,
-                            len: pkt_len,
-                            payload: payload
-                        };
-                        Ok(pkt)
+                        if pkt_len == 0 {
+                            println!("ignoring zero length packet"); 
+                            Err(Unknown)
+                        } else {
+                            let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // does this copy? pkt_data_ptr's location is reused
+                            let pkt = PcapPacket{
+                                timestamp: (*pkthdr_ptr).ts,
+                                len: pkt_len,
+                                payload: payload
+                            };
+                            Ok(pkt)
+                        }
                     }
                     _ => { Err(Unknown) }
                 }
