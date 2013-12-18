@@ -1,15 +1,15 @@
-pcapfe.rs:81:35: 81:40 error: missing lifetime specifier
-pcapfe.rs:81     EthernetPacket(EthernetHeader, &[u8]),
-                                                ^~~~~
-pcapfe.rs:82:39: 82:44 error: missing lifetime specifier
-pcapfe.rs:82     IpPacket(EthernetHeader, IpHeader, &[u8]),
-                                                    ^~~~~
-pcapfe.rs:83:51: 83:56 error: missing lifetime specifier
-pcapfe.rs:83     TcpPacket(EthernetHeader, IpHeader, TcpHeader, &[u8]),
-                                                                ^~~~~
-pcapfe.rs:84:51: 84:56 error: missing lifetime specifier
-pcapfe.rs:84     UdpPacket(EthernetHeader, IpHeader, UdpHeader, &[u8]),
-                                                                ^~~~~
+pcapfe.rs:170:65: 170:72 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
+pcapfe.rs:170                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
+                                                                               ^~~~~~~
+pcapfe.rs:180:65: 180:72 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
+pcapfe.rs:180                         UdpPacket(ethernet_hdr, ip_hdr, udp_hdr, payload)
+                                                                               ^~~~~~~
+pcapfe.rs:192:41: 192:48 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
+pcapfe.rs:192             EthernetPacket(ethernet_hdr, payload)
+                                                       ^~~~~~~
+pcapfe.rs:300:27: 300:39 error: type `~[u8]` does not implement any method in scope named `bytes`
+pcapfe.rs:300                 let data = pkt.bytes();
+                                         ^~~~~~~~~~~~
 error: aborting due to 4 previous errors
 task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
-task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:391
+task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:392

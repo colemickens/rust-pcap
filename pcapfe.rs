@@ -52,7 +52,7 @@ pub struct IpHeader {
     Flags:       uint,
     FragOffset:  uint,
     Ttl:         uint,
-    Protocol:    uint,
+    Protocol:    InternetProtocolNumbers,
     Checksum:    uint,
     SrcIp:       ip::IpAddr,
     DstIp:       ip::IpAddr,
@@ -79,52 +79,116 @@ pub struct UdpHeader {
 
 pub enum DecodedPacket {
     InvalidPacket,
-    EthernetPacket(EthernetHeader, &[u8]),
-    IpPacket(EthernetHeader, IpHeader, &[u8]),
-    TcpPacket(EthernetHeader, IpHeader, TcpHeader, &[u8]),
-    UdpPacket(EthernetHeader, IpHeader, UdpHeader, &[u8]),
+    EthernetPacket(EthernetHeader, ~[u8]),
+    IpPacket(EthernetHeader, IpHeader, ~[u8]),
+    TcpPacket(EthernetHeader, IpHeader, TcpHeader, ~[u8]),
+    UdpPacket(EthernetHeader, IpHeader, UdpHeader, ~[u8]),
 }
 
+pub enum InternetProtocolNumbers {
+    ICMP = 1,
+    TCP = 6,
+    UserDatagram = 17,
+}
 
-const SIZE_ETHERNET_HEADER = 14;
-const SIZE_IP_HEADER_MIN = 20;
-const SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
-const SIZE TCP_HEADER = ;
-const SIZE UDP_HEADER = ;
+pub fn decode_ethernet_header() -> EthernetHeader {
+    EthernetHeader{
+        DstMac: mac_from_slice([ 0x00, 0x01,  0x02, 0x03, 0x04, 0x05 ]),
+        SrcMac: mac_from_slice([ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 ]),
+    }
+}
+
+pub fn decode_ip_header() -> IpHeader {
+    IpHeader{
+        Version:     80,
+        Ihl:         80,
+        Tos:         80,
+        Length:      80,
+        Id:          80,
+        Flags:       80,
+        FragOffset:  80,
+        Ttl:         80,
+        Protocol:    TCP,
+        Checksum:    80,
+        SrcIp:       ip::Ipv4Addr(127, 0, 0, 1),
+        DstIp:       ip::Ipv4Addr(127, 0, 0, 1),
+    }
+}
+
+pub fn decode_tcp_header() -> TcpHeader {
+    TcpHeader{
+        SrcPort:     80,
+        DstPort:     80,
+        Seq:         80,
+        Ack:         80,
+        DataOffset:  80,
+        Flags:       80,
+        Window:      80,
+        Checksum:    80,
+        Urgent:      80,
+    }
+}
+
+pub fn decode_udp_header() -> UdpHeader {
+    UdpHeader{
+        SrcPort:  80,
+        DstPort:  80,
+        Length:   80,
+        Checksum: 90,
+    }
+}
 
 pub fn DecodePacket(pkt: &PcapPacket) -> DecodedPacket {
+    let SIZE_ETHERNET_HEADER = 14;
+    let SIZE_IP_HEADER_MIN = 20;
+    let SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
+    let SIZE_TCP_HEADER = 1; // FIX
+    let SIZE_UDP_HEADER = 1; // FIX
+
     let payload: &[u8];
-    let mut size = pkt.length;
+    let mut size = pkt.len;
 
     if size > SIZE_ETHERNET_HEADER { // make these consts
         size = size - SIZE_ETHERNET_HEADER;
+        // reslice payload
         let ethernet_hdr = decode_ethernet_header();
 
         if size > SIZE_IP_HEADER_MIN {
             let ip_hdr = decode_ip_header();
-            if ip_hdr.total_length > SIZE_IP_HEADER_MAX {
-                InvalidPacket // give better feedback somehow?
+            if ip_hdr.Length > SIZE_IP_HEADER_MAX {
+                return InvalidPacket // give better feedback somehow?
             }
-            size = size - ip_hdr.total_length;
-            match ip_hdr.protocol {
-                tcp: {
+            size = size - ip_hdr.Length;
+            // reslice payload
+            let protocol__ = 6;
+            match protocol__ {
+                6 => { // TODO: make these an enum or something that is declared ahead of time
+                    ip_hdr.Protocol = TCP;
                     if size > SIZE_TCP_HEADER {
+                        // reslice payload
                         let tcp_hdr = decode_tcp_header();
                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
+                    } else {
+                        InvalidPacket
                     }
                 }
-                udp: {
+                14 => {
+                    ip_hdr.Protocol = UserDatagram;
                     if size > SIZE_UDP_HEADER {
-                        let udp_hdr = decode_tcp_header();
-                        TcpPacket(ethernet_hdr, ip_hdr, udp_hdr, payload)
+                        // reslice payload
+                        let udp_hdr = decode_udp_header();
+                        UdpPacket(ethernet_hdr, ip_hdr, udp_hdr, payload)
+                    } else {
+                        InvalidPacket
                     }
                 }
-                _: {
+                _ => {
                     // ignore these as unsupported for now, esp INIP
                     InvalidPacket
                 }
             }
         } else {
+            // Do we consider pkt.len > ethernet  && pkt.len < ip_min == ??? bad? malformed ethernet? etc? wtf? drop it?
             EthernetPacket(ethernet_hdr, payload)
         }
     } else {
@@ -226,6 +290,26 @@ impl PcapDevice {
                 }
             }
         }
+    }
+
+    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
+        // pcap_inject(arg1: *mut pcap_t, arg2: *c_void, arg3: size_t) -> c_int;
+        match pkt {
+            TcpPacket(ehdr, ihdr, thdr, pkt) => {
+                println!("tcp, {:?}", pkt);
+                let data = pkt.bytes();
+                let result = pcap_inject(self.pcap_dev, data, data.length);
+                match result {
+                    -1 => {}
+                    0 => {}
+                    1 => {}
+                }
+            }
+            _ => {
+
+            }
+        };
+        Ok(())
     }
 
     // Should this be impl Drop for PcapDevice?
