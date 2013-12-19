@@ -42,9 +42,16 @@ pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
 pub struct EthernetHeader {
     DstMac:     MacAddress,
     SrcMac:     MacAddress,
+    Type:       EthernetType,
 }
 
-pub struct IpHeader {
+pub enum EthernetType {
+    EthernetType_IPv4,
+    EthernetType_IPv6,
+    EthernetType_Unknown,
+}
+
+pub struct Ipv4Header {
     Version:     uint,
     Ihl:         uint,
     Tos:         uint,
@@ -57,6 +64,12 @@ pub struct IpHeader {
     Checksum:    uint,
     SrcIp:       ip::IpAddr,
     DstIp:       ip::IpAddr,
+}
+
+pub enum InternetProtocolNumbers {
+    ICMP = 1,
+    TCP = 6,
+    UserDatagram = 17,
 }
 
 pub struct TcpHeader {
@@ -81,26 +94,35 @@ pub struct UdpHeader {
 pub enum DecodedPacket<'r> {
     InvalidPacket,
     EthernetPacket(EthernetHeader, &'r [u8]),
-    IpPacket(EthernetHeader, IpHeader, &'r [u8]),
-    TcpPacket(EthernetHeader, IpHeader, TcpHeader, &'r [u8]),
-    UdpPacket(EthernetHeader, IpHeader, UdpHeader, &'r [u8]),
+    IpPacket(EthernetHeader, Ipv4Header, &'r [u8]),
+    TcpPacket(EthernetHeader, Ipv4Header, TcpHeader, &'r [u8]),
+    UdpPacket(EthernetHeader, Ipv4Header, UdpHeader, &'r [u8]),
 }
 
-pub enum InternetProtocolNumbers {
-    ICMP = 1,
-    TCP = 6,
-    UserDatagram = 17,
+pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHeader, uint)> {
+    // TODO: Check size
+
+    let dst_mac = mac_from_slice(header_plus_payload.slice(0, 6));
+    let src_mac = mac_from_slice(header_plus_payload.slice(6, 12));
+    //let type_ = unsafe { header_plus_payload.slice(13, 14).to_owned() as uint }; // TODO: Fix
+    let type_ = 0x0400;
+    let type_ = match type_ {
+        0x0400 => { EthernetType_IPv4 }
+        0x0800 => { EthernetType_IPv6 }
+        _ => { EthernetType_Unknown }
+    };
+    let ether_hdr = EthernetHeader{
+        DstMac: dst_mac,
+        SrcMac: src_mac,
+        Type: type_,
+    };
+    Some((ether_hdr, 10u))
 }
 
-pub fn decode_ethernet_header() -> EthernetHeader {
-    EthernetHeader{
-        DstMac: mac_from_slice([ 0x00, 0x01,  0x02, 0x03, 0x04, 0x05 ]),
-        SrcMac: mac_from_slice([ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 ]),
-    }
-}
+pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uint)> {
+    // TODO: Check size
 
-pub fn decode_ip_header() -> IpHeader {
-    IpHeader{
+    Some((Ipv4Header{
         Version:     80,
         Ihl:         80,
         Tos:         80,
@@ -113,11 +135,15 @@ pub fn decode_ip_header() -> IpHeader {
         Checksum:    80,
         SrcIp:       ip::Ipv4Addr(127, 0, 0, 1),
         DstIp:       ip::Ipv4Addr(127, 0, 0, 1),
-    }
+    },
+    4))
+    // length of (the ipv4 header or the whole rest of it, I'm not sure, check this)
 }
 
-pub fn decode_tcp_header() -> TcpHeader {
-    TcpHeader{
+pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
+    // TODO: Check size
+
+    Some((TcpHeader{
         SrcPort:     80,
         DstPort:     80,
         Seq:         80,
@@ -127,16 +153,20 @@ pub fn decode_tcp_header() -> TcpHeader {
         Window:      80,
         Checksum:    80,
         Urgent:      80,
-    }
+    },
+    4))
 }
 
-pub fn decode_udp_header() -> UdpHeader {
-    UdpHeader{
+pub fn decode_udp_header(header_plus_payload: &[u8]) -> Option<(UdpHeader, uint)> {
+    // TODO: Check size
+    
+    Some((UdpHeader{
         SrcPort:  80,
         DstPort:  80,
         Length:   80,
         Checksum: 90,
-    }
+    },
+    4))
 }
 
 pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
@@ -146,55 +176,59 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
     let SIZE_TCP_HEADER = 1; // FIX
     let SIZE_UDP_HEADER = 1; // FIX
 
-    let payload: &'r [u8] = pkt.payload;
+    let mut payload: &'r [u8] = pkt.payload;
     let mut size = pkt.len;
 
-    if size > SIZE_ETHERNET_HEADER { // make these consts
-        size = size - SIZE_ETHERNET_HEADER;
-        // reslice payload
-        let ethernet_hdr = decode_ethernet_header();
+    match decode_ethernet_header(payload) {
+        Some((ether_hdr, ether_hdr_len)) => {
+            payload = payload.slice_from(ether_hdr_len);
+            match ether_hdr.Type {
+                IPv4 => match decode_ipv4_header(payload) {
+                    Some((ip_hdr, ip_hdr_len)) => {
+                        payload = payload.slice_from(ip_hdr_len);
+                        match ip_hdr.Protocol {
+                            TCP => {
+                                match decode_tcp_header(payload) {
+                                    Some((tcp_hdr, tcp_hdr_len)) => {
+                                        payload = payload.slice_from(tcp_hdr_len);
+                                        TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload)
+                                    }
+                                    None => { InvalidPacket }
+                                }
+                            }
+                            UserDatagram => {
+                                match decode_udp_header(payload) {
+                                    Some((udp_hdr, udp_hdr_len)) => {
+                                        payload = payload.slice_from(udp_hdr_len);
+                                        UdpPacket(ether_hdr, ip_hdr, udp_hdr, payload)
+                                    }
+                                    None => { InvalidPacket } // could let it fall through? does it matter?
+                                }
+                            }
+                            _ => { InvalidPacket }
+                        }
+                    },
+                    None => { InvalidPacket }
+                },
+                
+                /*
+                IPv6 => match decode_ipv6_header(payload) {
 
-        if size > SIZE_IP_HEADER_MIN {
-            let mut ip_hdr = decode_ip_header();
-            if ip_hdr.Length > SIZE_IP_HEADER_MAX {
-                return InvalidPacket // give better feedback somehow?
+                },
+                */
+                
+                /*
+                _ => { return InvalidPacket; } // should I _have_ to uncomment this "dead" code.
+                // it won't be dead when I add new types
+                // that means adding new types to the enum in the future will break code.
+                // that's probably okay?
+                */
             }
-            size = size - ip_hdr.Length;
-            // reslice payload
-            let protocol__ = 6;
-            match protocol__ {
-                6 => { // TODO: make these an enum or something that is declared ahead of time
-                    ip_hdr.Protocol = TCP;
-                    if size > SIZE_TCP_HEADER {
-                        // reslice payload
-                        let tcp_hdr = decode_tcp_header();
-                        TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
-                    } else {
-                        InvalidPacket
-                    }
-                }
-                14 => {
-                    ip_hdr.Protocol = UserDatagram;
-                    if size > SIZE_UDP_HEADER {
-                        // reslice payload
-                        let udp_hdr = decode_udp_header();
-                        UdpPacket(ethernet_hdr, ip_hdr, udp_hdr, payload)
-                    } else {
-                        InvalidPacket
-                    }
-                }
-                _ => {
-                    // ignore these as unsupported for now, esp INIP
-                    InvalidPacket
-                }
-            }
-        } else {
-            // Do we consider pkt.len > ethernet  && pkt.len < ip_min == ??? bad? malformed ethernet? etc? wtf? drop it?
-            EthernetPacket(ethernet_hdr, payload)
         }
-    } else {
-        InvalidPacket
-    }    
+        None => {
+            InvalidPacket // change the return type to opt or result
+        }
+    }
 }
 
 // pcap wrapper
