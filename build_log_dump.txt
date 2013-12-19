@@ -1,0 +1,48 @@
+examples/dump/main.rs:7:4: 7:17 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:7 use std::comm::*;
+                            ^~~~~~~~~~~~~
+examples/dump/main.rs:8:4: 8:20 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:8 use std::hashmap::*;
+                            ^~~~~~~~~~~~~~~~
+examples/dump/main.rs:9:4: 9:17 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:9 use std::task::*;
+                            ^~~~~~~~~~~~~
+examples/dump/main.rs:12:4: 12:25 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:12 use std::io::buffered::*;
+                             ^~~~~~~~~~~~~~~~~~~~~
+examples/dump/main.rs:13:4: 13:18 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:13 use std::io::timer;
+                             ^~~~~~~~~~~~~~
+examples/dump/main.rs:14:4: 14:25 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:14 use std::io::net::tcp::*;
+                             ^~~~~~~~~~~~~~~~~~~~~
+examples/dump/main.rs:15:23: 15:33 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:15 use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
+                                                ^~~~~~~~~~
+examples/dump/main.rs:15:34: 15:40 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:15 use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
+                                                           ^~~~~~
+examples/dump/main.rs:15:41: 15:49 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:15 use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
+                                                                  ^~~~~~~~
+examples/dump/main.rs:17:4: 17:15 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:17 use extra::json;
+                             ^~~~~~~~~~~
+examples/dump/main.rs:19:23: 19:32 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:19 use extra::serialize::{Encodable, Decodable, Decoder};
+                                                ^~~~~~~~~
+examples/dump/main.rs:19:34: 19:43 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:19 use extra::serialize::{Encodable, Decodable, Decoder};
+                                                           ^~~~~~~~~
+examples/dump/main.rs:19:45: 19:52 warning: unused import, #[warn(unused_imports)] on by default
+examples/dump/main.rs:19 use extra::serialize::{Encodable, Decodable, Decoder};
+                                                                      ^~~~~~~
+examples/dump/main.rs:60:38: 60:47 warning: unused variable: `ether_hdr`, #[warn(unused_variable)] on by default
+examples/dump/main.rs:60                             TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload) => {
+                                                               ^~~~~~~~~
+examples/dump/main.rs:60:49: 60:55 warning: unused variable: `ip_hdr`, #[warn(unused_variable)] on by default
+examples/dump/main.rs:60                             TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload) => {
+                                                                          ^~~~~~
+examples/dump/main.rs:60:57: 60:64 warning: unused variable: `tcp_hdr`, #[warn(unused_variable)] on by default
+examples/dump/main.rs:60                             TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload) => {
+                                                                                  ^~~~~~~

@@ -4,12 +4,13 @@
 
 extern mod std;
 
-use std::libc::{c_uint,c_schar};
-use std::{ptr,vec};
+use std::cast;
 use std::io::net::ip;
 use std::io::util;
-
-use std::cast;
+use std::libc::{c_uint,c_schar};
+use std::ptr;
+use std::str;
+use std::vec;
 
 use pcap::*;
 mod pcap;
@@ -116,7 +117,7 @@ pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHea
         SrcMac: src_mac,
         Type: type_,
     };
-    Some((ether_hdr, 10u))
+    Some((ether_hdr, 14))
 }
 
 pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uint)> {
@@ -135,8 +136,13 @@ pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uin
         Checksum:    80,
         SrcIp:       ip::Ipv4Addr(127, 0, 0, 1),
         DstIp:       ip::Ipv4Addr(127, 0, 0, 1),
+        // copy the remaining payload pointer here?
+        // is that valuable?
+        // honestly, might be nicer, in case you match a TCP Packet, but want the
+        // Ethernet header and the rest of the raw bytes
+        // ... otherwise, there really wouldn't be a way to access that easily through my API...
     },
-    4))
+    20))
     // length of (the ipv4 header or the whole rest of it, I'm not sure, check this)
 }
 
@@ -154,19 +160,27 @@ pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)
         Checksum:    80,
         Urgent:      80,
     },
-    4))
+    20))
 }
 
 pub fn decode_udp_header(header_plus_payload: &[u8]) -> Option<(UdpHeader, uint)> {
     // TODO: Check size
-    
+
     Some((UdpHeader{
         SrcPort:  80,
         DstPort:  80,
         Length:   80,
         Checksum: 90,
     },
-    4))
+    8))
+}
+
+pub fn pp(p: &[u8]) {
+    let p2 = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
+    println!("print ascii-mapped bytes: {:?}", p2);
+    let temp_payload = unsafe { str::from_utf8_owned(p2); };
+    println!("print utf8 bytes        : {:?}", temp_payload); // why does this not print properly here
+    // even thought the same technique seems to work inline elsewhere and the p2 seems to contain the correct bytes...
 }
 
 pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
@@ -179,18 +193,20 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
     let mut payload: &'r [u8] = pkt.payload;
     let mut size = pkt.len;
 
+    let c = 0;
+
     match decode_ethernet_header(payload) {
         Some((ether_hdr, ether_hdr_len)) => {
-            payload = payload.slice_from(ether_hdr_len);
+            payload = payload.slice_from(ether_hdr_len-c);
             match ether_hdr.Type {
                 IPv4 => match decode_ipv4_header(payload) {
                     Some((ip_hdr, ip_hdr_len)) => {
-                        payload = payload.slice_from(ip_hdr_len);
+                        payload = payload.slice_from(ip_hdr_len-c);
                         match ip_hdr.Protocol {
                             TCP => {
                                 match decode_tcp_header(payload) {
                                     Some((tcp_hdr, tcp_hdr_len)) => {
-                                        payload = payload.slice_from(tcp_hdr_len);
+                                        payload = payload.slice_from(tcp_hdr_len-c);
                                         TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload)
                                     }
                                     None => { InvalidPacket }
@@ -199,7 +215,7 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
                             UserDatagram => {
                                 match decode_udp_header(payload) {
                                     Some((udp_hdr, udp_hdr_len)) => {
-                                        payload = payload.slice_from(udp_hdr_len);
+                                        payload = payload.slice_from(udp_hdr_len-c);
                                         UdpPacket(ether_hdr, ip_hdr, udp_hdr, payload)
                                     }
                                     None => { InvalidPacket } // could let it fall through? does it matter?
