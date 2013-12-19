@@ -1,15 +1,18 @@
-pcapfe.rs:170:65: 170:72 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
-pcapfe.rs:170                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
+pcapfe.rs:171:65: 171:72 error: cannot infer an appropriate lifetime for automatic coercion due to conflicting requirements
+pcapfe.rs:171                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
                                                                                ^~~~~~~
-pcapfe.rs:180:65: 180:72 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
-pcapfe.rs:180                         UdpPacket(ethernet_hdr, ip_hdr, udp_hdr, payload)
+pcapfe.rs:171:65: 171:72 note: first, the lifetime cannot outlive the expression at 171:65...
+pcapfe.rs:171                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
                                                                                ^~~~~~~
-pcapfe.rs:192:41: 192:48 error: mismatched types: expected `~[u8]` but found `&[u8]` ([] storage differs: expected ~ but found &)
-pcapfe.rs:192             EthernetPacket(ethernet_hdr, payload)
-                                                       ^~~~~~~
-pcapfe.rs:300:27: 300:39 error: type `~[u8]` does not implement any method in scope named `bytes`
-pcapfe.rs:300                 let data = pkt.bytes();
-                                         ^~~~~~~~~~~~
-error: aborting due to 4 previous errors
+pcapfe.rs:171:65: 171:72 note: ...so that automatically borrowed pointer is valid at the time of borrow
+pcapfe.rs:171                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
+                                                                               ^~~~~~~
+pcapfe.rs:171:24: 172:21 note: but, the lifetime must be valid for the call at 171:24...
+pcapfe.rs:171                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
+pcapfe.rs:172                     } else {
+pcapfe.rs:171:65: 171:72 note: ...so that argument is valid for the call
+pcapfe.rs:171                         TcpPacket(ethernet_hdr, ip_hdr, tcp_hdr, payload)
+                                                                               ^~~~~~~
+error: aborting due to previous error
 task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
 task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:392

@@ -7,6 +7,7 @@ extern mod std;
 use std::libc::{c_uint,c_schar};
 use std::{ptr,vec};
 use std::io::net::ip;
+use std::io::util;
 
 use std::cast;
 
@@ -77,12 +78,12 @@ pub struct UdpHeader {
     Checksum:    uint,
 }
 
-pub enum DecodedPacket {
+pub enum DecodedPacket<'r> {
     InvalidPacket,
-    EthernetPacket(EthernetHeader, ~[u8]),
-    IpPacket(EthernetHeader, IpHeader, ~[u8]),
-    TcpPacket(EthernetHeader, IpHeader, TcpHeader, ~[u8]),
-    UdpPacket(EthernetHeader, IpHeader, UdpHeader, ~[u8]),
+    EthernetPacket(EthernetHeader, &'r [u8]),
+    IpPacket(EthernetHeader, IpHeader, &'r [u8]),
+    TcpPacket(EthernetHeader, IpHeader, TcpHeader, &'r [u8]),
+    UdpPacket(EthernetHeader, IpHeader, UdpHeader, &'r [u8]),
 }
 
 pub enum InternetProtocolNumbers {
@@ -138,14 +139,14 @@ pub fn decode_udp_header() -> UdpHeader {
     }
 }
 
-pub fn DecodePacket(pkt: &PcapPacket) -> DecodedPacket {
+pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket {
     let SIZE_ETHERNET_HEADER = 14;
     let SIZE_IP_HEADER_MIN = 20;
     let SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
     let SIZE_TCP_HEADER = 1; // FIX
     let SIZE_UDP_HEADER = 1; // FIX
 
-    let payload: &[u8];
+    let payload: &'r [u8] = pkt.payload;
     let mut size = pkt.len;
 
     if size > SIZE_ETHERNET_HEADER { // make these consts
@@ -292,6 +293,7 @@ impl PcapDevice {
         }
     }
 
+    /*
     pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
         // pcap_inject(arg1: *mut pcap_t, arg2: *c_void, arg3: size_t) -> c_int;
         match pkt {
@@ -311,6 +313,7 @@ impl PcapDevice {
         };
         Ok(())
     }
+    */
 
     // Should this be impl Drop for PcapDevice?
     pub fn Close(&mut self) {
