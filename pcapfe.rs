@@ -139,7 +139,7 @@ pub fn decode_udp_header() -> UdpHeader {
     }
 }
 
-pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket {
+pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
     let SIZE_ETHERNET_HEADER = 14;
     let SIZE_IP_HEADER_MIN = 20;
     let SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
@@ -155,7 +155,7 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket {
         let ethernet_hdr = decode_ethernet_header();
 
         if size > SIZE_IP_HEADER_MIN {
-            let ip_hdr = decode_ip_header();
+            let mut ip_hdr = decode_ip_header();
             if ip_hdr.Length > SIZE_IP_HEADER_MAX {
                 return InvalidPacket // give better feedback somehow?
             }
