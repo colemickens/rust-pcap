@@ -15,6 +15,9 @@ use std::vec;
 use pcap::*;
 mod pcap;
 
+// Todo: probably a better way to design several pieces of this in general
+// some way to chain these together or sumthin
+
 pub enum PcapNextExError {
     BadState,
     ReadError,
@@ -108,6 +111,7 @@ pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHea
     //let type_ = unsafe { header_plus_payload.slice(13, 14).to_owned() as uint }; // TODO: Fix
     let type_ = 0x0400;
     let type_ = match type_ {
+        // for lower ranges, it maps to a size, ugh. something EthernetHeader_Size<uint> ?
         0x0400 => { EthernetType_IPv4 }
         0x0800 => { EthernetType_IPv6 }
         _ => { EthernetType_Unknown }

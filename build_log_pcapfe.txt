@@ -873,42 +873,42 @@ pcap.rs:704     pub fn bpf_dump(arg1: *Struct_bpf_program, arg2: c_int);
 pcap.rs:705:8: 705:62 warning: code is never used: `pcap_get_selectable_fd`, #[warn(dead_code)] on by default
 pcap.rs:705     pub fn pcap_get_selectable_fd(arg1: *mut pcap_t) -> c_int;
                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pcapfe.rs:37:22: 37:24 warning: unused variable: `sl`, #[warn(unused_variable)] on by default
-pcapfe.rs:37 pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
+pcapfe.rs:40:22: 40:24 warning: unused variable: `sl`, #[warn(unused_variable)] on by default
+pcapfe.rs:40 pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
                                    ^~
-pcapfe.rs:123:26: 123:45 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
-pcapfe.rs:123 pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uint)> {
+pcapfe.rs:127:26: 127:45 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
+pcapfe.rs:127 pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uint)> {
                                         ^~~~~~~~~~~~~~~~~~~
-pcapfe.rs:149:25: 149:44 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
-pcapfe.rs:149 pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
+pcapfe.rs:153:25: 153:44 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
+pcapfe.rs:153 pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
                                        ^~~~~~~~~~~~~~~~~~~
-pcapfe.rs:166:25: 166:44 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
-pcapfe.rs:166 pub fn decode_udp_header(header_plus_payload: &[u8]) -> Option<(UdpHeader, uint)> {
+pcapfe.rs:170:25: 170:44 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
+pcapfe.rs:170 pub fn decode_udp_header(header_plus_payload: &[u8]) -> Option<(UdpHeader, uint)> {
                                        ^~~~~~~~~~~~~~~~~~~
-pcapfe.rs:181:23: 181:59 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
-pcapfe.rs:181     let temp_payload = unsafe { str::from_utf8_owned(p2); };
+pcapfe.rs:185:23: 185:59 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
+pcapfe.rs:185     let temp_payload = unsafe { str::from_utf8_owned(p2); };
                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pcapfe.rs:186:8: 186:28 warning: unused variable: `SIZE_ETHERNET_HEADER`, #[warn(unused_variable)] on by default
-pcapfe.rs:186     let SIZE_ETHERNET_HEADER = 14;
+pcapfe.rs:191:8: 191:28 warning: unused variable: `SIZE_ETHERNET_HEADER`, #[warn(unused_variable)] on by default
+pcapfe.rs:191     let SIZE_ETHERNET_HEADER = 14;
                       ^~~~~~~~~~~~~~~~~~~~
-pcapfe.rs:187:8: 187:26 warning: unused variable: `SIZE_IP_HEADER_MIN`, #[warn(unused_variable)] on by default
-pcapfe.rs:187     let SIZE_IP_HEADER_MIN = 20;
+pcapfe.rs:192:8: 192:26 warning: unused variable: `SIZE_IP_HEADER_MIN`, #[warn(unused_variable)] on by default
+pcapfe.rs:192     let SIZE_IP_HEADER_MIN = 20;
                       ^~~~~~~~~~~~~~~~~~
-pcapfe.rs:188:8: 188:26 warning: unused variable: `SIZE_IP_HEADER_MAX`, #[warn(unused_variable)] on by default
-pcapfe.rs:188     let SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
+pcapfe.rs:193:8: 193:26 warning: unused variable: `SIZE_IP_HEADER_MAX`, #[warn(unused_variable)] on by default
+pcapfe.rs:193     let SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
                       ^~~~~~~~~~~~~~~~~~
-pcapfe.rs:189:8: 189:23 warning: unused variable: `SIZE_TCP_HEADER`, #[warn(unused_variable)] on by default
-pcapfe.rs:189     let SIZE_TCP_HEADER = 1; // FIX
+pcapfe.rs:194:8: 194:23 warning: unused variable: `SIZE_TCP_HEADER`, #[warn(unused_variable)] on by default
+pcapfe.rs:194     let SIZE_TCP_HEADER = 1; // FIX
                       ^~~~~~~~~~~~~~~
-pcapfe.rs:190:8: 190:23 warning: unused variable: `SIZE_UDP_HEADER`, #[warn(unused_variable)] on by default
-pcapfe.rs:190     let SIZE_UDP_HEADER = 1; // FIX
+pcapfe.rs:195:8: 195:23 warning: unused variable: `SIZE_UDP_HEADER`, #[warn(unused_variable)] on by default
+pcapfe.rs:195     let SIZE_UDP_HEADER = 1; // FIX
                       ^~~~~~~~~~~~~~~
-pcapfe.rs:193:8: 193:16 warning: unused variable: `size`, #[warn(unused_variable)] on by default
-pcapfe.rs:193     let mut size = pkt.len;
+pcapfe.rs:198:8: 198:16 warning: unused variable: `size`, #[warn(unused_variable)] on by default
+pcapfe.rs:198     let mut size = pkt.len;
                       ^~~~~~~~
-pcapfe.rs:201:16: 201:20 warning: unused variable: `IPv4`, #[warn(unused_variable)] on by default
-pcapfe.rs:201                 IPv4 => match decode_ipv4_header(payload) {
+pcapfe.rs:206:16: 206:20 warning: unused variable: `IPv4`, #[warn(unused_variable)] on by default
+pcapfe.rs:206                 IPv4 => match decode_ipv4_header(payload) {
                               ^~~~
-pcapfe.rs:193:8: 193:16 warning: variable does not need to be mutable, #[warn(unused_mut)] on by default
-pcapfe.rs:193     let mut size = pkt.len;
+pcapfe.rs:198:8: 198:16 warning: variable does not need to be mutable, #[warn(unused_mut)] on by default
+pcapfe.rs:198     let mut size = pkt.len;
                       ^~~~~~~~
