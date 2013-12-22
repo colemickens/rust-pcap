@@ -264,7 +264,8 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
                 },
                 
                 IPv6 => match decode_ipv6_header(payload) {
-
+                    Some(_te) => { InvalidPacket }
+                    None => { InvalidPacket }
                 },
                 
                 _ => { return InvalidPacket; } // should I _have_ to uncomment this "dead" code.
