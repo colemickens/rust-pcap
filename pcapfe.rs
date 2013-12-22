@@ -7,7 +7,7 @@ extern mod std;
 use std::cast;
 use std::io::net::ip;
 use std::io::util;
-use std::libc::{c_uint,c_schar};
+use std::libc::{c_uint,c_schar,c_void};
 use std::ptr;
 use std::str;
 use std::vec;
@@ -124,14 +124,18 @@ pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHea
     Some((ether_hdr, 14))
 }
 
+// should these decodes just return their payload in the first place?
+// wouldn't need to reslice them, the main nested parsing code gets cleaner.........
+
 pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uint)> {
     // TODO: Check size
 
+    let length = 100;
     Some((Ipv4Header{
         Version:     80,
         Ihl:         80,
         Tos:         80,
-        Length:      80,
+        Length:      length,
         Id:          80,
         Flags:       80,
         FragOffset:  80,
@@ -146,12 +150,29 @@ pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uin
         // Ethernet header and the rest of the raw bytes
         // ... otherwise, there really wouldn't be a way to access that easily through my API...
     },
-    20))
-    // length of (the ipv4 header or the whole rest of it, I'm not sure, check this)
+    length))
 }
 
 pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
     // TODO: Check size
+    /*
+    let version = 0u;
+    let ihl = 0u;
+    let dscp = 0u;
+    let ecn = 0u;
+    let total_len = header_plus_payload[2:4];
+    let id = header_plus_payload[4:6];
+    let flags = 0u;
+    let fragment_offset = 0u;
+    let ttl = header_plus_payload[8:9];
+    let protocol = header_plus_playload[9:10];
+    let checksum = header_plus_payload[10:12];
+    let src_ip = header_plus_payload[16:20];
+    let dst_ip = header_plus_payload[20:24];
+    let options = header_plus_payload[24:ihl];
+    */
+
+    let ihl = 20;
 
     Some((TcpHeader{
         SrcPort:     80,
@@ -164,7 +185,7 @@ pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)
         Checksum:    80,
         Urgent:      80,
     },
-    20))
+    ihl))
 }
 
 pub fn decode_udp_header(header_plus_payload: &[u8]) -> Option<(UdpHeader, uint)> {
@@ -203,7 +224,10 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
         Some((ether_hdr, ether_hdr_len)) => {
             payload = payload.slice_from(ether_hdr_len-c);
             match ether_hdr.Type {
-                IPv4 => match decode_ipv4_header(payload) {
+                // WTF, why is the follow line building?
+                // ?????????
+                // wtf is it putting there??!?!
+                IPv4aa => match decode_ipv4_header(payload) {
                     Some((ip_hdr, ip_hdr_len)) => {
                         payload = payload.slice_from(ip_hdr_len-c);
                         match ip_hdr.Protocol {
@@ -347,27 +371,35 @@ impl PcapDevice {
         }
     }
 
-    /*
-    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
-        // pcap_inject(arg1: *mut pcap_t, arg2: *c_void, arg3: size_t) -> c_int;
-        match pkt {
-            TcpPacket(ehdr, ihdr, thdr, pkt) => {
-                println!("tcp, {:?}", pkt);
-                let data = pkt.bytes();
-                let result = pcap_inject(self.pcap_dev, data, data.length);
-                match result {
-                    -1 => {}
-                    0 => {}
-                    1 => {}
-                }
-            }
-            _ => {
+    // what should this function take?
+    // A DecodedPacket (if so, how?)
 
-            }
-        };
+    // A PcapPacket?
+    // just a vector of bytes and let it figure it out?
+
+    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
+        unsafe {
+            match pkt {
+                TcpPacket(ehdr, ihdr, thdr, pkt) => {
+                    println!("tcp, {:?}", pkt);
+                    let data: ~[u8] = ~[0x00, 0x01, 0x02]; // TODO: FIX
+                    let data1 = unsafe { data.as_ptr() as *c_void };
+                    let size1 = unsafe { data.len() as u64 };
+                    let result = pcap_inject(self.pcap_dev, data1, size1);
+                    match result {
+                        -1 => {}
+                        0 => {}
+                        1 => {}
+                        _ => { fail!("stop touching yourself pcap"); }
+                    }
+                }
+                _ => {
+
+                }
+            };
+        }
         Ok(())
     }
-    */
 
     // Should this be impl Drop for PcapDevice?
     pub fn Close(&mut self) {
