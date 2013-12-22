@@ -70,6 +70,10 @@ pub struct Ipv4Header {
     DstIp:       ip::IpAddr,
 }
 
+pub struct Ipv6Header {
+    Temp:        uint,
+}
+
 pub enum InternetProtocolNumbers {
     ICMP = 1,
     TCP = 6,
@@ -153,6 +157,10 @@ pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uin
     length))
 }
 
+pub fn decode_ipv6_header(header_plus_payload: &[u8]) -> Option<(Ipv6Header, uint)> {
+    None
+}
+
 pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
     // TODO: Check size
     /*
@@ -227,7 +235,7 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
                 // WTF, why is the follow line building?
                 // ?????????
                 // wtf is it putting there??!?!
-                IPv4aa => match decode_ipv4_header(payload) {
+                IPv4 => match decode_ipv4_header(payload) {
                     Some((ip_hdr, ip_hdr_len)) => {
                         payload = payload.slice_from(ip_hdr_len-c);
                         match ip_hdr.Protocol {
@@ -255,18 +263,14 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
                     None => { InvalidPacket }
                 },
                 
-                /*
                 IPv6 => match decode_ipv6_header(payload) {
 
                 },
-                */
                 
-                /*
                 _ => { return InvalidPacket; } // should I _have_ to uncomment this "dead" code.
                 // it won't be dead when I add new types
                 // that means adding new types to the enum in the future will break code.
                 // that's probably okay?
-                */
             }
         }
         None => {
