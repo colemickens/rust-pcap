@@ -232,7 +232,7 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
         Some((ether_hdr, ether_hdr_len)) => {
             payload = payload.slice_from(ether_hdr_len-c);
             match ether_hdr.Kind {
-                IPv4 => match decode_ipv4_header(payload) {
+                EthernetType_IPv4 => match decode_ipv4_header(payload) {
                     Some((ip_hdr, ip_hdr_len)) => {
                         payload = payload.slice_from(ip_hdr_len-c);
                         match ip_hdr.Protocol {
@@ -255,7 +255,7 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
                     },
                     None => { InvalidPacket }
                 },
-                IPv6 => match decode_ipv6_header(payload) {
+                EthernetType_IPv6 => match decode_ipv6_header(payload) {
                     Some(_te) => { InvalidPacket }
                     None => { InvalidPacket }
                 },

@@ -1,9 +1,926 @@
-pcapfe.rs:258:16: 258:20 error: unreachable pattern
-pcapfe.rs:258                 IPv6 => match decode_ipv6_header(payload) {
-                              ^~~~
-pcapfe.rs:262:16: 262:17 error: unreachable pattern
-pcapfe.rs:262                 _ => { return InvalidPacket; }
-                              ^
-error: aborting due to 2 previous errors
-task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
-task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:444
+pcapfe.rs:7:4: 7:13 warning: unused import, #[warn(unused_imports)] on by default
+pcapfe.rs:7 use std::cast;
+                ^~~~~~~~~
+pcapfe.rs:9:4: 9:17 warning: unused import, #[warn(unused_imports)] on by default
+pcapfe.rs:9 use std::io::util;
+                ^~~~~~~~~~~~~
+pcap.rs:31:0: 33:1 warning: code is never used: `__fsid_t`, #[warn(dead_code)] on by default
+pcap.rs:31 pub struct __fsid_t {
+pcap.rs:32     __val: [c_int, ..2u],
+pcap.rs:33 }
+pcap.rs:102:0: 104:1 warning: code is never used: `__sigset_t`, #[warn(dead_code)] on by default
+pcap.rs:102 pub struct __sigset_t {
+pcap.rs:103     __val: [c_ulong, ..16u],
+pcap.rs:104 }
+pcap.rs:106:0: 109:1 warning: code is never used: `Struct_timespec`, #[warn(dead_code)] on by default
+pcap.rs:106 pub struct Struct_timespec {
+pcap.rs:107     tv_sec: __time_t,
+pcap.rs:108     tv_nsec: __syscall_slong_t,
+pcap.rs:109 }
+pcap.rs:116:0: 118:1 warning: code is never used: `fd_set`, #[warn(dead_code)] on by default
+pcap.rs:116 pub struct fd_set {
+pcap.rs:117     __fds_bits: [__fd_mask, ..16u],
+pcap.rs:118 }
+pcap.rs:125:0: 127:1 warning: code is never used: `Union_pthread_attr_t`, #[warn(dead_code)] on by default
+pcap.rs:125 pub struct Union_pthread_attr_t {
+pcap.rs:126     data: [u64, ..7u],
+pcap.rs:127 }
+pcap.rs:129:4: 131:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:129     pub fn __size(&mut self) -> *mut [c_schar, ..56u] {
+pcap.rs:130         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:131     }
+pcap.rs:132:4: 134:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:132     pub fn __align(&mut self) -> *mut c_long {
+pcap.rs:133         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:134     }
+pcap.rs:137:0: 140:1 warning: code is never used: `Struct___pthread_internal_list`, #[warn(dead_code)] on by default
+pcap.rs:137 pub struct Struct___pthread_internal_list {
+pcap.rs:138     __prev: *mut Struct___pthread_internal_list,
+pcap.rs:139     __next: *mut Struct___pthread_internal_list,
+pcap.rs:140 }
+pcap.rs:142:0: 151:1 warning: code is never used: `Struct___pthread_mutex_s`, #[warn(dead_code)] on by default
+pcap.rs:142 pub struct Struct___pthread_mutex_s {
+pcap.rs:143     __lock: c_int,
+pcap.rs:144     __count: c_uint,
+pcap.rs:145     __owner: c_int,
+pcap.rs:146     __nusers: c_uint,
+pcap.rs:147     __kind: c_int,
+            ...
+pcap.rs:152:0: 154:1 warning: code is never used: `pthread_mutex_t`, #[warn(dead_code)] on by default
+pcap.rs:152 pub struct pthread_mutex_t {
+pcap.rs:153     data: [u64, ..5u],
+pcap.rs:154 }
+pcap.rs:156:4: 158:5 warning: code is never used: `__data`, #[warn(dead_code)] on by default
+pcap.rs:156     pub fn __data(&mut self) -> *mut Struct___pthread_mutex_s {
+pcap.rs:157         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:158     }
+pcap.rs:159:4: 161:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:159     pub fn __size(&mut self) -> *mut [c_schar, ..40u] {
+pcap.rs:160         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:161     }
+pcap.rs:162:4: 164:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:162     pub fn __align(&mut self) -> *mut c_long {
+pcap.rs:163         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:164     }
+pcap.rs:166:0: 168:1 warning: code is never used: `pthread_mutexattr_t`, #[warn(dead_code)] on by default
+pcap.rs:166 pub struct pthread_mutexattr_t {
+pcap.rs:167     data: [u32, ..1u],
+pcap.rs:168 }
+pcap.rs:170:4: 172:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:170     pub fn __size(&mut self) -> *mut [c_schar, ..4u] {
+pcap.rs:171         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:172     }
+pcap.rs:173:4: 175:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:173     pub fn __align(&mut self) -> *mut c_int {
+pcap.rs:174         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:175     }
+pcap.rs:177:0: 186:1 warning: code is never used: `Struct_Unnamed1`, #[warn(dead_code)] on by default
+pcap.rs:177 pub struct Struct_Unnamed1 {
+pcap.rs:178     __lock: c_int,
+pcap.rs:179     __futex: c_uint,
+pcap.rs:180     __total_seq: c_ulonglong,
+pcap.rs:181     __wakeup_seq: c_ulonglong,
+pcap.rs:182     __woken_seq: c_ulonglong,
+            ...
+pcap.rs:187:0: 189:1 warning: code is never used: `pthread_cond_t`, #[warn(dead_code)] on by default
+pcap.rs:187 pub struct pthread_cond_t {
+pcap.rs:188     data: [u64, ..6u],
+pcap.rs:189 }
+pcap.rs:191:4: 193:5 warning: code is never used: `__data`, #[warn(dead_code)] on by default
+pcap.rs:191     pub fn __data(&mut self) -> *mut Struct_Unnamed1 {
+pcap.rs:192         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:193     }
+pcap.rs:194:4: 196:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:194     pub fn __size(&mut self) -> *mut [c_schar, ..48u] {
+pcap.rs:195         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:196     }
+pcap.rs:197:4: 199:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:197     pub fn __align(&mut self) -> *mut c_longlong {
+pcap.rs:198         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:199     }
+pcap.rs:201:0: 203:1 warning: code is never used: `pthread_condattr_t`, #[warn(dead_code)] on by default
+pcap.rs:201 pub struct pthread_condattr_t {
+pcap.rs:202     data: [u32, ..1u],
+pcap.rs:203 }
+pcap.rs:205:4: 207:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:205     pub fn __size(&mut self) -> *mut [c_schar, ..4u] {
+pcap.rs:206         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:207     }
+pcap.rs:208:4: 210:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:208     pub fn __align(&mut self) -> *mut c_int {
+pcap.rs:209         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:210     }
+pcap.rs:214:0: 226:1 warning: code is never used: `Struct_Unnamed2`, #[warn(dead_code)] on by default
+pcap.rs:214 pub struct Struct_Unnamed2 {
+pcap.rs:215     __lock: c_int,
+pcap.rs:216     __nr_readers: c_uint,
+pcap.rs:217     __readers_wakeup: c_uint,
+pcap.rs:218     __writer_wakeup: c_uint,
+pcap.rs:219     __nr_readers_queued: c_uint,
+            ...
+pcap.rs:227:0: 229:1 warning: code is never used: `pthread_rwlock_t`, #[warn(dead_code)] on by default
+pcap.rs:227 pub struct pthread_rwlock_t {
+pcap.rs:228     data: [u64, ..7u],
+pcap.rs:229 }
+pcap.rs:231:4: 233:5 warning: code is never used: `__data`, #[warn(dead_code)] on by default
+pcap.rs:231     pub fn __data(&mut self) -> *mut Struct_Unnamed2 {
+pcap.rs:232         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:233     }
+pcap.rs:234:4: 236:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:234     pub fn __size(&mut self) -> *mut [c_schar, ..56u] {
+pcap.rs:235         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:236     }
+pcap.rs:237:4: 239:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:237     pub fn __align(&mut self) -> *mut c_long {
+pcap.rs:238         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:239     }
+pcap.rs:241:0: 243:1 warning: code is never used: `pthread_rwlockattr_t`, #[warn(dead_code)] on by default
+pcap.rs:241 pub struct pthread_rwlockattr_t {
+pcap.rs:242     data: [u64, ..1u],
+pcap.rs:243 }
+pcap.rs:245:4: 247:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:245     pub fn __size(&mut self) -> *mut [c_schar, ..8u] {
+pcap.rs:246         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:247     }
+pcap.rs:248:4: 250:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:248     pub fn __align(&mut self) -> *mut c_long {
+pcap.rs:249         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:250     }
+pcap.rs:253:0: 255:1 warning: code is never used: `pthread_barrier_t`, #[warn(dead_code)] on by default
+pcap.rs:253 pub struct pthread_barrier_t {
+pcap.rs:254     data: [u64, ..4u],
+pcap.rs:255 }
+pcap.rs:257:4: 259:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:257     pub fn __size(&mut self) -> *mut [c_schar, ..32u] {
+pcap.rs:258         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:259     }
+pcap.rs:260:4: 262:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:260     pub fn __align(&mut self) -> *mut c_long {
+pcap.rs:261         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:262     }
+pcap.rs:264:0: 266:1 warning: code is never used: `pthread_barrierattr_t`, #[warn(dead_code)] on by default
+pcap.rs:264 pub struct pthread_barrierattr_t {
+pcap.rs:265     data: [u32, ..1u],
+pcap.rs:266 }
+pcap.rs:268:4: 270:5 warning: code is never used: `__size`, #[warn(dead_code)] on by default
+pcap.rs:268     pub fn __size(&mut self) -> *mut [c_schar, ..4u] {
+pcap.rs:269         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:270     }
+pcap.rs:271:4: 273:5 warning: code is never used: `__align`, #[warn(dead_code)] on by default
+pcap.rs:271     pub fn __align(&mut self) -> *mut c_int {
+pcap.rs:272         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:273     }
+pcap.rs:275:0: 278:1 warning: code is never used: `Struct_timezone`, #[warn(dead_code)] on by default
+pcap.rs:275 pub struct Struct_timezone {
+pcap.rs:276     tz_minuteswest: c_int,
+pcap.rs:277     tz_dsttime: c_int,
+pcap.rs:278 }
+pcap.rs:281:0: 281:35 warning: code is never used: `ITIMER_REAL`, #[warn(dead_code)] on by default
+pcap.rs:281 pub static ITIMER_REAL: c_uint = 0;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:282:0: 282:38 warning: code is never used: `ITIMER_VIRTUAL`, #[warn(dead_code)] on by default
+pcap.rs:282 pub static ITIMER_VIRTUAL: c_uint = 1;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:283:0: 283:35 warning: code is never used: `ITIMER_PROF`, #[warn(dead_code)] on by default
+pcap.rs:283 pub static ITIMER_PROF: c_uint = 2;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:284:0: 287:1 warning: code is never used: `Struct_itimerval`, #[warn(dead_code)] on by default
+pcap.rs:284 pub struct Struct_itimerval {
+pcap.rs:285     it_interval: Struct_timeval,
+pcap.rs:286     it_value: Struct_timeval,
+pcap.rs:287 }
+pcap.rs:303:0: 305:1 warning: code is never used: `Union_Unnamed3`, #[warn(dead_code)] on by default
+pcap.rs:303 pub struct Union_Unnamed3 {
+pcap.rs:304     data: [u32, ..1u],
+pcap.rs:305 }
+pcap.rs:307:4: 309:5 warning: code is never used: `__wch`, #[warn(dead_code)] on by default
+pcap.rs:307     pub fn __wch(&mut self) -> *mut c_uint {
+pcap.rs:308         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:309     }
+pcap.rs:310:4: 312:5 warning: code is never used: `__wchb`, #[warn(dead_code)] on by default
+pcap.rs:310     pub fn __wchb(&mut self) -> *mut [c_schar, ..4u] {
+pcap.rs:311         unsafe { ::std::cast::transmute(::std::ptr::to_mut_unsafe_ptr(self)) }
+pcap.rs:312     }
+pcap.rs:314:0: 317:1 warning: code is never used: `__mbstate_t`, #[warn(dead_code)] on by default
+pcap.rs:314 pub struct __mbstate_t {
+pcap.rs:315     __count: c_int,
+pcap.rs:316     __value: Union_Unnamed3,
+pcap.rs:317 }
+pcap.rs:318:0: 321:1 warning: code is never used: `_G_fpos_t`, #[warn(dead_code)] on by default
+pcap.rs:318 pub struct _G_fpos_t {
+pcap.rs:319     __pos: __off_t,
+pcap.rs:320     __state: __mbstate_t,
+pcap.rs:321 }
+pcap.rs:322:0: 325:1 warning: code is never used: `_G_fpos64_t`, #[warn(dead_code)] on by default
+pcap.rs:322 pub struct _G_fpos64_t {
+pcap.rs:323     __pos: __off64_t,
+pcap.rs:324     __state: __mbstate_t,
+pcap.rs:325 }
+pcap.rs:330:0: 334:1 warning: code is never used: `Struct__IO_marker`, #[warn(dead_code)] on by default
+pcap.rs:330 pub struct Struct__IO_marker {
+pcap.rs:331     _next: *mut Struct__IO_marker,
+pcap.rs:332     _sbuf: *mut Struct__IO_FILE,
+pcap.rs:333     _pos: c_int,
+pcap.rs:334 }
+pcap.rs:336:0: 336:36 warning: code is never used: `__codecvt_ok`, #[warn(dead_code)] on by default
+pcap.rs:336 pub static __codecvt_ok: c_uint = 0;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:337:0: 337:41 warning: code is never used: `__codecvt_partial`, #[warn(dead_code)] on by default
+pcap.rs:337 pub static __codecvt_partial: c_uint = 1;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:338:0: 338:39 warning: code is never used: `__codecvt_error`, #[warn(dead_code)] on by default
+pcap.rs:338 pub static __codecvt_error: c_uint = 2;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:339:0: 339:40 warning: code is never used: `__codecvt_noconv`, #[warn(dead_code)] on by default
+pcap.rs:339 pub static __codecvt_noconv: c_uint = 3;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:340:0: 370:1 warning: code is never used: `Struct__IO_FILE`, #[warn(dead_code)] on by default
+pcap.rs:340 pub struct Struct__IO_FILE {
+pcap.rs:341     _flags: c_int,
+pcap.rs:342     _IO_read_ptr: *mut c_schar,
+pcap.rs:343     _IO_read_end: *mut c_schar,
+pcap.rs:344     _IO_read_base: *mut c_schar,
+pcap.rs:345     _IO_write_base: *mut c_schar,
+            ...
+pcap.rs:384:0: 392:1 warning: code is never used: `Struct_pcap_file_header`, #[warn(dead_code)] on by default
+pcap.rs:384 pub struct Struct_pcap_file_header {
+pcap.rs:385     magic: bpf_u_int32,
+pcap.rs:386     version_major: u_short,
+pcap.rs:387     version_minor: u_short,
+pcap.rs:388     thiszone: bpf_int32,
+pcap.rs:389     sigfigs: bpf_u_int32,
+            ...
+pcap.rs:394:0: 394:36 warning: code is never used: `PCAP_D_INOUT`, #[warn(dead_code)] on by default
+pcap.rs:394 pub static PCAP_D_INOUT: c_uint = 0;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:395:0: 395:33 warning: code is never used: `PCAP_D_IN`, #[warn(dead_code)] on by default
+pcap.rs:395 pub static PCAP_D_IN: c_uint = 1;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:396:0: 396:34 warning: code is never used: `PCAP_D_OUT`, #[warn(dead_code)] on by default
+pcap.rs:396 pub static PCAP_D_OUT: c_uint = 2;
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:402:0: 406:1 warning: code is never used: `Struct_pcap_stat`, #[warn(dead_code)] on by default
+pcap.rs:402 pub struct Struct_pcap_stat {
+pcap.rs:403     ps_recv: u_int,
+pcap.rs:404     ps_drop: u_int,
+pcap.rs:405     ps_ifdrop: u_int,
+pcap.rs:406 }
+pcap.rs:407:0: 413:1 warning: code is never used: `Struct_pcap_if`, #[warn(dead_code)] on by default
+pcap.rs:407 pub struct Struct_pcap_if {
+pcap.rs:408     next: *mut Struct_pcap_if,
+pcap.rs:409     name: *mut c_schar,
+pcap.rs:410     description: *mut c_schar,
+pcap.rs:411     addresses: *mut Struct_pcap_addr,
+pcap.rs:412     flags: bpf_u_int32,
+            ...
+pcap.rs:414:0: 420:1 warning: code is never used: `Struct_pcap_addr`, #[warn(dead_code)] on by default
+pcap.rs:414 pub struct Struct_pcap_addr {
+pcap.rs:415     next: *mut Struct_pcap_addr,
+pcap.rs:416     addr: *mut Struct_sockaddr,
+pcap.rs:417     netmask: *mut Struct_sockaddr,
+pcap.rs:418     broadaddr: *mut Struct_sockaddr,
+pcap.rs:419     dstaddr: *mut Struct_sockaddr,
+            ...
+pcap.rs:426:0: 431:1 warning: code is never used: `Struct___va_list_tag`, #[warn(dead_code)] on by default
+pcap.rs:426 pub struct Struct___va_list_tag {
+pcap.rs:427     gp_offset: c_uint,
+pcap.rs:428     fp_offset: c_uint,
+pcap.rs:429     overflow_arg_area: *mut c_void,
+pcap.rs:430     reg_save_area: *mut c_void,
+pcap.rs:431 }
+pcap.rs:434:8: 434:56 warning: code is never used: `_IO_2_1_stdin_`, #[warn(dead_code)] on by default
+pcap.rs:434     pub static mut _IO_2_1_stdin_: Struct__IO_FILE_plus;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:435:8: 435:57 warning: code is never used: `_IO_2_1_stdout_`, #[warn(dead_code)] on by default
+pcap.rs:435     pub static mut _IO_2_1_stdout_: Struct__IO_FILE_plus;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:436:8: 436:57 warning: code is never used: `_IO_2_1_stderr_`, #[warn(dead_code)] on by default
+pcap.rs:436     pub static mut _IO_2_1_stderr_: Struct__IO_FILE_plus;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:437:8: 437:47 warning: code is never used: `stdin`, #[warn(dead_code)] on by default
+pcap.rs:437     pub static mut stdin: *mut Struct__IO_FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:438:8: 438:48 warning: code is never used: `stdout`, #[warn(dead_code)] on by default
+pcap.rs:438     pub static mut stdout: *mut Struct__IO_FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:439:8: 439:48 warning: code is never used: `stderr`, #[warn(dead_code)] on by default
+pcap.rs:439     pub static mut stderr: *mut Struct__IO_FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:440:8: 440:35 warning: code is never used: `sys_nerr`, #[warn(dead_code)] on by default
+pcap.rs:440     pub static mut sys_nerr: c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:441:8: 441:39 warning: code is never used: `sys_errlist`, #[warn(dead_code)] on by default
+pcap.rs:441     pub static mut sys_errlist: c_void;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:442:8: 444:59 warning: code is never used: `select`, #[warn(dead_code)] on by default
+pcap.rs:442     pub fn select(__nfds: c_int, __readfds: *mut fd_set,
+pcap.rs:443                   __writefds: *mut fd_set, __exceptfds: *mut fd_set,
+pcap.rs:444                   __timeout: *mut Struct_timeval) -> c_int;
+pcap.rs:445:8: 448:11 warning: code is never used: `pselect`, #[warn(dead_code)] on by default
+pcap.rs:445     pub fn pselect(__nfds: c_int, __readfds: *mut fd_set,
+pcap.rs:446                    __writefds: *mut fd_set, __exceptfds: *mut fd_set,
+pcap.rs:447                    __timeout: *Struct_timespec, __sigmask: *__sigset_t) ->
+pcap.rs:448      c_int;
+pcap.rs:449:8: 449:55 warning: code is never used: `gnu_dev_major`, #[warn(dead_code)] on by default
+pcap.rs:449     pub fn gnu_dev_major(__dev: c_ulonglong) -> c_uint;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:450:8: 450:55 warning: code is never used: `gnu_dev_minor`, #[warn(dead_code)] on by default
+pcap.rs:450     pub fn gnu_dev_minor(__dev: c_ulonglong) -> c_uint;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:451:8: 451:76 warning: code is never used: `gnu_dev_makedev`, #[warn(dead_code)] on by default
+pcap.rs:451     pub fn gnu_dev_makedev(__major: c_uint, __minor: c_uint) -> c_ulonglong;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:452:8: 453:11 warning: code is never used: `gettimeofday`, #[warn(dead_code)] on by default
+pcap.rs:452     pub fn gettimeofday(__tv: *mut Struct_timeval, __tz: __timezone_ptr_t) ->
+pcap.rs:453      c_int;
+pcap.rs:454:8: 455:11 warning: code is never used: `settimeofday`, #[warn(dead_code)] on by default
+pcap.rs:454     pub fn settimeofday(__tv: *Struct_timeval, __tz: *Struct_timezone) ->
+pcap.rs:455      c_int;
+pcap.rs:456:8: 457:14 warning: code is never used: `adjtime`, #[warn(dead_code)] on by default
+pcap.rs:456     pub fn adjtime(__delta: *Struct_timeval, __olddelta: *mut Struct_timeval)
+pcap.rs:457      -> c_int;
+pcap.rs:458:8: 459:62 warning: code is never used: `getitimer`, #[warn(dead_code)] on by default
+pcap.rs:458     pub fn getitimer(__which: __itimer_which_t,
+pcap.rs:459                      __value: *mut Struct_itimerval) -> c_int;
+pcap.rs:460:8: 461:60 warning: code is never used: `setitimer`, #[warn(dead_code)] on by default
+pcap.rs:460     pub fn setitimer(__which: __itimer_which_t, __new: *Struct_itimerval,
+pcap.rs:461                      __old: *mut Struct_itimerval) -> c_int;
+pcap.rs:462:8: 462:76 warning: code is never used: `utimes`, #[warn(dead_code)] on by default
+pcap.rs:462     pub fn utimes(__file: *c_schar, __tvp: [Struct_timeval, ..2u]) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:463:8: 463:77 warning: code is never used: `lutimes`, #[warn(dead_code)] on by default
+pcap.rs:463     pub fn lutimes(__file: *c_schar, __tvp: [Struct_timeval, ..2u]) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:464:8: 464:72 warning: code is never used: `futimes`, #[warn(dead_code)] on by default
+pcap.rs:464     pub fn futimes(__fd: c_int, __tvp: [Struct_timeval, ..2u]) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:465:8: 465:70 warning: code is never used: `bpf_validate`, #[warn(dead_code)] on by default
+pcap.rs:465     pub fn bpf_validate(arg1: *Struct_bpf_insn, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:466:8: 467:44 warning: code is never used: `bpf_filter`, #[warn(dead_code)] on by default
+pcap.rs:466     pub fn bpf_filter(arg1: *Struct_bpf_insn, arg2: *u_char, arg3: u_int,
+pcap.rs:467                       arg4: u_int) -> u_int;
+pcap.rs:468:8: 468:53 warning: code is never used: `__underflow`, #[warn(dead_code)] on by default
+pcap.rs:468     pub fn __underflow(arg1: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:469:8: 469:49 warning: code is never used: `__uflow`, #[warn(dead_code)] on by default
+pcap.rs:469     pub fn __uflow(arg1: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:470:8: 470:65 warning: code is never used: `__overflow`, #[warn(dead_code)] on by default
+pcap.rs:470     pub fn __overflow(arg1: *mut _IO_FILE, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:471:8: 471:50 warning: code is never used: `_IO_getc`, #[warn(dead_code)] on by default
+pcap.rs:471     pub fn _IO_getc(__fp: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:472:8: 472:62 warning: code is never used: `_IO_putc`, #[warn(dead_code)] on by default
+pcap.rs:472     pub fn _IO_putc(__c: c_int, __fp: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:473:8: 473:50 warning: code is never used: `_IO_feof`, #[warn(dead_code)] on by default
+pcap.rs:473     pub fn _IO_feof(__fp: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:474:8: 474:52 warning: code is never used: `_IO_ferror`, #[warn(dead_code)] on by default
+pcap.rs:474     pub fn _IO_ferror(__fp: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:475:8: 475:58 warning: code is never used: `_IO_peekc_locked`, #[warn(dead_code)] on by default
+pcap.rs:475     pub fn _IO_peekc_locked(__fp: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:476:8: 476:46 warning: code is never used: `_IO_flockfile`, #[warn(dead_code)] on by default
+pcap.rs:476     pub fn _IO_flockfile(arg1: *mut _IO_FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:477:8: 477:48 warning: code is never used: `_IO_funlockfile`, #[warn(dead_code)] on by default
+pcap.rs:477     pub fn _IO_funlockfile(arg1: *mut _IO_FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:478:8: 478:58 warning: code is never used: `_IO_ftrylockfile`, #[warn(dead_code)] on by default
+pcap.rs:478     pub fn _IO_ftrylockfile(arg1: *mut _IO_FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:479:8: 480:72 warning: code is never used: `_IO_vfscanf`, #[warn(dead_code)] on by default
+pcap.rs:479     pub fn _IO_vfscanf(arg1: *mut _IO_FILE, arg2: *c_schar,
+pcap.rs:480                        arg3: __gnuc_va_list, arg4: *mut c_int) -> c_int;
+pcap.rs:481:8: 482:55 warning: code is never used: `_IO_vfprintf`, #[warn(dead_code)] on by default
+pcap.rs:481     pub fn _IO_vfprintf(arg1: *mut _IO_FILE, arg2: *c_schar,
+pcap.rs:482                         arg3: __gnuc_va_list) -> c_int;
+pcap.rs:483:8: 484:15 warning: code is never used: `_IO_padn`, #[warn(dead_code)] on by default
+pcap.rs:483     pub fn _IO_padn(arg1: *mut _IO_FILE, arg2: c_int, arg3: __ssize_t) ->
+pcap.rs:484      __ssize_t;
+pcap.rs:485:8: 486:12 warning: code is never used: `_IO_sgetn`, #[warn(dead_code)] on by default
+pcap.rs:485     pub fn _IO_sgetn(arg1: *mut _IO_FILE, arg2: *mut c_void, arg3: size_t) ->
+pcap.rs:486      size_t;
+pcap.rs:487:8: 488:49 warning: code is never used: `_IO_seekoff`, #[warn(dead_code)] on by default
+pcap.rs:487     pub fn _IO_seekoff(arg1: *mut _IO_FILE, arg2: __off64_t, arg3: c_int,
+pcap.rs:488                        arg4: c_int) -> __off64_t;
+pcap.rs:489:8: 490:15 warning: code is never used: `_IO_seekpos`, #[warn(dead_code)] on by default
+pcap.rs:489     pub fn _IO_seekpos(arg1: *mut _IO_FILE, arg2: __off64_t, arg3: c_int) ->
+pcap.rs:490      __off64_t;
+pcap.rs:491:8: 491:53 warning: code is never used: `_IO_free_backup_area`, #[warn(dead_code)] on by default
+pcap.rs:491     pub fn _IO_free_backup_area(arg1: *mut _IO_FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:492:8: 492:49 warning: code is never used: `remove`, #[warn(dead_code)] on by default
+pcap.rs:492     pub fn remove(__filename: *c_schar) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:493:8: 493:61 warning: code is never used: `rename`, #[warn(dead_code)] on by default
+pcap.rs:493     pub fn rename(__old: *c_schar, __new: *c_schar) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:494:8: 495:46 warning: code is never used: `renameat`, #[warn(dead_code)] on by default
+pcap.rs:494     pub fn renameat(__oldfd: c_int, __old: *c_schar, __newfd: c_int,
+pcap.rs:495                     __new: *c_schar) -> c_int;
+pcap.rs:496:8: 496:34 warning: code is never used: `tmpfile`, #[warn(dead_code)] on by default
+pcap.rs:496     pub fn tmpfile() -> *mut FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:497:8: 497:53 warning: code is never used: `tmpnam`, #[warn(dead_code)] on by default
+pcap.rs:497     pub fn tmpnam(__s: *mut c_schar) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:498:8: 498:55 warning: code is never used: `tmpnam_r`, #[warn(dead_code)] on by default
+pcap.rs:498     pub fn tmpnam_r(__s: *mut c_schar) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:499:8: 499:69 warning: code is never used: `tempnam`, #[warn(dead_code)] on by default
+pcap.rs:499     pub fn tempnam(__dir: *c_schar, __pfx: *c_schar) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:500:8: 500:48 warning: code is never used: `fclose`, #[warn(dead_code)] on by default
+pcap.rs:500     pub fn fclose(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:501:8: 501:48 warning: code is never used: `fflush`, #[warn(dead_code)] on by default
+pcap.rs:501     pub fn fflush(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:502:8: 502:57 warning: code is never used: `fflush_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:502     pub fn fflush_unlocked(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:503:8: 503:71 warning: code is never used: `fopen`, #[warn(dead_code)] on by default
+pcap.rs:503     pub fn fopen(__filename: *c_schar, __modes: *c_schar) -> *mut FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:504:8: 505:53 warning: code is never used: `freopen`, #[warn(dead_code)] on by default
+pcap.rs:504     pub fn freopen(__filename: *c_schar, __modes: *c_schar,
+pcap.rs:505                    __stream: *mut FILE) -> *mut FILE;
+pcap.rs:506:8: 506:63 warning: code is never used: `fdopen`, #[warn(dead_code)] on by default
+pcap.rs:506     pub fn fdopen(__fd: c_int, __modes: *c_schar) -> *mut FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:507:8: 508:15 warning: code is never used: `fmemopen`, #[warn(dead_code)] on by default
+pcap.rs:507     pub fn fmemopen(__s: *mut c_void, __len: size_t, __modes: *c_schar) ->
+pcap.rs:508      *mut FILE;
+pcap.rs:509:8: 510:18 warning: code is never used: `open_memstream`, #[warn(dead_code)] on by default
+pcap.rs:509     pub fn open_memstream(__bufloc: *mut *mut c_schar, __sizeloc: *mut size_t)
+pcap.rs:510      -> *mut FILE;
+pcap.rs:511:8: 511:60 warning: code is never used: `setbuf`, #[warn(dead_code)] on by default
+pcap.rs:511     pub fn setbuf(__stream: *mut FILE, __buf: *mut c_schar);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:512:8: 513:41 warning: code is never used: `setvbuf`, #[warn(dead_code)] on by default
+pcap.rs:512     pub fn setvbuf(__stream: *mut FILE, __buf: *mut c_schar, __modes: c_int,
+pcap.rs:513                    __n: size_t) -> c_int;
+pcap.rs:514:8: 515:37 warning: code is never used: `setbuffer`, #[warn(dead_code)] on by default
+pcap.rs:514     pub fn setbuffer(__stream: *mut FILE, __buf: *mut c_schar,
+pcap.rs:515                      __size: size_t);
+pcap.rs:516:8: 516:43 warning: code is never used: `setlinebuf`, #[warn(dead_code)] on by default
+pcap.rs:516     pub fn setlinebuf(__stream: *mut FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:517:8: 517:74 warning: code is never used: `fprintf`, #[warn(dead_code)] on by default
+pcap.rs:517     pub fn fprintf(__stream: *mut FILE, __format: *c_schar, ...) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:518:8: 518:52 warning: code is never used: `printf`, #[warn(dead_code)] on by default
+pcap.rs:518     pub fn printf(__format: *c_schar, ...) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:519:8: 519:72 warning: code is never used: `sprintf`, #[warn(dead_code)] on by default
+pcap.rs:519     pub fn sprintf(__s: *mut c_schar, __format: *c_schar, ...) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:520:8: 521:14 warning: code is never used: `vfprintf`, #[warn(dead_code)] on by default
+pcap.rs:520     pub fn vfprintf(__s: *mut FILE, __format: *c_schar, __arg: __gnuc_va_list)
+pcap.rs:521      -> c_int;
+pcap.rs:522:8: 522:71 warning: code is never used: `vprintf`, #[warn(dead_code)] on by default
+pcap.rs:522     pub fn vprintf(__format: *c_schar, __arg: __gnuc_va_list) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:523:8: 524:52 warning: code is never used: `vsprintf`, #[warn(dead_code)] on by default
+pcap.rs:523     pub fn vsprintf(__s: *mut c_schar, __format: *c_schar,
+pcap.rs:524                     __arg: __gnuc_va_list) -> c_int;
+pcap.rs:525:8: 526:54 warning: code is never used: `snprintf`, #[warn(dead_code)] on by default
+pcap.rs:525     pub fn snprintf(__s: *mut c_schar, __maxlen: size_t,
+pcap.rs:526                     __format: *c_schar, ...) -> c_int;
+pcap.rs:527:8: 528:53 warning: code is never used: `vsnprintf`, #[warn(dead_code)] on by default
+pcap.rs:527     pub fn vsnprintf(__s: *mut c_schar, __maxlen: size_t, __format: *c_schar,
+pcap.rs:528                      __arg: __gnuc_va_list) -> c_int;
+pcap.rs:529:8: 530:11 warning: code is never used: `vdprintf`, #[warn(dead_code)] on by default
+pcap.rs:529     pub fn vdprintf(__fd: c_int, __fmt: *c_schar, __arg: __gnuc_va_list) ->
+pcap.rs:530      c_int;
+pcap.rs:531:8: 531:63 warning: code is never used: `dprintf`, #[warn(dead_code)] on by default
+pcap.rs:531     pub fn dprintf(__fd: c_int, __fmt: *c_schar, ...) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:532:8: 532:73 warning: code is never used: `fscanf`, #[warn(dead_code)] on by default
+pcap.rs:532     pub fn fscanf(__stream: *mut FILE, __format: *c_schar, ...) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:533:8: 533:51 warning: code is never used: `scanf`, #[warn(dead_code)] on by default
+pcap.rs:533     pub fn scanf(__format: *c_schar, ...) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:534:8: 534:67 warning: code is never used: `sscanf`, #[warn(dead_code)] on by default
+pcap.rs:534     pub fn sscanf(__s: *c_schar, __format: *c_schar, ...) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:535:8: 536:14 warning: code is never used: `vfscanf`, #[warn(dead_code)] on by default
+pcap.rs:535     pub fn vfscanf(__s: *mut FILE, __format: *c_schar, __arg: __gnuc_va_list)
+pcap.rs:536      -> c_int;
+pcap.rs:537:8: 537:70 warning: code is never used: `vscanf`, #[warn(dead_code)] on by default
+pcap.rs:537     pub fn vscanf(__format: *c_schar, __arg: __gnuc_va_list) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:538:8: 539:14 warning: code is never used: `vsscanf`, #[warn(dead_code)] on by default
+pcap.rs:538     pub fn vsscanf(__s: *c_schar, __format: *c_schar, __arg: __gnuc_va_list)
+pcap.rs:539      -> c_int;
+pcap.rs:540:8: 540:47 warning: code is never used: `fgetc`, #[warn(dead_code)] on by default
+pcap.rs:540     pub fn fgetc(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:541:8: 541:46 warning: code is never used: `getc`, #[warn(dead_code)] on by default
+pcap.rs:541     pub fn getc(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:542:8: 542:30 warning: code is never used: `getchar`, #[warn(dead_code)] on by default
+pcap.rs:542     pub fn getchar() -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:543:8: 543:55 warning: code is never used: `getc_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:543     pub fn getc_unlocked(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:544:8: 544:39 warning: code is never used: `getchar_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:544     pub fn getchar_unlocked() -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:545:8: 545:56 warning: code is never used: `fgetc_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:545     pub fn fgetc_unlocked(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:546:8: 546:59 warning: code is never used: `fputc`, #[warn(dead_code)] on by default
+pcap.rs:546     pub fn fputc(__c: c_int, __stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:547:8: 547:58 warning: code is never used: `putc`, #[warn(dead_code)] on by default
+pcap.rs:547     pub fn putc(__c: c_int, __stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:548:8: 548:40 warning: code is never used: `putchar`, #[warn(dead_code)] on by default
+pcap.rs:548     pub fn putchar(__c: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:549:8: 549:68 warning: code is never used: `fputc_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:549     pub fn fputc_unlocked(__c: c_int, __stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:550:8: 550:67 warning: code is never used: `putc_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:550     pub fn putc_unlocked(__c: c_int, __stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:551:8: 551:49 warning: code is never used: `putchar_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:551     pub fn putchar_unlocked(__c: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:552:8: 552:46 warning: code is never used: `getw`, #[warn(dead_code)] on by default
+pcap.rs:552     pub fn getw(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:553:8: 553:58 warning: code is never used: `putw`, #[warn(dead_code)] on by default
+pcap.rs:553     pub fn putw(__w: c_int, __stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:554:8: 555:18 warning: code is never used: `fgets`, #[warn(dead_code)] on by default
+pcap.rs:554     pub fn fgets(__s: *mut c_schar, __n: c_int, __stream: *mut FILE) ->
+pcap.rs:555      *mut c_schar;
+pcap.rs:556:8: 556:51 warning: code is never used: `gets`, #[warn(dead_code)] on by default
+pcap.rs:556     pub fn gets(__s: *mut c_schar) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:557:8: 558:76 warning: code is never used: `__getdelim`, #[warn(dead_code)] on by default
+pcap.rs:557     pub fn __getdelim(__lineptr: *mut *mut c_schar, __n: *mut size_t,
+pcap.rs:558                       __delimiter: c_int, __stream: *mut FILE) -> __ssize_t;
+pcap.rs:559:8: 560:74 warning: code is never used: `getdelim`, #[warn(dead_code)] on by default
+pcap.rs:559     pub fn getdelim(__lineptr: *mut *mut c_schar, __n: *mut size_t,
+pcap.rs:560                     __delimiter: c_int, __stream: *mut FILE) -> __ssize_t;
+pcap.rs:561:8: 562:53 warning: code is never used: `getline`, #[warn(dead_code)] on by default
+pcap.rs:561     pub fn getline(__lineptr: *mut *mut c_schar, __n: *mut size_t,
+pcap.rs:562                    __stream: *mut FILE) -> __ssize_t;
+pcap.rs:563:8: 563:62 warning: code is never used: `fputs`, #[warn(dead_code)] on by default
+pcap.rs:563     pub fn fputs(__s: *c_schar, __stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:564:8: 564:40 warning: code is never used: `puts`, #[warn(dead_code)] on by default
+pcap.rs:564     pub fn puts(__s: *c_schar) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:565:8: 565:60 warning: code is never used: `ungetc`, #[warn(dead_code)] on by default
+pcap.rs:565     pub fn ungetc(__c: c_int, __stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:566:8: 567:48 warning: code is never used: `fread`, #[warn(dead_code)] on by default
+pcap.rs:566     pub fn fread(__ptr: *mut c_void, __size: size_t, __n: size_t,
+pcap.rs:567                  __stream: *mut FILE) -> size_t;
+pcap.rs:568:8: 569:15 warning: code is never used: `fwrite`, #[warn(dead_code)] on by default
+pcap.rs:568     pub fn fwrite(__ptr: *c_void, __size: size_t, __n: size_t, __s: *mut FILE)
+pcap.rs:569      -> size_t;
+pcap.rs:570:8: 571:57 warning: code is never used: `fread_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:570     pub fn fread_unlocked(__ptr: *mut c_void, __size: size_t, __n: size_t,
+pcap.rs:571                           __stream: *mut FILE) -> size_t;
+pcap.rs:572:8: 573:58 warning: code is never used: `fwrite_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:572     pub fn fwrite_unlocked(__ptr: *c_void, __size: size_t, __n: size_t,
+pcap.rs:573                            __stream: *mut FILE) -> size_t;
+pcap.rs:574:8: 575:11 warning: code is never used: `fseek`, #[warn(dead_code)] on by default
+pcap.rs:574     pub fn fseek(__stream: *mut FILE, __off: c_long, __whence: c_int) ->
+pcap.rs:575      c_int;
+pcap.rs:576:8: 576:48 warning: code is never used: `ftell`, #[warn(dead_code)] on by default
+pcap.rs:576     pub fn ftell(__stream: *mut FILE) -> c_long;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:577:8: 577:39 warning: code is never used: `rewind`, #[warn(dead_code)] on by default
+pcap.rs:577     pub fn rewind(__stream: *mut FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:578:8: 579:11 warning: code is never used: `fseeko`, #[warn(dead_code)] on by default
+pcap.rs:578     pub fn fseeko(__stream: *mut FILE, __off: __off_t, __whence: c_int) ->
+pcap.rs:579      c_int;
+pcap.rs:580:8: 580:50 warning: code is never used: `ftello`, #[warn(dead_code)] on by default
+pcap.rs:580     pub fn ftello(__stream: *mut FILE) -> __off_t;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:581:8: 581:69 warning: code is never used: `fgetpos`, #[warn(dead_code)] on by default
+pcap.rs:581     pub fn fgetpos(__stream: *mut FILE, __pos: *mut fpos_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:582:8: 582:65 warning: code is never used: `fsetpos`, #[warn(dead_code)] on by default
+pcap.rs:582     pub fn fsetpos(__stream: *mut FILE, __pos: *fpos_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:583:8: 583:41 warning: code is never used: `clearerr`, #[warn(dead_code)] on by default
+pcap.rs:583     pub fn clearerr(__stream: *mut FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:584:8: 584:46 warning: code is never used: `feof`, #[warn(dead_code)] on by default
+pcap.rs:584     pub fn feof(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:585:8: 585:48 warning: code is never used: `ferror`, #[warn(dead_code)] on by default
+pcap.rs:585     pub fn ferror(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:586:8: 586:50 warning: code is never used: `clearerr_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:586     pub fn clearerr_unlocked(__stream: *mut FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:587:8: 587:55 warning: code is never used: `feof_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:587     pub fn feof_unlocked(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:588:8: 588:57 warning: code is never used: `ferror_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:588     pub fn ferror_unlocked(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:589:8: 589:33 warning: code is never used: `perror`, #[warn(dead_code)] on by default
+pcap.rs:589     pub fn perror(__s: *c_schar);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:590:8: 590:48 warning: code is never used: `fileno`, #[warn(dead_code)] on by default
+pcap.rs:590     pub fn fileno(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:591:8: 591:57 warning: code is never used: `fileno_unlocked`, #[warn(dead_code)] on by default
+pcap.rs:591     pub fn fileno_unlocked(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:592:8: 592:70 warning: code is never used: `popen`, #[warn(dead_code)] on by default
+pcap.rs:592     pub fn popen(__command: *c_schar, __modes: *c_schar) -> *mut FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:593:8: 593:48 warning: code is never used: `pclose`, #[warn(dead_code)] on by default
+pcap.rs:593     pub fn pclose(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:594:8: 594:54 warning: code is never used: `ctermid`, #[warn(dead_code)] on by default
+pcap.rs:594     pub fn ctermid(__s: *mut c_schar) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:595:8: 595:42 warning: code is never used: `flockfile`, #[warn(dead_code)] on by default
+pcap.rs:595     pub fn flockfile(__stream: *mut FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:596:8: 596:54 warning: code is never used: `ftrylockfile`, #[warn(dead_code)] on by default
+pcap.rs:596     pub fn ftrylockfile(__stream: *mut FILE) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:597:8: 597:44 warning: code is never used: `funlockfile`, #[warn(dead_code)] on by default
+pcap.rs:597     pub fn funlockfile(__stream: *mut FILE);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:598:8: 598:62 warning: code is never used: `pcap_lookupdev`, #[warn(dead_code)] on by default
+pcap.rs:598     pub fn pcap_lookupdev(arg1: *mut c_schar) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:602:8: 602:74 warning: code is never used: `pcap_create`, #[warn(dead_code)] on by default
+pcap.rs:602     pub fn pcap_create(arg1: *c_schar, arg2: *mut c_schar) -> *mut pcap_t;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:603:8: 603:69 warning: code is never used: `pcap_set_snaplen`, #[warn(dead_code)] on by default
+pcap.rs:603     pub fn pcap_set_snaplen(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:604:8: 604:69 warning: code is never used: `pcap_set_promisc`, #[warn(dead_code)] on by default
+pcap.rs:604     pub fn pcap_set_promisc(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:605:8: 605:58 warning: code is never used: `pcap_can_set_rfmon`, #[warn(dead_code)] on by default
+pcap.rs:605     pub fn pcap_can_set_rfmon(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:606:8: 606:67 warning: code is never used: `pcap_set_rfmon`, #[warn(dead_code)] on by default
+pcap.rs:606     pub fn pcap_set_rfmon(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:607:8: 607:69 warning: code is never used: `pcap_set_timeout`, #[warn(dead_code)] on by default
+pcap.rs:607     pub fn pcap_set_timeout(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:608:8: 608:73 warning: code is never used: `pcap_set_tstamp_type`, #[warn(dead_code)] on by default
+pcap.rs:608     pub fn pcap_set_tstamp_type(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:609:8: 609:76 warning: code is never used: `pcap_set_immediate_mode`, #[warn(dead_code)] on by default
+pcap.rs:609     pub fn pcap_set_immediate_mode(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:610:8: 610:73 warning: code is never used: `pcap_set_buffer_size`, #[warn(dead_code)] on by default
+pcap.rs:610     pub fn pcap_set_buffer_size(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:611:8: 611:78 warning: code is never used: `pcap_set_tstamp_precision`, #[warn(dead_code)] on by default
+pcap.rs:611     pub fn pcap_set_tstamp_precision(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:612:8: 612:65 warning: code is never used: `pcap_get_tstamp_precision`, #[warn(dead_code)] on by default
+pcap.rs:612     pub fn pcap_get_tstamp_precision(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:613:8: 613:53 warning: code is never used: `pcap_activate`, #[warn(dead_code)] on by default
+pcap.rs:613     pub fn pcap_activate(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:614:8: 615:11 warning: code is never used: `pcap_list_tstamp_types`, #[warn(dead_code)] on by default
+pcap.rs:614     pub fn pcap_list_tstamp_types(arg1: *mut pcap_t, arg2: *mut *mut c_int) ->
+pcap.rs:615      c_int;
+pcap.rs:616:8: 616:52 warning: code is never used: `pcap_free_tstamp_types`, #[warn(dead_code)] on by default
+pcap.rs:616     pub fn pcap_free_tstamp_types(arg1: *mut c_int);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:617:8: 617:65 warning: code is never used: `pcap_tstamp_type_name_to_val`, #[warn(dead_code)] on by default
+pcap.rs:617     pub fn pcap_tstamp_type_name_to_val(arg1: *c_schar) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:618:8: 618:65 warning: code is never used: `pcap_tstamp_type_val_to_name`, #[warn(dead_code)] on by default
+pcap.rs:618     pub fn pcap_tstamp_type_val_to_name(arg1: c_int) -> *c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:619:8: 619:72 warning: code is never used: `pcap_tstamp_type_val_to_description`, #[warn(dead_code)] on by default
+pcap.rs:619     pub fn pcap_tstamp_type_val_to_description(arg1: c_int) -> *c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:622:8: 622:67 warning: code is never used: `pcap_open_dead`, #[warn(dead_code)] on by default
+pcap.rs:622     pub fn pcap_open_dead(arg1: c_int, arg2: c_int) -> *mut pcap_t;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:623:8: 624:76 warning: code is never used: `pcap_open_dead_with_tstamp_precision`, #[warn(dead_code)] on by default
+pcap.rs:623     pub fn pcap_open_dead_with_tstamp_precision(arg1: c_int, arg2: c_int,
+pcap.rs:624                                                 arg3: u_int) -> *mut pcap_t;
+pcap.rs:625:8: 628:17 warning: code is never used: `pcap_open_offline_with_tstamp_precision`, #[warn(dead_code)] on by default
+pcap.rs:625     pub fn pcap_open_offline_with_tstamp_precision(arg1: *c_schar,
+pcap.rs:626                                                    arg2: u_int,
+pcap.rs:627                                                    arg3: *mut c_schar) ->
+pcap.rs:628      *mut pcap_t;
+pcap.rs:629:8: 630:17 warning: code is never used: `pcap_open_offline`, #[warn(dead_code)] on by default
+pcap.rs:629     pub fn pcap_open_offline(arg1: *c_schar, arg2: *mut c_schar) ->
+pcap.rs:630      *mut pcap_t;
+pcap.rs:631:8: 634:17 warning: code is never used: `pcap_fopen_offline_with_tstamp_precision`, #[warn(dead_code)] on by default
+pcap.rs:631     pub fn pcap_fopen_offline_with_tstamp_precision(arg1: *mut FILE,
+pcap.rs:632                                                     arg2: u_int,
+pcap.rs:633                                                     arg3: *mut c_schar) ->
+pcap.rs:634      *mut pcap_t;
+pcap.rs:635:8: 636:17 warning: code is never used: `pcap_fopen_offline`, #[warn(dead_code)] on by default
+pcap.rs:635     pub fn pcap_fopen_offline(arg1: *mut FILE, arg2: *mut c_schar) ->
+pcap.rs:636      *mut pcap_t;
+pcap.rs:638:8: 639:49 warning: code is never used: `pcap_loop`, #[warn(dead_code)] on by default
+pcap.rs:638     pub fn pcap_loop(arg1: *mut pcap_t, arg2: c_int, arg3: pcap_handler,
+pcap.rs:639                      arg4: *mut u_char) -> c_int;
+pcap.rs:640:8: 641:53 warning: code is never used: `pcap_dispatch`, #[warn(dead_code)] on by default
+pcap.rs:640     pub fn pcap_dispatch(arg1: *mut pcap_t, arg2: c_int, arg3: pcap_handler,
+pcap.rs:641                          arg4: *mut u_char) -> c_int;
+pcap.rs:642:8: 643:13 warning: code is never used: `pcap_next`, #[warn(dead_code)] on by default
+pcap.rs:642     pub fn pcap_next(arg1: *mut pcap_t, arg2: *mut Struct_pcap_pkthdr) ->
+pcap.rs:643      *u_char;
+pcap.rs:646:8: 646:45 warning: code is never used: `pcap_breakloop`, #[warn(dead_code)] on by default
+pcap.rs:646     pub fn pcap_breakloop(arg1: *mut pcap_t);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:647:8: 648:11 warning: code is never used: `pcap_stats`, #[warn(dead_code)] on by default
+pcap.rs:647     pub fn pcap_stats(arg1: *mut pcap_t, arg2: *mut Struct_pcap_stat) ->
+pcap.rs:648      c_int;
+pcap.rs:651:8: 652:11 warning: code is never used: `pcap_setdirection`, #[warn(dead_code)] on by default
+pcap.rs:651     pub fn pcap_setdirection(arg1: *mut pcap_t, arg2: pcap_direction_t) ->
+pcap.rs:652      c_int;
+pcap.rs:653:8: 653:76 warning: code is never used: `pcap_getnonblock`, #[warn(dead_code)] on by default
+pcap.rs:653     pub fn pcap_getnonblock(arg1: *mut pcap_t, arg2: *mut c_schar) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:654:8: 655:57 warning: code is never used: `pcap_setnonblock`, #[warn(dead_code)] on by default
+pcap.rs:654     pub fn pcap_setnonblock(arg1: *mut pcap_t, arg2: c_int,
+pcap.rs:655                             arg3: *mut c_schar) -> c_int;
+pcap.rs:658:8: 659:11 warning: code is never used: `pcap_sendpacket`, #[warn(dead_code)] on by default
+pcap.rs:658     pub fn pcap_sendpacket(arg1: *mut pcap_t, arg2: *u_char, arg3: c_int) ->
+pcap.rs:659      c_int;
+pcap.rs:660:8: 660:53 warning: code is never used: `pcap_statustostr`, #[warn(dead_code)] on by default
+pcap.rs:660     pub fn pcap_statustostr(arg1: c_int) -> *c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:661:8: 661:50 warning: code is never used: `pcap_strerror`, #[warn(dead_code)] on by default
+pcap.rs:661     pub fn pcap_strerror(arg1: c_int) -> *c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:662:8: 662:58 warning: code is never used: `pcap_geterr`, #[warn(dead_code)] on by default
+pcap.rs:662     pub fn pcap_geterr(arg1: *mut pcap_t) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:663:8: 663:62 warning: code is never used: `pcap_perror`, #[warn(dead_code)] on by default
+pcap.rs:663     pub fn pcap_perror(arg1: *mut pcap_t, arg2: *mut c_schar);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:667:8: 669:72 warning: code is never used: `pcap_compile_nopcap`, #[warn(dead_code)] on by default
+pcap.rs:667     pub fn pcap_compile_nopcap(arg1: c_int, arg2: c_int,
+pcap.rs:668                                arg3: *mut Struct_bpf_program, arg4: *c_schar,
+pcap.rs:669                                arg5: c_int, arg6: bpf_u_int32) -> c_int;
+pcap.rs:670:8: 670:56 warning: code is never used: `pcap_freecode`, #[warn(dead_code)] on by default
+pcap.rs:670     pub fn pcap_freecode(arg1: *mut Struct_bpf_program);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:671:8: 673:11 warning: code is never used: `pcap_offline_filter`, #[warn(dead_code)] on by default
+pcap.rs:671     pub fn pcap_offline_filter(arg1: *Struct_bpf_program,
+pcap.rs:672                                arg2: *Struct_pcap_pkthdr, arg3: *u_char) ->
+pcap.rs:673      c_int;
+pcap.rs:674:8: 674:53 warning: code is never used: `pcap_datalink`, #[warn(dead_code)] on by default
+pcap.rs:674     pub fn pcap_datalink(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:675:8: 675:57 warning: code is never used: `pcap_datalink_ext`, #[warn(dead_code)] on by default
+pcap.rs:675     pub fn pcap_datalink_ext(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:676:8: 677:11 warning: code is never used: `pcap_list_datalinks`, #[warn(dead_code)] on by default
+pcap.rs:676     pub fn pcap_list_datalinks(arg1: *mut pcap_t, arg2: *mut *mut c_int) ->
+pcap.rs:677      c_int;
+pcap.rs:678:8: 678:70 warning: code is never used: `pcap_set_datalink`, #[warn(dead_code)] on by default
+pcap.rs:678     pub fn pcap_set_datalink(arg1: *mut pcap_t, arg2: c_int) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:679:8: 679:49 warning: code is never used: `pcap_free_datalinks`, #[warn(dead_code)] on by default
+pcap.rs:679     pub fn pcap_free_datalinks(arg1: *mut c_int);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:680:8: 680:62 warning: code is never used: `pcap_datalink_name_to_val`, #[warn(dead_code)] on by default
+pcap.rs:680     pub fn pcap_datalink_name_to_val(arg1: *c_schar) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:681:8: 681:62 warning: code is never used: `pcap_datalink_val_to_name`, #[warn(dead_code)] on by default
+pcap.rs:681     pub fn pcap_datalink_val_to_name(arg1: c_int) -> *c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:682:8: 682:69 warning: code is never used: `pcap_datalink_val_to_description`, #[warn(dead_code)] on by default
+pcap.rs:682     pub fn pcap_datalink_val_to_description(arg1: c_int) -> *c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:683:8: 683:53 warning: code is never used: `pcap_snapshot`, #[warn(dead_code)] on by default
+pcap.rs:683     pub fn pcap_snapshot(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:684:8: 684:55 warning: code is never used: `pcap_is_swapped`, #[warn(dead_code)] on by default
+pcap.rs:684     pub fn pcap_is_swapped(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:685:8: 685:58 warning: code is never used: `pcap_major_version`, #[warn(dead_code)] on by default
+pcap.rs:685     pub fn pcap_major_version(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:686:8: 686:58 warning: code is never used: `pcap_minor_version`, #[warn(dead_code)] on by default
+pcap.rs:686     pub fn pcap_minor_version(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:687:8: 687:53 warning: code is never used: `pcap_file`, #[warn(dead_code)] on by default
+pcap.rs:687     pub fn pcap_file(arg1: *mut pcap_t) -> *mut FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:688:8: 688:51 warning: code is never used: `pcap_fileno`, #[warn(dead_code)] on by default
+pcap.rs:688     pub fn pcap_fileno(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:689:8: 690:24 warning: code is never used: `pcap_dump_open`, #[warn(dead_code)] on by default
+pcap.rs:689     pub fn pcap_dump_open(arg1: *mut pcap_t, arg2: *c_schar) ->
+pcap.rs:690      *mut pcap_dumper_t;
+pcap.rs:691:8: 692:24 warning: code is never used: `pcap_dump_fopen`, #[warn(dead_code)] on by default
+pcap.rs:691     pub fn pcap_dump_fopen(arg1: *mut pcap_t, fp: *mut FILE) ->
+pcap.rs:692      *mut pcap_dumper_t;
+pcap.rs:693:8: 693:65 warning: code is never used: `pcap_dump_file`, #[warn(dead_code)] on by default
+pcap.rs:693     pub fn pcap_dump_file(arg1: *mut pcap_dumper_t) -> *mut FILE;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:694:8: 694:63 warning: code is never used: `pcap_dump_ftell`, #[warn(dead_code)] on by default
+pcap.rs:694     pub fn pcap_dump_ftell(arg1: *mut pcap_dumper_t) -> c_long;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:695:8: 695:62 warning: code is never used: `pcap_dump_flush`, #[warn(dead_code)] on by default
+pcap.rs:695     pub fn pcap_dump_flush(arg1: *mut pcap_dumper_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:696:8: 696:53 warning: code is never used: `pcap_dump_close`, #[warn(dead_code)] on by default
+pcap.rs:696     pub fn pcap_dump_close(arg1: *mut pcap_dumper_t);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:697:8: 698:36 warning: code is never used: `pcap_dump`, #[warn(dead_code)] on by default
+pcap.rs:697     pub fn pcap_dump(arg1: *mut u_char, arg2: *Struct_pcap_pkthdr,
+pcap.rs:698                      arg3: *u_char);
+pcap.rs:699:8: 700:11 warning: code is never used: `pcap_findalldevs`, #[warn(dead_code)] on by default
+pcap.rs:699     pub fn pcap_findalldevs(arg1: *mut *mut pcap_if_t, arg2: *mut c_schar) ->
+pcap.rs:700      c_int;
+pcap.rs:701:8: 701:50 warning: code is never used: `pcap_freealldevs`, #[warn(dead_code)] on by default
+pcap.rs:701     pub fn pcap_freealldevs(arg1: *mut pcap_if_t);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:702:8: 702:42 warning: code is never used: `pcap_lib_version`, #[warn(dead_code)] on by default
+pcap.rs:702     pub fn pcap_lib_version() -> *c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:703:8: 703:74 warning: code is never used: `bpf_image`, #[warn(dead_code)] on by default
+pcap.rs:703     pub fn bpf_image(arg1: *Struct_bpf_insn, arg2: c_int) -> *mut c_schar;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:704:8: 704:60 warning: code is never used: `bpf_dump`, #[warn(dead_code)] on by default
+pcap.rs:704     pub fn bpf_dump(arg1: *Struct_bpf_program, arg2: c_int);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcap.rs:705:8: 705:62 warning: code is never used: `pcap_get_selectable_fd`, #[warn(dead_code)] on by default
+pcap.rs:705     pub fn pcap_get_selectable_fd(arg1: *mut pcap_t) -> c_int;
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcapfe.rs:40:22: 40:24 warning: unused variable: `sl`, #[warn(unused_variable)] on by default
+pcapfe.rs:40 pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
+                                   ^~
+pcapfe.rs:134:26: 134:45 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
+pcapfe.rs:134 pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uint)> {
+                                        ^~~~~~~~~~~~~~~~~~~
+pcapfe.rs:160:26: 160:45 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
+pcapfe.rs:160 pub fn decode_ipv6_header(header_plus_payload: &[u8]) -> Option<(Ipv6Header, uint)> {
+                                        ^~~~~~~~~~~~~~~~~~~
+pcapfe.rs:164:25: 164:44 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
+pcapfe.rs:164 pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
+                                       ^~~~~~~~~~~~~~~~~~~
+pcapfe.rs:199:25: 199:44 warning: unused variable: `header_plus_payload`, #[warn(unused_variable)] on by default
+pcapfe.rs:199 pub fn decode_udp_header(header_plus_payload: &[u8]) -> Option<(UdpHeader, uint)> {
+                                       ^~~~~~~~~~~~~~~~~~~
+pcapfe.rs:214:23: 214:59 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
+pcapfe.rs:214     let temp_payload = unsafe { str::from_utf8_owned(p2); };
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcapfe.rs:220:8: 220:28 warning: unused variable: `SIZE_ETHERNET_HEADER`, #[warn(unused_variable)] on by default
+pcapfe.rs:220     let SIZE_ETHERNET_HEADER = 14;
+                      ^~~~~~~~~~~~~~~~~~~~
+pcapfe.rs:221:8: 221:26 warning: unused variable: `SIZE_IP_HEADER_MIN`, #[warn(unused_variable)] on by default
+pcapfe.rs:221     let SIZE_IP_HEADER_MIN = 20;
+                      ^~~~~~~~~~~~~~~~~~
+pcapfe.rs:222:8: 222:26 warning: unused variable: `SIZE_IP_HEADER_MAX`, #[warn(unused_variable)] on by default
+pcapfe.rs:222     let SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
+                      ^~~~~~~~~~~~~~~~~~
+pcapfe.rs:223:8: 223:23 warning: unused variable: `SIZE_TCP_HEADER`, #[warn(unused_variable)] on by default
+pcapfe.rs:223     let SIZE_TCP_HEADER = 1; // FIX
+                      ^~~~~~~~~~~~~~~
+pcapfe.rs:224:8: 224:23 warning: unused variable: `SIZE_UDP_HEADER`, #[warn(unused_variable)] on by default
+pcapfe.rs:224     let SIZE_UDP_HEADER = 1; // FIX
+                      ^~~~~~~~~~~~~~~
+pcapfe.rs:227:8: 227:16 warning: unused variable: `size`, #[warn(unused_variable)] on by default
+pcapfe.rs:227     let mut size = pkt.len;
+                      ^~~~~~~~
+pcapfe.rs:227:8: 227:16 warning: variable does not need to be mutable, #[warn(unused_mut)] on by default
+pcapfe.rs:227     let mut size = pkt.len;
+                      ^~~~~~~~
+pcapfe.rs:376:26: 376:30 warning: unused variable: `ehdr`, #[warn(unused_variable)] on by default
+pcapfe.rs:376                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
+                                        ^~~~
+pcapfe.rs:376:32: 376:36 warning: unused variable: `ihdr`, #[warn(unused_variable)] on by default
+pcapfe.rs:376                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
+                                              ^~~~
+pcapfe.rs:376:38: 376:42 warning: unused variable: `thdr`, #[warn(unused_variable)] on by default
+pcapfe.rs:376                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
+                                                    ^~~~
+pcapfe.rs:379:32: 379:67 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
+pcapfe.rs:379                     let data1 = unsafe { data.as_ptr() as *c_void };
+                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pcapfe.rs:380:32: 380:60 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
+pcapfe.rs:380                     let size1 = unsafe { data.len() as u64 };
+                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
