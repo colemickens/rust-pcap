@@ -46,7 +46,7 @@ pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
 pub struct EthernetHeader {
     DstMac:     MacAddress,
     SrcMac:     MacAddress,
-    Type:       EthernetType,
+    Kind:       EthernetType,
 }
 
 pub enum EthernetType {
@@ -123,7 +123,7 @@ pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHea
     let ether_hdr = EthernetHeader{
         DstMac: dst_mac,
         SrcMac: src_mac,
-        Type: type_,
+        Kind: type_,
     };
     Some((ether_hdr, 14))
 }
@@ -231,10 +231,7 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
     match decode_ethernet_header(payload) {
         Some((ether_hdr, ether_hdr_len)) => {
             payload = payload.slice_from(ether_hdr_len-c);
-            match ether_hdr.Type {
-                // WTF, why is the follow line building?
-                // ?????????
-                // wtf is it putting there??!?!
+            match ether_hdr.Kind {
                 IPv4 => match decode_ipv4_header(payload) {
                     Some((ip_hdr, ip_hdr_len)) => {
                         payload = payload.slice_from(ip_hdr_len-c);
@@ -261,17 +258,12 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
                         }
                     },
                     None => { InvalidPacket }
-                },
-                
+                }
                 IPv6 => match decode_ipv6_header(payload) {
                     Some(_te) => { InvalidPacket }
                     None => { InvalidPacket }
-                },
-                
-                _ => { return InvalidPacket; } // should I _have_ to uncomment this "dead" code.
-                // it won't be dead when I add new types
-                // that means adding new types to the enum in the future will break code.
-                // that's probably okay?
+                }
+                _ => { return InvalidPacket; }
             }
         }
         None => {
