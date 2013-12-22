@@ -236,36 +236,32 @@ pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
                     Some((ip_hdr, ip_hdr_len)) => {
                         payload = payload.slice_from(ip_hdr_len-c);
                         match ip_hdr.Protocol {
-                            TCP => {
-                                match decode_tcp_header(payload) {
-                                    Some((tcp_hdr, tcp_hdr_len)) => {
-                                        payload = payload.slice_from(tcp_hdr_len-c);
-                                        TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload)
-                                    }
-                                    None => { InvalidPacket }
+                            TCP => match decode_tcp_header(payload) {
+                                Some((tcp_hdr, tcp_hdr_len)) => {
+                                    payload = payload.slice_from(tcp_hdr_len-c);
+                                    TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload)
                                 }
-                            }
-                            UserDatagram => {
-                                match decode_udp_header(payload) {
-                                    Some((udp_hdr, udp_hdr_len)) => {
-                                        payload = payload.slice_from(udp_hdr_len-c);
-                                        UdpPacket(ether_hdr, ip_hdr, udp_hdr, payload)
-                                    }
-                                    None => { InvalidPacket } // could let it fall through? does it matter?
+                                None => { InvalidPacket }
+                            },
+                            UserDatagram => match decode_udp_header(payload) {
+                                Some((udp_hdr, udp_hdr_len)) => {
+                                    payload = payload.slice_from(udp_hdr_len-c);
+                                    UdpPacket(ether_hdr, ip_hdr, udp_hdr, payload)
                                 }
-                            }
+                                None => { InvalidPacket } // could let it fall through? does it matter?
+                            },
                             _ => { InvalidPacket }
                         }
                     },
                     None => { InvalidPacket }
-                }
+                },
                 IPv6 => match decode_ipv6_header(payload) {
                     Some(_te) => { InvalidPacket }
                     None => { InvalidPacket }
-                }
+                },
                 _ => { return InvalidPacket; }
             }
-        }
+        },
         None => {
             InvalidPacket // change the return type to opt or result
         }

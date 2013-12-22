@@ -1,5 +1,9 @@
-pcapfe.rs:262:16: 262:20 error: expected one of `,`, `}` but found `IPv6`
-pcapfe.rs:262                 IPv6 => match decode_ipv6_header(payload) {
+pcapfe.rs:258:16: 258:20 error: unreachable pattern
+pcapfe.rs:258                 IPv6 => match decode_ipv6_header(payload) {
                               ^~~~
-task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:76
+pcapfe.rs:262:16: 262:17 error: unreachable pattern
+pcapfe.rs:262                 _ => { return InvalidPacket; }
+                              ^
+error: aborting due to 2 previous errors
+task 'rustc' failed at 'explicit failure', /build/rust-git/src/rust/src/libsyntax/diagnostic.rs:102
 task '<main>' failed at 'explicit failure', /build/rust-git/src/rust/src/librustc/lib.rs:444
