@@ -903,24 +903,24 @@ pcapfe.rs:216     let SIZE_UDP_HEADER = 1; // FIX
 pcapfe.rs:219:8: 219:16 warning: unused variable: `size`, #[warn(unused_variable)] on by default
 pcapfe.rs:219     let mut size = pkt.len;
                       ^~~~~~~~
-pcapfe.rs:227:16: 227:22 warning: unused variable: `IPv4aa`, #[warn(unused_variable)] on by default
-pcapfe.rs:227                 IPv4aa => match decode_ipv4_header(payload) {
+pcapfe.rs:230:16: 230:22 warning: unused variable: `IPv4aa`, #[warn(unused_variable)] on by default
+pcapfe.rs:230                 IPv4aa => match decode_ipv4_header(payload) {
                               ^~~~~~
 pcapfe.rs:219:8: 219:16 warning: variable does not need to be mutable, #[warn(unused_mut)] on by default
 pcapfe.rs:219     let mut size = pkt.len;
                       ^~~~~~~~
-pcapfe.rs:380:26: 380:30 warning: unused variable: `ehdr`, #[warn(unused_variable)] on by default
-pcapfe.rs:380                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
+pcapfe.rs:383:26: 383:30 warning: unused variable: `ehdr`, #[warn(unused_variable)] on by default
+pcapfe.rs:383                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
                                         ^~~~
-pcapfe.rs:380:32: 380:36 warning: unused variable: `ihdr`, #[warn(unused_variable)] on by default
-pcapfe.rs:380                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
+pcapfe.rs:383:32: 383:36 warning: unused variable: `ihdr`, #[warn(unused_variable)] on by default
+pcapfe.rs:383                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
                                               ^~~~
-pcapfe.rs:380:38: 380:42 warning: unused variable: `thdr`, #[warn(unused_variable)] on by default
-pcapfe.rs:380                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
+pcapfe.rs:383:38: 383:42 warning: unused variable: `thdr`, #[warn(unused_variable)] on by default
+pcapfe.rs:383                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
                                                     ^~~~
-pcapfe.rs:383:32: 383:67 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
-pcapfe.rs:383                     let data1 = unsafe { data.as_ptr() as *c_void };
+pcapfe.rs:386:32: 386:67 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
+pcapfe.rs:386                     let data1 = unsafe { data.as_ptr() as *c_void };
                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-pcapfe.rs:384:32: 384:60 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
-pcapfe.rs:384                     let size1 = unsafe { data.len() as u64 };
+pcapfe.rs:387:32: 387:60 warning: unnecessary `unsafe` block, #[warn(unused_unsafe)] on by default
+pcapfe.rs:387                     let size1 = unsafe { data.len() as u64 };
                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
