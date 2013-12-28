@@ -252,7 +252,8 @@ pub fn pp(p: &[u8]) {
     let p2 = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
     println!("print ascii-mapped bytes: {:?}", p2);
     let temp_payload = unsafe { str::from_utf8_owned(p2); };
-    println!("print utf8 bytes        : {:?}", temp_payload); // why does this not print properly here
+    println!("print utf8 bytes        : {:?}", temp_payload);
+    // HELP: why does this ^^ not print properly here
     // even thought the same technique seems to work inline elsewhere and the p2 seems to contain the correct bytes...
 }
 
@@ -399,12 +400,6 @@ impl PcapDevice {
             }
         }
     }
-
-    // what should this function take?
-    // A DecodedPacket (if so, how?)
-
-    // A PcapPacket?
-    // just a vector of bytes and let it figure it out?
 
     pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
         unsafe {
