@@ -5,18 +5,10 @@ extern mod pcapfe;
 
 use std::str;
 use std::comm::*;
-use std::hashmap::*;
 use std::task::*;
 use std::os;
 use std::io::*;
-use std::io::buffered::*;
-use std::io::timer;
-use std::io::net::tcp::*;
-use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
-
-use extra::json;
 use extra::getopts::*;
-use extra::serialize::{Encodable, Decodable, Decoder};
 
 use pcapfe::*;
 

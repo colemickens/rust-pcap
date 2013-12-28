@@ -4,19 +4,9 @@ extern mod extra;
 extern mod pcapfe;
 
 use std::str;
-use std::comm::*;
-use std::hashmap::*;
-use std::task::*;
 use std::os;
 use std::io::*;
-use std::io::buffered::*;
-use std::io::timer;
-use std::io::net::tcp::*;
-use std::io::net::ip::{SocketAddr,IpAddr,Ipv4Addr};
-
-use extra::json;
 use extra::getopts::*;
-use extra::serialize::{Encodable, Decodable, Decoder};
 
 use pcapfe::*;
 
@@ -55,7 +45,7 @@ fn main() {
                         println!("++");
                         pp(pkt.payload);
                         println!("--");
-                        let dpkt = DecodePacket(&pkt);
+                        let dpkt = DecodePacket(pkt.payload);
                         match dpkt {
                             TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload) => {
                                 let temp_payload = str::from_utf8_owned(payload.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 }));

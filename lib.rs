@@ -1,19 +1,30 @@
-#[feature(globs)];
+#[crate_id="pcapfe#0.0"];
+#[crate_type="lib"];
+#[desc = "A Rust package wrapping libpcap (tested on Linux only)."];
+#[license = "MIT"]; // sure, why not?(
 
-#[link(name="pcapfe", vers="0.0.1")];
+#[feature(globs)];
 
 extern mod std;
 
 use std::cast;
 use std::io::net::ip;
+use std::io::net::ip::Ipv4Addr;
 use std::io::util;
 use std::libc::{c_uint,c_schar,c_void};
 use std::ptr;
 use std::str;
+use std::u16;
 use std::vec;
 
 use pcap::*;
 mod pcap;
+
+pub static SIZE_ETHERNET_HEADER: uint = 14;
+pub static SIZE_IP_HEADER_MIN: uint = 20;
+pub static SIZE_IP_HEADER_MAX: uint = 80;
+pub static SIZE_TCP_HEADER: uint = 1;
+pub static SIZE_UDP_HEADER: uint = 8;
 
 // Todo: probably a better way to design several pieces of this in general
 // some way to chain these together or sumthin
@@ -56,18 +67,19 @@ pub enum EthernetType {
 }
 
 pub struct Ipv4Header {
-    Version:     uint,
-    Ihl:         uint,
-    Tos:         uint,
-    Length:      uint,
-    Id:          uint,
-    Flags:       uint,
-    FragOffset:  uint,
-    Ttl:         uint,
-    Protocol:    InternetProtocolNumbers,
-    Checksum:    uint,
-    SrcIp:       ip::IpAddr,
-    DstIp:       ip::IpAddr,
+    Version:      uint,
+    Ihl:          uint,
+    Tos:          uint,
+    HeaderLength: uint,
+    TotalLength:  uint,
+    Id:           uint,
+    Flags:        uint,
+    FragOffset:   uint,
+    Ttl:          uint,
+    Protocol:     InternetProtocolNumbers,
+    Checksum:     uint,
+    SrcIp:        ip::IpAddr,
+    DstIp:        ip::IpAddr,
 }
 
 pub struct Ipv6Header {
@@ -131,30 +143,61 @@ pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHea
 // should these decodes just return their payload in the first place?
 // wouldn't need to reslice them, the main nested parsing code gets cleaner.........
 
-pub fn decode_ipv4_header(header_plus_payload: &[u8]) -> Option<(Ipv4Header, uint)> {
+pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
     // TODO: Check size
+    let byte1 = h[0];
+    let byte2 = h[1];
 
-    let length = 100;
-    Some((Ipv4Header{
-        Version:     80,
-        Ihl:         80,
-        Tos:         80,
-        Length:      length,
-        Id:          80,
-        Flags:       80,
-        FragOffset:  80,
-        Ttl:         80,
-        Protocol:    TCP,
-        Checksum:    80,
-        SrcIp:       ip::Ipv4Addr(127, 0, 0, 1),
-        DstIp:       ip::Ipv4Addr(127, 0, 0, 1),
+    let version = 4;
+    let ihl = (byte1 & 0b00001111) as uint;
+
+    let dscp = byte2 >> 2;
+    let ecn = byte2 & 0b00000011;
+
+    let total_len = u16::parse_bytes(h.slice(2,4), 10).expect("failed to decode");
+    let id = u16::parse_bytes(h.slice(5,6), 10).expect("failed to decode");
+
+    let temp = u16::parse_bytes(h.slice(7,8), 10).expect("failed to decode");
+    let flags = temp >> 13;
+    let frag_offset = temp & 0b0001111111111111;
+
+    let ttl = h[8];
+    let proto = h[9];
+
+    let checksum = u16::parse_bytes(h.slice(10,12), 10).expect("failed to decode");
+
+    let src_ip = Ipv4Addr(h[12], h[13], h[14], h[15]);
+    let dst_ip = Ipv4Addr(h[16], h[17], h[18], h[19]);
+
+    let options = h.slice(24, ihl);
+    let options = 0; // TODO: REMOVE
+
+    // TODO: Flesh out the options stuff
+
+    // TODO: Check the checksum
+
+    let res = Ipv4Header{
+        Version:      version as uint,
+        Ihl:          ihl as uint,
+        Tos:          80, // WTF IS THIS EVEN?
+        HeaderLength: ihl as uint,
+        TotalLength:  total_len as uint,
+        Id:           id as uint,
+        Flags:        flags as uint,
+        FragOffset:   frag_offset as uint,
+        Ttl:          ttl as uint,
+        Protocol:     match(proto) { 0x8000 => { TCP }, _ => { UserDatagram } },
+        Checksum:     checksum as uint,
+        SrcIp:        src_ip,
+        DstIp:        dst_ip,
         // copy the remaining payload pointer here?
         // is that valuable?
         // honestly, might be nicer, in case you match a TCP Packet, but want the
         // Ethernet header and the rest of the raw bytes
         // ... otherwise, there really wouldn't be a way to access that easily through my API...
-    },
-    length))
+    };
+
+    Some((res, ihl))
 }
 
 pub fn decode_ipv6_header(header_plus_payload: &[u8]) -> Option<(Ipv6Header, uint)> {
@@ -162,27 +205,9 @@ pub fn decode_ipv6_header(header_plus_payload: &[u8]) -> Option<(Ipv6Header, uin
 }
 
 pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
-    // TODO: Check size
-    /*
-    let version = 0u;
-    let ihl = 0u;
-    let dscp = 0u;
-    let ecn = 0u;
-    let total_len = header_plus_payload[2:4];
-    let id = header_plus_payload[4:6];
-    let flags = 0u;
-    let fragment_offset = 0u;
-    let ttl = header_plus_payload[8:9];
-    let protocol = header_plus_playload[9:10];
-    let checksum = header_plus_payload[10:12];
-    let src_ip = header_plus_payload[16:20];
-    let dst_ip = header_plus_payload[20:24];
-    let options = header_plus_payload[24:ihl];
-    */
+    // TODO: Check length
 
-    let ihl = 20;
-
-    Some((TcpHeader{
+    let res = TcpHeader{
         SrcPort:     80,
         DstPort:     80,
         Seq:         80,
@@ -192,20 +217,35 @@ pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)
         Window:      80,
         Checksum:    80,
         Urgent:      80,
-    },
-    ihl))
+    };
+
+    // TODO: Check checksum
+
+    Some((res, 20))
 }
 
-pub fn decode_udp_header(header_plus_payload: &[u8]) -> Option<(UdpHeader, uint)> {
-    // TODO: Check size
+pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
+    if h.len() < 8 {
+        return None
+    }
 
-    Some((UdpHeader{
-        SrcPort:  80,
-        DstPort:  80,
-        Length:   80,
-        Checksum: 90,
-    },
-    8))
+    let src_port = u16::parse_bytes(h.slice(0,1), 10).expect("decoding the udp header failed");
+    let dst_port = u16::parse_bytes(h.slice(2,3), 10).expect("decoding the udp header failed");
+    let length   = u16::parse_bytes(h.slice(4,5), 10).expect("decoding the udp header failed");
+    let checksum = u16::parse_bytes(h.slice(6,7), 10).expect("decoding the udp header failed");
+
+    let res = UdpHeader{
+        SrcPort:  src_port as ip::Port,
+        DstPort:  dst_port as ip::Port,
+        Length:   length   as uint,
+        Checksum: checksum as uint,
+
+        //Payload: h.slice_from(8),
+    };
+
+    // TODO: Check checksum
+
+    Some((res, 8))
 }
 
 pub fn pp(p: &[u8]) {
@@ -216,36 +256,27 @@ pub fn pp(p: &[u8]) {
     // even thought the same technique seems to work inline elsewhere and the p2 seems to contain the correct bytes...
 }
 
-pub fn DecodePacket<'r>(pkt: &'r PcapPacket) -> DecodedPacket<'r> {
-    let SIZE_ETHERNET_HEADER = 14;
-    let SIZE_IP_HEADER_MIN = 20;
-    let SIZE_IP_HEADER_MAX = 20; // TODO set this and use it
-    let SIZE_TCP_HEADER = 1; // FIX
-    let SIZE_UDP_HEADER = 1; // FIX
-
-    let mut payload: &'r [u8] = pkt.payload;
-    let mut size = pkt.len;
-
-    let c = 0;
+pub fn DecodePacket<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
+    let mut payload = payload;
 
     match decode_ethernet_header(payload) {
         Some((ether_hdr, ether_hdr_len)) => {
-            payload = payload.slice_from(ether_hdr_len-c);
+            payload = payload.slice_from(ether_hdr_len);
             match ether_hdr.Kind {
                 EthernetType_IPv4 => match decode_ipv4_header(payload) {
                     Some((ip_hdr, ip_hdr_len)) => {
-                        payload = payload.slice_from(ip_hdr_len-c);
+                        payload = payload.slice_from(ip_hdr_len);
                         match ip_hdr.Protocol {
                             TCP => match decode_tcp_header(payload) {
                                 Some((tcp_hdr, tcp_hdr_len)) => {
-                                    payload = payload.slice_from(tcp_hdr_len-c);
+                                    payload = payload.slice_from(tcp_hdr_len);
                                     TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload)
                                 }
                                 None => { InvalidPacket }
                             },
                             UserDatagram => match decode_udp_header(payload) {
                                 Some((udp_hdr, udp_hdr_len)) => {
-                                    payload = payload.slice_from(udp_hdr_len-c);
+                                    payload = payload.slice_from(udp_hdr_len);
                                     UdpPacket(ether_hdr, ip_hdr, udp_hdr, payload)
                                 }
                                 None => { InvalidPacket } // could let it fall through? does it matter?
@@ -298,6 +329,11 @@ pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Option<Pc
             Some(pd)
         }
     }
+}
+
+pub fn PcapOpenOffline(filename: &str) -> Option<PcapDevice> {
+    // do shit, return handle
+    None
 }
 
 impl PcapDevice {

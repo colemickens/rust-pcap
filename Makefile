@@ -1,7 +1,20 @@
 all:
+	# generate the bindings (broken for some reason)
 	# ../../crabtw/rust-bindgen/bindgen -builtins -l pcap -match pcap.h -o pcap.rs /usr/include/pcap/pcap.h -I/usr/lib/clang/3.3/include/
-	# somehow that broke all of the sudden?
-	# gotta revert the pcap.rs generated to a good one, check this later, I guess
-	rustc --lib pcapfe.rs > build_log_pcapfe.txt 2>&1
-	rustc -L . examples/tufe/main.rs -o tufe > build_log_tufe.txt 2>&1
-	rustc -L . examples/dump/main.rs -o dump > build_log_dump.txt 2>&1
+	
+	# build the library
+	rustc --lib pcapfe.rs > logs/build_log_pcapfe.txt 2>&1
+
+	# run the packet decode tests
+	rustc pcapfe.rs --test > logs/test_log_pcapfe.txt 2>&1
+
+	# build the TUFE example
+	rustc -L . examples/tufe/main.rs -o tufe > logs/build_log_tufe.txt 2>&1
+	
+	# build the DUMP example
+	rustc -L . examples/dump/main.rs -o dump > logs/build_log_dump.txt 2>&1
+
+clean:
+	rm dump
+	rm tufe
+	rm libpcapfe*.so
