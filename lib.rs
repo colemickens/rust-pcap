@@ -120,6 +120,8 @@ pub enum DecodedPacket<'r> {
 }
 
 pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHeader, uint)> {
+    
+    println!("decode ethernet header");
     // TODO: Check size
 
     let dst_mac = mac_from_slice(header_plus_payload.slice(0, 6));
@@ -144,6 +146,9 @@ pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHea
 // wouldn't need to reslice them, the main nested parsing code gets cleaner.........
 
 pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
+
+    println!("decode ipv4 header (len: {:?})", h.len());
+
     // TODO: Check size
     let byte1 = h[0];
     let byte2 = h[1];
@@ -151,23 +156,29 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
     let version = 4;
     let ihl = (byte1 & 0b00001111) as uint;
 
+    println!("decode ipv4 header (len: {:?})", ihl);
+
+
     let dscp = byte2 >> 2;
     let ecn = byte2 & 0b00000011;
 
-    let total_len = u16::parse_bytes(h.slice(2,4), 10).expect("failed to decode");
-    let id = u16::parse_bytes(h.slice(5,6), 10).expect("failed to decode");
+    let total_len = h[2] << 8 | h[3];
+    let id = h[5] << 8 | h[6];
 
-    let temp = u16::parse_bytes(h.slice(7,8), 10).expect("failed to decode");
+    let temp = h[7] << 8 | h[8];
     let flags = temp >> 13;
     let frag_offset = temp & 0b0001111111111111;
 
     let ttl = h[8];
     let proto = h[9];
 
-    let checksum = u16::parse_bytes(h.slice(10,12), 10).expect("failed to decode");
+    let checksum = h[10] << 8 | h[11];
 
     let src_ip = Ipv4Addr(h[12], h[13], h[14], h[15]);
     let dst_ip = Ipv4Addr(h[16], h[17], h[18], h[19]);
+
+    // calculate the real end of the header, because it's not ihl
+    // it's like IHL * 5 + 120 or something
 
     let options = h.slice(24, ihl);
     let options = 0; // TODO: REMOVE
@@ -207,6 +218,8 @@ pub fn decode_ipv6_header(header_plus_payload: &[u8]) -> Option<(Ipv6Header, uin
 pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
     // TODO: Check length
 
+    println!("decode tcp header");
+
     let res = TcpHeader{
         SrcPort:     80,
         DstPort:     80,
@@ -229,10 +242,10 @@ pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
         return None
     }
 
-    let src_port = u16::parse_bytes(h.slice(0,1), 10).expect("decoding the udp header failed");
-    let dst_port = u16::parse_bytes(h.slice(2,3), 10).expect("decoding the udp header failed");
-    let length   = u16::parse_bytes(h.slice(4,5), 10).expect("decoding the udp header failed");
-    let checksum = u16::parse_bytes(h.slice(6,7), 10).expect("decoding the udp header failed");
+    let src_port = u16::parse_bytes(h.slice(0,1), 10).expect("udp: failed to decode src_port");
+    let dst_port = u16::parse_bytes(h.slice(2,3), 10).expect("udp: failed to decode dst_port");
+    let length   = u16::parse_bytes(h.slice(4,5), 10).expect("udp: failed to decode length");
+    let checksum = u16::parse_bytes(h.slice(6,7), 10).expect("udp: failed to decode checksum");
 
     let res = UdpHeader{
         SrcPort:  src_port as ip::Port,

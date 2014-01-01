@@ -1,4 +1,4 @@
-#[nowarn(dead_code)]
+#[allow(dead_code)];
 
 use std::libc::*;
 pub type __int128_t = c_void;
