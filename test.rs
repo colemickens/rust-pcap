@@ -1,7 +1,14 @@
+#[feature(globs)];
+
 extern mod pcapfe;
+
+use std::io::net::ip::Ipv4Addr;
 
 use pcapfe::DecodePacket;
 use pcapfe::UdpPacket;
+use pcapfe::InternetProtocolNumbers;
+use pcapfe::EthernetType;
+use pcapfe::EthernetType::*;
 
 #[test]
 fn test_decode_udp_packet() {
@@ -17,28 +24,31 @@ fn test_decode_udp_packet() {
             println!("{:?}", udp_hdr);
             println!("{:?}", payload);
 
-            assert_eq!(eth_hdr.Source, );
-            assert_eq!(eth_hdr.Destination, );
-            assert_eq!(eth_hdr.Type, 0x0800);
+            //assert_eq!(eth_hdr.DstMac, 0x9c2a706692e3);
+            //assert_eq!(eth_hdr.SrcMac, 0xe091f5e307be);
+            //assert_eq!(eth_hdr.Kind, EthernetType_IPv4);
 
             assert_eq!(ip_hdr.Version, 4);
-            assert_eq!(ip_hdr.Ihl, );
-            assert_eq!(ip_hdr.DiffServField, );
-            assert_eq!(ip_hdr.TotalLength, );
-            assert_eq!(ip_hdr.HeaderLength, );
-            assert_eq!(ip_hdr.Id, );
-            assert_eq!(ip_hdr.Flags, );
-            assert_eq!(ip_hdr.frag_offset, );
-            assert_eq!(ip_hdr.Ttl, );
-            assert_eq!(ip_hdr.Protocol, );
-            assert_eq!(ip_hdr.Checksum, );
-            assert_eq!(ip_hdr.Source, );
-            assert_eq!(ip_hdr.Destination, );
+            assert_eq!(ip_hdr.Ihl, 5);
+            assert_eq!(ip_hdr.DiffServices, 0x00);
+            assert_eq!(ip_hdr.TotalLength, 20);
+            assert_eq!(ip_hdr.HeaderLength, 20*5);
+            assert_eq!(ip_hdr.Id, 0x4eeb);
+            assert_eq!(ip_hdr.Flags, 0x02);
+            assert_eq!(ip_hdr.FragOffset, 0);
+            assert_eq!(ip_hdr.Ttl, 248);
+            //assert_eq!(ip_hdr.Protocol, UserDatagram);
+            assert_eq!(ip_hdr.Checksum, 0x2c71);
+            assert_eq!(ip_hdr.SrcIp, Ipv4Addr(65, 32, 5, 111));
+            assert_eq!(ip_hdr.DstIp, Ipv4Addr(192, 168, 0, 12));
 
-            assert_eq!(udp_hdr.SourcePort, 52);
-            assert_eq!(udp_hdr.DestinationPort, 56862);
+            assert_eq!(udp_hdr.SrcPort, 52);
+            assert_eq!(udp_hdr.DstPort, 56862);
             assert_eq!(udp_hdr.Length, 57);
+            //aseert_eq!(udp_hdr.Checksum, 0x0000);
             
+            assert_eq!(payload.len(), 100);
+
             //assert_eq!(); // can you assert_eq on a slice's contents?
     	}, 
     	_ => { fail!("wrong packet type to start out with"); }

@@ -69,7 +69,7 @@ pub enum EthernetType {
 pub struct Ipv4Header {
     Version:      uint,
     Ihl:          uint,
-    Tos:          uint,
+    DiffServices: uint,
     HeaderLength: uint,
     TotalLength:  uint,
     Id:           uint,
@@ -190,7 +190,7 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
     let res = Ipv4Header{
         Version:      version as uint,
         Ihl:          ihl as uint,
-        Tos:          80, // WTF IS THIS EVEN?
+        DiffServices: 0x0000, // WTF IS THIS EVEN?
         HeaderLength: ihl as uint,
         TotalLength:  total_len as uint,
         Id:           id as uint,
