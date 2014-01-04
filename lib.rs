@@ -43,6 +43,7 @@ pub enum PcapFilterError {
     SetError
 }
 
+/*
 pub struct MacAddress {
     // there must be a better way!
     Address: [u8, ..6]
@@ -53,10 +54,11 @@ pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
         Address: [ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 ],
     }
 }
+*/
 
 pub struct EthernetHeader {
-    DstMac:     MacAddress,
-    SrcMac:     MacAddress,
+    DstMac:     ~[u8],
+    SrcMac:     ~[u8],
     Kind:       EthernetType,
 }
 
@@ -124,8 +126,8 @@ pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHea
     println!("decode ethernet header");
     // TODO: Check size
 
-    let dst_mac = mac_from_slice(header_plus_payload.slice(0, 6));
-    let src_mac = mac_from_slice(header_plus_payload.slice(6, 12));
+    let dst_mac = header_plus_payload.slice(0, 6).to_owned();
+    let src_mac = header_plus_payload.slice(6, 12).to_owned();
     //let type_ = unsafe { header_plus_payload.slice(13, 14).to_owned() as uint }; // TODO: Fix
     let type_ = 0x0400;
     let type_ = match type_ {
@@ -162,36 +164,37 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
     let dscp = byte2 >> 2;
     let ecn = byte2 & 0b00000011;
 
-    let total_len = h[2] << 8 | h[3];
-    let id = h[5] << 8 | h[6];
+    let total_len: u16 = h[2] as u16 << 8 | h[3] as u16;
+    let id: u16 = h[4] as u16 << 8 | h[5] as u16;
 
-    let temp = h[7] << 8 | h[8];
-    let flags = temp >> 13;
-    let frag_offset = temp & 0b0001111111111111;
+    let flags = h[6] >> 5 & 0b00000111;
+    //let frag_offset = 
+    let frag_offset: u16 = h[6] as u16 << 8 | h[7] as u16;
+    let frag_offset = 0b0001111111111111;
+    let frag_offset = 0;
 
     let ttl = h[8];
     let proto = h[9];
 
-    let checksum = h[10] << 8 | h[11];
+    let checksum: u16 = h[10] as u16 << 8 | h[11] as u16;
 
     let src_ip = Ipv4Addr(h[12], h[13], h[14], h[15]);
     let dst_ip = Ipv4Addr(h[16], h[17], h[18], h[19]);
 
-    // calculate the real end of the header, because it's not ihl
-    // it's like IHL * 5 + 120 or something
 
-    let options = h.slice(24, ihl);
-    let options = 0; // TODO: REMOVE
+    if ihl > 15 {
+            fail!("too many ihls");
+    }
 
-    // TODO: Flesh out the options stuff
-
-    // TODO: Check the checksum
+    if ihl > 5 {
+        let options = h.slice(24, 4*(ihl-5));
+    }
 
     let res = Ipv4Header{
         Version:      version as uint,
         Ihl:          ihl as uint,
         DiffServices: 0x0000, // WTF IS THIS EVEN?
-        HeaderLength: ihl as uint,
+        HeaderLength: ihl * 4 as uint,
         TotalLength:  total_len as uint,
         Id:           id as uint,
         Flags:        flags as uint,
@@ -208,7 +211,7 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
         // ... otherwise, there really wouldn't be a way to access that easily through my API...
     };
 
-    Some((res, ihl))
+    Some((res, ihl*4))
 }
 
 pub fn decode_ipv6_header(header_plus_payload: &[u8]) -> Option<(Ipv6Header, uint)> {
@@ -242,10 +245,14 @@ pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
         return None
     }
 
-    let src_port = u16::parse_bytes(h.slice(0,1), 10).expect("udp: failed to decode src_port");
-    let dst_port = u16::parse_bytes(h.slice(2,3), 10).expect("udp: failed to decode dst_port");
-    let length   = u16::parse_bytes(h.slice(4,5), 10).expect("udp: failed to decode length");
-    let checksum = u16::parse_bytes(h.slice(6,7), 10).expect("udp: failed to decode checksum");
+    println!("---------------------");
+    pb(h);
+    println!("---------------------");
+
+    let src_port: u16 = h[0] as u16 << 8 | h[1] as u16;
+    let dst_port: u16 = h[2] as u16 << 8 | h[3] as u16;
+    let length: u16   = h[4] as u16 << 8 | h[5] as u16;
+    let checksum: u16 = h[6] as u16 << 8 | h[7] as u16;
 
     let res = UdpHeader{
         SrcPort:  src_port as ip::Port,
@@ -259,6 +266,10 @@ pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
     // TODO: Check checksum
 
     Some((res, 8))
+}
+
+pub fn pb(p: &[u8]) {
+    println!("bytes: {:?}", p);
 }
 
 pub fn pp(p: &[u8]) {
@@ -283,6 +294,8 @@ pub fn DecodePacket<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
                         match ip_hdr.Protocol {
                             TCP => match decode_tcp_header(payload) {
                                 Some((tcp_hdr, tcp_hdr_len)) => {
+                                    // tcp_hdr -> tcp_hdr.len()
+                                    // return payload with it. attempt decode, etc
                                     payload = payload.slice_from(tcp_hdr_len);
                                     TcpPacket(ether_hdr, ip_hdr, tcp_hdr, payload)
                                 }
@@ -387,7 +400,7 @@ impl PcapDevice {
                 let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
                 let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
 
-                let result = pcap_next_ex( self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
+                let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
 
                 let pkt_len: uint = (*pkthdr_ptr).len as uint;
                 match result {
