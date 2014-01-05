@@ -26,9 +26,6 @@ pub static SIZE_IP_HEADER_MAX: uint = 80;
 pub static SIZE_TCP_HEADER: uint = 1;
 pub static SIZE_UDP_HEADER: uint = 8;
 
-// Todo: probably a better way to design several pieces of this in general
-// some way to chain these together or sumthin
-
 pub enum PcapNextExError {
     BadState,
     ReadError,
@@ -43,29 +40,22 @@ pub enum PcapFilterError {
     SetError
 }
 
-/*
-pub struct MacAddress {
-    // there must be a better way!
-    Address: [u8, ..6]
-}
-
-pub fn mac_from_slice(sl: &[u8]) -> MacAddress {
-    MacAddress{
-        Address: [ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 ],
-    }
-}
-*/
-
 pub struct EthernetHeader {
     DstMac:     ~[u8],
     SrcMac:     ~[u8],
-    Kind:       EthernetType,
+    Ethertype:       Ethertype,
 }
 
-pub enum EthernetType {
-    EthernetType_IPv4,
-    EthernetType_IPv6,
-    EthernetType_Unknown,
+pub enum Ethertype {
+    Ethertype_IP,
+    Ethertype_ARP,
+    Ethertype_VLAN,
+    Ethertype_Unknown,
+}
+
+pub enum IpHeader {
+    Ipv4Header,
+    Ipv6Header,
 }
 
 pub struct Ipv4Header {
@@ -116,50 +106,48 @@ pub struct UdpHeader {
 pub enum DecodedPacket<'r> {
     InvalidPacket,
     EthernetPacket(EthernetHeader, &'r [u8]),
-    IpPacket(EthernetHeader, Ipv4Header, &'r [u8]),
+    IpPacket(EthernetHeader, IpHeader, &'r [u8]),
     TcpPacket(EthernetHeader, Ipv4Header, TcpHeader, &'r [u8]),
     UdpPacket(EthernetHeader, Ipv4Header, UdpHeader, &'r [u8]),
 }
 
-pub fn decode_ethernet_header(header_plus_payload: &[u8]) -> Option<(EthernetHeader, uint)> {
-    
-    println!("decode ethernet header");
+pub fn decode_ethernet_header(h: &[u8]) -> Option<(EthernetHeader, uint)> {
     // TODO: Check size
 
-    let dst_mac = header_plus_payload.slice(0, 6).to_owned();
-    let src_mac = header_plus_payload.slice(6, 12).to_owned();
-    //let type_ = unsafe { header_plus_payload.slice(13, 14).to_owned() as uint }; // TODO: Fix
-    let type_ = 0x0400;
-    let type_ = match type_ {
+    let dst_mac = h.slice(0, 6).to_owned();
+    let src_mac = h.slice(6, 12).to_owned();
+    let ethertype: u16 = h[12] as u16 << 8 | h[13] as u16;
+    println!("{:?}", ethertype);
+    let ethertype = match ethertype {
         // for lower ranges, it maps to a size, ugh. something EthernetHeader_Size<uint> ?
-        0x0400 => { EthernetType_IPv4 }
-        0x0800 => { EthernetType_IPv6 }
-        _ => { EthernetType_Unknown }
+        // TODO: use this, leverage matches,
+        // TODO: PRI: attribution http://homepage.smc.edu/morgan_david/linux/n-protocol-09-ethernet.pdf
+
+        0x0800 => { Ethertype_IP }
+        0x0806 => { Ethertype_ARP }
+        0x8137 => { Ethertype_ARP }
+        0x8100 => { Ethertype_VLAN }
+        _ => { Ethertype_Unknown }
     };
     let ether_hdr = EthernetHeader{
         DstMac: dst_mac,
         SrcMac: src_mac,
-        Kind: type_,
+        Ethertype: ethertype,
     };
     Some((ether_hdr, 14))
 }
 
-// should these decodes just return their payload in the first place?
-// wouldn't need to reslice them, the main nested parsing code gets cleaner.........
+pub fn decode_ip_header(h: &[u8]) -> Option<(IpHeader, uint)> {
+    decode_ipv4_header(h)
+}
 
 pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
-
-    println!("decode ipv4 header (len: {:?})", h.len());
-
     // TODO: Check size
     let byte1 = h[0];
     let byte2 = h[1];
 
     let version = 4;
     let ihl = (byte1 & 0b00001111) as uint;
-
-    println!("decode ipv4 header (len: {:?})", ihl);
-
 
     let dscp = byte2 >> 2;
     let ecn = byte2 & 0b00000011;
@@ -214,11 +202,11 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<(Ipv4Header, uint)> {
     Some((res, ihl*4))
 }
 
-pub fn decode_ipv6_header(header_plus_payload: &[u8]) -> Option<(Ipv6Header, uint)> {
+pub fn decode_ipv6_header(h: &[u8]) -> Option<(Ipv6Header, uint)> {
     None
 }
 
-pub fn decode_tcp_header(header_plus_payload: &[u8]) -> Option<(TcpHeader, uint)> {
+pub fn decode_tcp_header(h: &[u8]) -> Option<(TcpHeader, uint)> {
     // TODO: Check length
 
     println!("decode tcp header");
@@ -244,11 +232,6 @@ pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
     if h.len() < 8 {
         return None
     }
-
-    println!("---------------------");
-    pp(h);
-    println!("---------------------");
-
     let src_port: u16 = h[0] as u16 << 8 | h[1] as u16;
     let dst_port: u16 = h[2] as u16 << 8 | h[3] as u16;
     let length: u16   = h[4] as u16 << 8 | h[5] as u16;
@@ -263,16 +246,13 @@ pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
         //Payload: h.slice_from(8),
     };
 
-    // TODO: Check checksum
-
     Some((res, 8))
 }
 
-pub fn pp(p: &[u8]) {
-    let p2 = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
-    println!("print ascii-mapped bytes: {:?}", p2);
-    let temp_payload = str::from_utf8_owned(p2);
-    println!("print utf8 bytes        : {:?}", temp_payload);
+pub fn prettystr(p: &[u8]) -> ~str {
+    // HELP/TODO: probably faster to allocate al bytes since we know the size, then copy byte wise if it matches, else write 46
+    let p = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
+    str::from_utf8_owned(p)
 }
 
 pub fn DecodePacket<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
@@ -281,8 +261,8 @@ pub fn DecodePacket<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
     match decode_ethernet_header(payload) {
         Some((ether_hdr, ether_hdr_len)) => {
             payload = payload.slice_from(ether_hdr_len);
-            match ether_hdr.Kind {
-                EthernetType_IPv4 => match decode_ipv4_header(payload) {
+            match ether_hdr.Ethertype {
+                Ethertype_IP => match decode_ip_header(payload) {
                     Some((ip_hdr, ip_hdr_len)) => {
                         payload = payload.slice_from(ip_hdr_len);
                         match ip_hdr.Protocol {
@@ -307,11 +287,7 @@ pub fn DecodePacket<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
                     },
                     None => { InvalidPacket }
                 },
-                EthernetType_IPv6 => match decode_ipv6_header(payload) {
-                    Some(_te) => { InvalidPacket }
-                    None => { InvalidPacket }
-                },
-                _ => { return InvalidPacket; }
+                _ => { InvalidPacket }
             }
         },
         None => {
@@ -342,7 +318,7 @@ pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Option<Pc
         let mut errbuf: ~[c_schar] = vec::with_capacity(256);
         let c_dev = dev.to_c_str().unwrap();
         let handle = pcap_open_live(c_dev, size as i32, flag as i32, mtu as i32, errbuf.as_mut_ptr());
-        // should probably do something with error buffer?
+        // TODO: read error buffer, return Result instead with error contents
         if handle == ptr::mut_null() {
             None
         } else {
@@ -353,7 +329,7 @@ pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Option<Pc
 }
 
 pub fn PcapOpenOffline(filename: &str) -> Option<PcapDevice> {
-    // do shit, return handle
+    // TODO: implement
     None
 }
 
@@ -399,14 +375,16 @@ impl PcapDevice {
                 let pkt_len: uint = (*pkthdr_ptr).len as uint;
                 match result {
                     -2 => { Err(EndOfCaptureFile) }
-                    -1 => { Err(ReadError) } // call pcap_geterr() or pcap_perror()
+                    -1 => { Err(ReadError) } // call pcap_geterr() or pcap_perror() (ret Result instead)
                     0 => { Err(Timeout) }
                     1 => {
                         if pkt_len == 0 {
                             println!("ignoring zero length packet"); 
                             Err(Unknown)
                         } else {
-                            let payload = std::vec::from_buf(pkt_data_ptr, pkt_len); // does this copy? pkt_data_ptr's location is reused
+                            let payload = std::vec::from_buf(pkt_data_ptr, pkt_len);
+                            // HELP: does that copy? pkt_data_ptr's location is reused
+                            
                             let pkt = PcapPacket{
                                 timestamp: (*pkthdr_ptr).ts,
                                 len: pkt_len,
@@ -434,7 +412,7 @@ impl PcapDevice {
                         -1 => {}
                         0 => {}
                         1 => {}
-                        _ => { fail!("stop touching yourself pcap"); }
+                        _ => { fail!("shouldn't happen"); }
                     }
                 }
                 _ => {
@@ -445,7 +423,7 @@ impl PcapDevice {
         Ok(())
     }
 
-    // Should this be impl Drop for PcapDevice?
+    // HELP: Should this be impl Drop for PcapDevice?
     pub fn Close(&mut self) {
         unsafe {
             self.closed = true;

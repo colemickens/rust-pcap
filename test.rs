@@ -6,10 +6,11 @@ use std::io::net::ip::Ipv4Addr;
 
 use pcapfe::DecodePacket;
 use pcapfe::UdpPacket;
-use pcapfe::EthernetType;
+
+use pcapfe::Ethertype;
+use pcapfe::Ethertype::*;
+
 use pcapfe::InternetProtocolNumbers;
-use pcapfe::EthernetType;
-use pcapfe::EthernetType::*;
 
 #[test]
 fn test_decode_udp_packet() {
@@ -26,8 +27,8 @@ fn test_decode_udp_packet() {
     let pkt = DecodePacket(dns_pkt);
     
     match pkt {
-    	UdpPacket(eth_hdr, ip_hdr,  udp_hdr,  payload) => {
-			println!("{:?}", eth_hdr);
+        UdpPacket(eth_hdr, ip_hdr,  udp_hdr,  payload) => {
+            println!("{:?}", eth_hdr);
             println!("{:?}", ip_hdr);
             println!("{:?}", udp_hdr);
             println!("{:?}", payload);
@@ -36,9 +37,8 @@ fn test_decode_udp_packet() {
             let src_mac = ~[0x30, 0x85, 0xa9, 0x40, 0x09, 0x35];
             assert_eq!(eth_hdr.DstMac, dst_mac);
             assert_eq!(eth_hdr.SrcMac, src_mac);
-            //assert_eq!(eth_hdr.Kind, EthernetType_IPv4);
-            match eth_hdr.Kind {
-                EthernetType_IPv4 => { /* good */ }
+            match eth_hdr.Ethertype {
+                EthernetType_IP => { /* good */ }
                 //_ => { fail!("wrong kind of ethernet packet"); } // same as below?
             }
 
@@ -50,14 +50,14 @@ fn test_decode_udp_packet() {
             assert_eq!(ip_hdr.Flags, 0x02);            
             assert_eq!(ip_hdr.FragOffset, 0);
             assert_eq!(ip_hdr.Ttl, 64);
-            //assert_eq!(ip_hdr.Protocol, UserDatagram); // if I can't do this , what am I doing when I "set" it on line 135/136 of lib.rs?
+
             match ip_hdr.Protocol {
                 UserDatagram => {
                     // good
-                },/*
+                },
+                /*
                 _ => { fail("n"); }
-
-                // is this unreachable because of UdpPacket match... :o  :D
+                // HELP: is that ^nreachable because of UdpPacket match...
                 */
             }
             assert_eq!(ip_hdr.Checksum, 0x8f37);
@@ -72,8 +72,8 @@ fn test_decode_udp_packet() {
             assert_eq!(payload.len(), 21);
             assert_eq!(payload, expected_payload);
 
-            pcapfe::pp(payload);
-    	}, 
-    	_ => { fail!("wrong packet type to start out with"); }
+            println!("{}", pcapfe::prettystr(payload) );
+        }, 
+        g => { println!("{:?}", g); fail!("wrong packet type to start out with"); }
     }
 } 
