@@ -246,7 +246,7 @@ pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
     }
 
     println!("---------------------");
-    pb(h);
+    pp(h);
     println!("---------------------");
 
     let src_port: u16 = h[0] as u16 << 8 | h[1] as u16;
@@ -268,17 +268,11 @@ pub fn decode_udp_header(h: &[u8]) -> Option<(UdpHeader, uint)> {
     Some((res, 8))
 }
 
-pub fn pb(p: &[u8]) {
-    println!("bytes: {:?}", p);
-}
-
 pub fn pp(p: &[u8]) {
     let p2 = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
     println!("print ascii-mapped bytes: {:?}", p2);
-    let temp_payload = unsafe { str::from_utf8_owned(p2); };
+    let temp_payload = str::from_utf8_owned(p2);
     println!("print utf8 bytes        : {:?}", temp_payload);
-    // HELP: why does this ^^ not print properly here
-    // even thought the same technique seems to work inline elsewhere and the p2 seems to contain the correct bytes...
 }
 
 pub fn DecodePacket<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {

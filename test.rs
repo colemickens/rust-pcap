@@ -71,6 +71,8 @@ fn test_decode_udp_packet() {
             
             assert_eq!(payload.len(), 21);
             assert_eq!(payload, expected_payload);
+
+            pcapfe::pp(payload);
     	}, 
     	_ => { fail!("wrong packet type to start out with"); }
     }
