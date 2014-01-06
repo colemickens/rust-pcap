@@ -9,7 +9,7 @@ extern mod std;
 
 use std::io::net::ip;
 use std::io::net::ip::Ipv4Addr;
-use std::libc::{c_uint,c_schar,c_void };
+use std::libc::{c_uint,c_char,c_schar,c_void };
 use std::ptr;
 use std::str;
 use std::vec;
@@ -430,21 +430,22 @@ pub struct PcapPacket {
     payload: ~[u8]
 }
 
-pub fn PcapOpenDevice(dev: &str) -> Option<PcapDevice> {
+pub fn PcapOpenDevice(dev: &str) -> Result<PcapDevice, ~str> {
     PcapOpenDeviceAdv(dev, 65536, 0, 1000)
 }
 
-pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Option<PcapDevice> {
+pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Result<PcapDevice, ~str> {
     unsafe {
-        let mut errbuf: ~[c_schar] = vec::with_capacity(256);
+        let mut errbuf: ~[c_char] = vec::with_capacity(256);
         let c_dev = dev.to_c_str().unwrap();
         let handle = pcap_open_live(c_dev, size as i32, flag as i32, mtu as i32, errbuf.as_mut_ptr());
-        // TODO: read error buffer, return Result instead with error contents
+        
+        let errbuf_f: ~[u8] = std::cast::transmute(errbuf);
         if handle == ptr::mut_null() {
-            None
+            Err(prettystr(errbuf_f)) // TODO: fix [this is always empty]
         } else {
             let pd: PcapDevice = PcapDevice { pcap_dev: handle, closed: false };
-            Some(pd)
+            Ok(pd)
         }
     }
 }
@@ -455,7 +456,7 @@ impl PcapDevice {
             if self.closed {
                 return Err(Filter_DeviceClosed)
             }
-            let mut errbuf: ~[c_schar] = vec::with_capacity(256);
+            let mut errbuf: ~[c_char] = vec::with_capacity(256);
             let mut netp: c_uint = 0;
             let mut maskp: c_uint = 0;
             let mut filter_program: Struct_bpf_program = std::unstable::intrinsics::uninit();
@@ -470,7 +471,7 @@ impl PcapDevice {
             } else {
                 let res = pcap_setfilter(self.pcap_dev, &mut filter_program);
                 if res != 0 {
-                    Err(Filter_SetError) // how to set the errorbuf msg in the SetError somehow?
+                    Err(Filter_SetError)
                 } else {
                     Ok(())
                 }
@@ -547,7 +548,7 @@ impl PcapDevice {
             let result = pcap_inject(self.pcap_dev, data1, size1);
             match result {
                 -1 => { None }
-                n => { Some(n) }
+                n => { Some(n as uint) } // HELP: not safe if negative (block w/ negative range in match [how?])
             }
         }
     }
