@@ -7,14 +7,11 @@
 
 extern mod std;
 
-use std::cast;
 use std::io::net::ip;
 use std::io::net::ip::Ipv4Addr;
-use std::io::util;
-use std::libc::{c_uint,c_schar,c_void};
+use std::libc::{c_uint,c_schar};
 use std::ptr;
 use std::str;
-use std::u16;
 use std::vec;
 
 use pcap::*;
@@ -77,18 +74,33 @@ pub enum InternetProtocolNumbers {
     UserDatagram = 17,
 }
 
+#[deriving(Eq)]
+pub struct TcpFlags {
+    ns:  bool,
+    cwr: bool,
+    ece: bool,
+    urg: bool,
+    ack: bool,
+    psh: bool,
+    rst: bool,
+    syn: bool,
+    fin: bool,
+}
+
+// cast these to uints?
 pub struct TcpHeader {
     SrcPort:     ip::Port,
     DstPort:     ip::Port,
-    Seq:         uint,
-    Ack:         uint,
-    DataOffset:  uint,
-    Flags:       uint,
-    Window:      uint,
-    Checksum:    uint,
-    Urgent:      uint,
+    SeqNum:      u32,
+    AckNum:      u32,
+    DataOffset:  u8,
+    Flags:       TcpFlags,
+    WindowSize:  u16,
+    Checksum:    u16,
+    UrgentPtr:   u16,
+    Options:     ~[u8],
 }
-impl TcpHeader { pub fn len(&self) -> uint { 20 } }
+impl TcpHeader { pub fn len(&self) -> uint { self.DataOffset as uint *4 } }
 
 pub struct UdpHeader {
     SrcPort:     ip::Port,
@@ -133,14 +145,11 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
     if h.len() < 20 {
         return None
     }
-    
-    let byte2 = h[1];
 
     let version = ((h[0] & 0b11110000) >> 4) as uint;
     let ihl = (h[0] & 0b00001111) as uint;
 
     let dscp = h[1] >> 2;
-    let ecn = h[1] & 0b00000011;
 
     let total_len: u16 = h[2] as u16 << 8 | h[3] as u16;
     let id: u16 = h[4] as u16 << 8 | h[5] as u16;
@@ -162,10 +171,8 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
     if ihl > 15 {
         return None
     }
-
-    if ihl > 5 {
-        let options = h.slice(24, 4*(ihl-5));
-    }
+    
+    //let options = h.slice(24, 4*(ihl-5)).to_owned(); // TODO: add back I guess, and add a test
 
     Some(Ipv4Header{
         Version:      version as uint,
@@ -176,10 +183,11 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
         Flags:        flags as uint,
         FragOffset:   frag_offset as uint,
         Ttl:          ttl as uint,
-        Protocol:     match(proto) { 0x8000 => { TCP }, _ => { UserDatagram } },
+        Protocol:     match(proto) { 0x06 => { TCP }, _ => { UserDatagram } },
         Checksum:     checksum as uint,
         SrcIp:        src_ip,
         DstIp:        dst_ip,
+        //Options:      options,
     })
 }
 
@@ -192,16 +200,51 @@ pub fn decode_tcp_header(h: &[u8]) -> Option<TcpHeader> {
         return None
     }
 
+    let src_port: u16 = h[0] as u16 << 8 | h[1] as u16;
+    let dst_port: u16 = h[2] as u16 << 8 | h[3] as u16;
+
+    let seq_num: u32 = h[4] as u32 << 24 | h[5] as u32 << 16 | h[6] as u32 << 8 | h[7] as u32;
+    let ack_num: u32 = h[8] as u32 << 24 | h[9] as u32 << 16 | h[10] as u32 << 8 | h[11] as u32;
+
+    let data_offset = h[12] >> 4;
+
+    let  ns: bool = (h[12] & 0b00000001) != 0;
+    let cwr: bool = (h[13] >> 7 & 0b00000001) != 0;
+    let ece: bool = (h[13] >> 6 & 0b00000001) != 0;
+    let urg: bool = (h[13] >> 5 & 0b00000001) != 0;
+    let ack: bool = (h[13] >> 4 & 0b00000001) != 0;
+    let psh: bool = (h[13] >> 3 & 0b00000001) != 0;
+    let rst: bool = (h[13] >> 2 & 0b00000001) != 0;
+    let syn: bool = (h[13] >> 1 & 0b00000001) != 0;
+    let fin: bool = (h[13] >> 0 & 0b00000001) != 0;
+
+    let window_size: u16 = h[14] as u16 << 8 | h[15] as u16;
+    let checksum: u16 = h[16] as u16 << 8 | h[17] as u16;
+    let urgent_ptr: u16 = h[18] as u16 << 8 | h[19] as u16;
+
+    let options: ~[u8] = ~[ 0x00, 0x00, 0x00 ]; // TODO: implement and test
+
     Some(TcpHeader{
-        SrcPort:     80,
-        DstPort:     80,
-        Seq:         80,
-        Ack:         80,
-        DataOffset:  80,
-        Flags:       80,
-        Window:      80,
-        Checksum:    80,
-        Urgent:      80,
+        SrcPort:     src_port,
+        DstPort:     dst_port,
+        SeqNum:      seq_num,
+        AckNum:      ack_num,
+        DataOffset:  data_offset,
+        Flags:       TcpFlags{
+            ns: ns,
+            cwr: cwr,
+            ece: ece,
+            urg: urg,
+            ack: ack,
+            psh: psh,
+            rst: rst,
+            syn: syn,
+            fin: fin,
+        },
+        WindowSize:  window_size,
+        Checksum:    checksum,
+        UrgentPtr:   urgent_ptr,
+        Options:     options,
     })
 }
 
@@ -296,11 +339,6 @@ pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Option<Pc
     }
 }
 
-pub fn PcapOpenOffline(filename: &str) -> Option<PcapDevice> {
-    // TODO: implement
-    None
-}
-
 impl PcapDevice {
     pub fn SetFilter(&self, dev: &str, filter_str: &str) -> Result<(), PcapError> {
         unsafe {
@@ -367,7 +405,7 @@ impl PcapDevice {
         }
     }
 
-    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
+/*    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
         // TODO: Implement
         unsafe {
             match pkt {
@@ -390,7 +428,7 @@ impl PcapDevice {
             };
         }
         Ok(())
-    }
+    }*/
 
     // HELP: Should this be impl Drop for PcapDevice?
     pub fn Close(&mut self) {
