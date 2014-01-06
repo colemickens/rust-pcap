@@ -515,7 +515,7 @@ impl PcapDevice {
         }
     }
 
-    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
+    pub fn Inject(&self, pkt: DecodedPacket) -> Option<uint> {
         unsafe {
             let mut data: ~[u8];
             match pkt {
@@ -546,11 +546,10 @@ impl PcapDevice {
             let size1 = data.len() as u64;
             let result = pcap_inject(self.pcap_dev, data1, size1);
             match result {
-                -1 => { fail!("failed"); }
-                n => { println!("inject: {} bytes written", n); }
+                -1 => { None }
+                n => { Some(n) }
             }
         }
-        Ok(())
     }
 
     // HELP: Should this be impl Drop for PcapDevice?
