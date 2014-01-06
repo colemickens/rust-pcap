@@ -42,25 +42,21 @@ pub struct EthernetHeader {
 impl EthernetHeader {
     pub fn len(&self) -> uint { 14 }
     pub fn as_bytes(&self) -> ~[u8] {
-        let result: ~[u8] = self.DstMac.to_owned();
-        std::vec::append(
-            std::vec::append(result,self.SrcMac),
-            match self.Ethertype {
-                Ethertype_IP => [0x08, 0x00],//0x0800, // TODO: there must be a better way
-                Ethertype_ARP => [0x08, 0x06],//0x0806,
-                Ethertype_VLAN => [0x81, 0x00],//0x8100,
-                _ => [0x00, 0x00],//0x0000 // TODO: should this fail, return Option<~[u8]> instead?
-            }
-        )
+        let mut res: ~[u8] = ~[];
+        res = std::vec::append(res, self.DstMac);
+        res = std::vec::append(res, self.SrcMac);
+        res = std::vec::append_one(res, (self.Ethertype as u16 >> 8) as u8) ;
+        res = std::vec::append_one(res, self.Ethertype as u8);
+        res
     }
 }
 
 #[deriving(Eq)]
 pub enum Ethertype {
-    Ethertype_IP,
-    Ethertype_ARP,
-    Ethertype_VLAN,
-    Ethertype_Unknown,
+    Ethertype_IP = 0x0800,
+    Ethertype_ARP = 0x0806,
+    Ethertype_VLAN = 0x8100,
+    Ethertype_Unknown = 0x0000,
 }
 
 pub struct Ipv4Header {
