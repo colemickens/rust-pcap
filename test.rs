@@ -154,6 +154,7 @@ fn test_encode_udp() {
         DstIp:        Ipv4Addr(192, 168, 1, 255),
         Ihl:          5,
         Protocol:     UserDatagram,
+        Options:      ~[],
     };
 
     let udp_hdr = UdpHeader{
@@ -198,6 +199,7 @@ fn test_encode_tcp() {
         DstIp:        Ipv4Addr(192, 168, 1, 4),
         Ihl:          5,
         Protocol:     TCP,
+        Options:      ~[],
     };
 
     let tcp_flags = TcpFlags{

@@ -64,22 +64,23 @@ pub enum Ethertype {
 }
 
 pub struct Ipv4Header {
-    Version:      uint,
-    Ihl:          uint,
+    Version:      u8,
+    Ihl:          u8,
     DiffServices: u8,
     Ecn:          u8,
-    TotalLength:  uint,
-    Id:           uint,
-    Flags:        uint,
-    FragOffset:   uint,
-    Ttl:          uint,
+    TotalLength:  u16,
+    Id:           u16,
+    Flags:        u8,
+    FragOffset:   u16,
+    Ttl:          u8,
     Protocol:     InternetProtocolNumbers,
-    Checksum:     uint,
+    Checksum:     u16,
     SrcIp:        ip::IpAddr,
     DstIp:        ip::IpAddr,
+    Options:     ~[u8],
 }
 impl Ipv4Header {
-    pub fn len(&self) -> uint { self.Ihl*4 }
+    pub fn len(&self) -> uint { self.Ihl as uint *4 }
     pub fn as_bytes(&self) -> ~[u8] {
         let mut res: ~[u8] = ~[];
         res = std::vec::append_one(res, ((self.Version as u8) << 4) | self.Ihl as u8);
@@ -98,12 +99,12 @@ impl Ipv4Header {
 
         match (self.SrcIp, self.DstIp) {
             (Ipv4Addr(a,b,c,d), Ipv4Addr(g,h,i,j)) => {
-                res = std::vec::append(res, ~[a,b,c,d,g,h,i,j]);
+                res = std::vec::append(res, [a,b,c,d,g,h,i,j]);
             }
             (_, _) => { fail!(); }
         }
-        
-        // res = std::vec::append(res, self.Options);
+
+        res = std::vec::append(res, self.Options);
 
         res
     }
@@ -166,7 +167,6 @@ impl TcpHeader {
         res = std::vec::append_one(res, ((self.AckNum as u32) >> 8) as u8);
         res = std::vec::append_one(res, ((self.AckNum as u32) >> 0) as u8);
         
-        let mut flags_byte = 0;
         let flags_byte = self.DataOffset << 4 | if self.Flags.ns { 0b00000001 } else { 0 };
 
         let mut flags_byte2 = 0;        
@@ -254,8 +254,8 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
         return None
     }
 
-    let version = ((h[0] & 0b11110000) >> 4) as uint;
-    let ihl = (h[0] & 0b00001111) as uint;
+    let version = (h[0] & 0b11110000) >> 4;
+    let ihl = h[0] & 0b00001111;
 
     let dscp = h[1] >> 2;
     let ecn = h[1] & 0b00000011;
@@ -281,23 +281,23 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
         return None
     }
     
-    //let options = h.slice(24, 4*(ihl-5)).to_owned(); // TODO: add back I guess, and add a test
+    let options = h.slice(20, 20+(4*(ihl as uint - 5))).to_owned();
 
     Some(Ipv4Header{
-        Version:      version as uint,
-        Ihl:          ihl as uint,
+        Version:      version,
+        Ihl:          ihl,
         DiffServices: dscp,
         Ecn:          ecn,
-        TotalLength:  total_len as uint,
-        Id:           id as uint,
-        Flags:        flags as uint,
-        FragOffset:   frag_offset as uint,
-        Ttl:          ttl as uint,
+        TotalLength:  total_len,
+        Id:           id,
+        Flags:        flags,
+        FragOffset:   frag_offset,
+        Ttl:          ttl,
         Protocol:     match(proto) { 0x06 => { TCP }, _ => { UserDatagram } },
-        Checksum:     checksum as uint,
+        Checksum:     checksum,
         SrcIp:        src_ip,
         DstIp:        dst_ip,
-        //Options:      options,
+        Options:      options,
     })
 }
 
@@ -516,27 +516,39 @@ impl PcapDevice {
     }
 
     pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
-        // TODO: Implement
         unsafe {
+            let mut data: ~[u8];
             match pkt {
-                TcpPacket(ehdr, ihdr, thdr, pkt) => {
-                    println!("tcp, {:?}", pkt);
-                    //let data: ~[u8] = ehdr.as_bytes().append(ihdr.as_bytes().append(thdr.as_bytes()));
-                    let data: ~[u8] = ~[ 0x00, 0x01 ];
-                    let data1 = unsafe { data.as_ptr() as *c_void };
-                    let size1 = unsafe { data.len() as u64 };
-                    let result = pcap_inject(self.pcap_dev, data1, size1);
-                    match result {
-                        -1 => { fail!("shouldn't happen"); }
-                        0 => { fail!("shouldn't happen"); }
-                        1 => { fail!("shouldn't happen"); }
-                        _ => { fail!("shouldn't happen"); }
-                    }
+                EthernetPacket(eth_hdr, payload) => {
+                    data = eth_hdr.as_bytes();
+                    data = std::vec::append(data, payload);
                 }
-                _ => {
-                     fail!("can't inject this kind of packet");
+                Ipv4Packet(eth_hdr, ip_hdr, payload) => {
+                    data = eth_hdr.as_bytes();
+                    data = std::vec::append(data, ip_hdr.as_bytes());
+                    data = std::vec::append(data, payload);
                 }
+                TcpPacket(eth_hdr, ip_hdr, tcp_hdr, payload) => {
+                    data = eth_hdr.as_bytes();
+                    data = std::vec::append(data, ip_hdr.as_bytes());
+                    data = std::vec::append(data, tcp_hdr.as_bytes());
+                    data = std::vec::append(data, payload);
+                }
+                UdpPacket(eth_hdr, ip_hdr, udp_hdr, payload) => {
+                    data = eth_hdr.as_bytes();
+                    data = std::vec::append(data, ip_hdr.as_bytes());
+                    data = std::vec::append(data, udp_hdr.as_bytes());
+                    data = std::vec::append(data, payload);
+                }
+                InvalidPacket => { fail!(); }
             };
+            let data1 = data.as_ptr() as *c_void;
+            let size1 = data.len() as u64;
+            let result = pcap_inject(self.pcap_dev, data1, size1);
+            match result {
+                -1 => { fail!("failed"); }
+                n => { println!("inject: {} bytes written", n); }
+            }
         }
         Ok(())
     }
