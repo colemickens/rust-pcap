@@ -39,8 +39,23 @@ pub struct EthernetHeader {
     SrcMac:     ~[u8],
     Ethertype:  Ethertype,
 }
-impl EthernetHeader { pub fn len(&self) -> uint { 14 } }
+impl EthernetHeader {
+    pub fn len(&self) -> uint { 14 }
+    pub fn as_bytes(&self) -> ~[u8] {
+        let result: ~[u8] = self.DstMac.to_owned();
+        std::vec::append(
+            std::vec::append(result,self.SrcMac),
+            match self.Ethertype {
+                Ethertype_IP => [0x08, 0x00],//0x0800, // TODO: there must be a better way
+                Ethertype_ARP => [0x08, 0x06],//0x0806,
+                Ethertype_VLAN => [0x81, 0x00],//0x8100,
+                _ => [0x00, 0x00],//0x0000 // TODO: should this fail, return Option<~[u8]> instead?
+            }
+        )
+    }
+}
 
+#[deriving(Eq)]
 pub enum Ethertype {
     Ethertype_IP,
     Ethertype_ARP,
@@ -52,6 +67,7 @@ pub struct Ipv4Header {
     Version:      uint,
     Ihl:          uint,
     DiffServices: u8,
+    Ecn:          u8,
     TotalLength:  uint,
     Id:           uint,
     Flags:        uint,
@@ -62,12 +78,42 @@ pub struct Ipv4Header {
     SrcIp:        ip::IpAddr,
     DstIp:        ip::IpAddr,
 }
-impl Ipv4Header { pub fn len(&self) -> uint { self.Ihl*4 } }
+impl Ipv4Header {
+    pub fn len(&self) -> uint { self.Ihl*4 }
+    pub fn as_bytes(&self) -> ~[u8] {
+        let mut res: ~[u8] = ~[];
+        res = std::vec::append_one(res, ((self.Version as u8) << 4) | self.Ihl as u8);
+        res = std::vec::append_one(res, (self.DiffServices as u8) << 6 | (self.Ecn) as u8);
+        res = std::vec::append_one(res, (self.TotalLength >> 8) as u8);
+        res = std::vec::append_one(res, self.TotalLength as u8);
+        res = std::vec::append_one(res, (self.Id >> 8) as u8);
+        res = std::vec::append_one(res, self.Id as u8);
+
+        res = std::vec::append_one(res, ((self.Flags as u8) << 5) | ((self.FragOffset >> 14) as u8));
+        res = std::vec::append_one(res, self.FragOffset as u8);
+        res = std::vec::append_one(res, self.Ttl as u8);
+        res = std::vec::append_one(res, self.Protocol as u8);
+        res = std::vec::append_one(res, (self.Checksum >> 8) as u8);
+        res = std::vec::append_one(res, self.Checksum as u8);
+
+        match (self.SrcIp, self.DstIp) {
+            (Ipv4Addr(a,b,c,d), Ipv4Addr(g,h,i,j)) => {
+                res = std::vec::append(res, ~[a,b,c,d,g,h,i,j]);
+            }
+            (_, _) => { fail!(); }
+        }
+        
+        // res = std::vec::append(res, self.Options);
+
+        res
+    }
+}
 
 pub struct Ipv6Header {
     Temp:        uint,
 }
 
+#[deriving(Eq)]
 pub enum InternetProtocolNumbers {
     ICMP = 1,
     TCP = 6,
@@ -100,7 +146,54 @@ pub struct TcpHeader {
     UrgentPtr:   u16,
     Options:     ~[u8],
 }
-impl TcpHeader { pub fn len(&self) -> uint { self.DataOffset as uint *4 } }
+impl TcpHeader {
+    pub fn len(&self) -> uint { self.DataOffset as uint *4 }
+    pub fn as_bytes(&self) -> ~[u8] {
+        let mut res: ~[u8] = ~[];
+
+        res = std::vec::append_one(res, ((self.SrcPort as u16) >> 8) as u8);
+        res = std::vec::append_one(res, self.SrcPort as u8);
+        res = std::vec::append_one(res, ((self.DstPort as u16) >> 8) as u8);
+        res = std::vec::append_one(res, self.DstPort as u8);
+
+        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 24) as u8);
+        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 16) as u8);
+        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 8) as u8);
+        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 0) as u8);
+        
+        res = std::vec::append_one(res, ((self.AckNum as u32) >> 24) as u8);
+        res = std::vec::append_one(res, ((self.AckNum as u32) >> 16) as u8);
+        res = std::vec::append_one(res, ((self.AckNum as u32) >> 8) as u8);
+        res = std::vec::append_one(res, ((self.AckNum as u32) >> 0) as u8);
+        
+        let mut flags_byte = 0;
+        let flags_byte = self.DataOffset << 4 | if self.Flags.ns { 0b00000001 } else { 0 };
+
+        let mut flags_byte2 = 0;        
+        if self.Flags.cwr { flags_byte2 += 0b10000000 };
+        if self.Flags.ece { flags_byte2 += 0b01000000 };
+        if self.Flags.urg { flags_byte2 += 0b00100000 };
+        if self.Flags.ack { flags_byte2 += 0b00010000 };
+        if self.Flags.psh { flags_byte2 += 0b00001000 };
+        if self.Flags.rst { flags_byte2 += 0b00000100 };
+        if self.Flags.syn { flags_byte2 += 0b00000010 };
+        if self.Flags.fin { flags_byte2 += 0b00000001 };
+
+        res = std::vec::append_one(res, flags_byte as u8);
+        res = std::vec::append_one(res, flags_byte2 as u8);
+
+        res = std::vec::append_one(res, (self.WindowSize >> 8) as u8);
+        res = std::vec::append_one(res, (self.WindowSize >> 0) as u8);
+        res = std::vec::append_one(res, (self.Checksum >> 8) as u8);
+        res = std::vec::append_one(res, (self.Checksum >> 0) as u8);
+        res = std::vec::append_one(res, (self.UrgentPtr >> 8) as u8);
+        res = std::vec::append_one(res, (self.UrgentPtr >> 0) as u8);
+
+        res = std::vec::append(res, self.Options);
+
+        res
+    }
+}
 
 pub struct UdpHeader {
     SrcPort:     ip::Port,
@@ -108,7 +201,23 @@ pub struct UdpHeader {
     Length:      uint,
     Checksum:    uint,
 }
-impl UdpHeader { pub fn len(&self) -> uint { 8 } }
+impl UdpHeader {
+    pub fn len(&self) -> uint { 8 }
+    pub fn as_bytes(&self) -> ~[u8] {
+        //let res: ~[u8] = ~[u8, ..8];
+        let mut res: ~[u8] = ~[];
+        res = std::vec::append_one(res, ((self.SrcPort as u16) >> 8) as u8);
+        res = std::vec::append_one(res, self.SrcPort as u8);
+        res = std::vec::append_one(res, ((self.DstPort as u16) >> 8) as u8);
+        res = std::vec::append_one(res, self.DstPort as u8);
+        res = std::vec::append_one(res, (self.Length >> 8) as u8);
+        res = std::vec::append_one(res, self.Length as u8);
+        res = std::vec::append_one(res, (self.Checksum >> 8) as u8);
+        res = std::vec::append_one(res, self.Checksum as u8);
+
+        res
+    }
+}
 
 pub enum DecodedPacket<'r> {
     InvalidPacket,
@@ -129,7 +238,6 @@ pub fn decode_ethernet_header(h: &[u8]) -> Option<EthernetHeader> {
     let ethertype = match ethertype {
         0x0800 => { Ethertype_IP }
         0x0806 => { Ethertype_ARP }
-        0x8137 => { Ethertype_ARP }
         0x8100 => { Ethertype_VLAN }
         _ => { Ethertype_Unknown }
     };
@@ -150,6 +258,7 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
     let ihl = (h[0] & 0b00001111) as uint;
 
     let dscp = h[1] >> 2;
+    let ecn = h[1] & 0b00000011;
 
     let total_len: u16 = h[2] as u16 << 8 | h[3] as u16;
     let id: u16 = h[4] as u16 << 8 | h[5] as u16;
@@ -178,6 +287,7 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
         Version:      version as uint,
         Ihl:          ihl as uint,
         DiffServices: dscp,
+        Ecn:          ecn,
         TotalLength:  total_len as uint,
         Id:           id as uint,
         Flags:        flags as uint,
@@ -222,7 +332,7 @@ pub fn decode_tcp_header(h: &[u8]) -> Option<TcpHeader> {
     let checksum: u16 = h[16] as u16 << 8 | h[17] as u16;
     let urgent_ptr: u16 = h[18] as u16 << 8 | h[19] as u16;
 
-    let options: ~[u8] = ~[ 0x00, 0x00, 0x00 ]; // TODO: implement and test
+    let options: ~[u8] = h.slice(20, (data_offset as uint)*4).to_owned();
 
     Some(TcpHeader{
         SrcPort:     src_port,
