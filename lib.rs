@@ -1,7 +1,7 @@
-#[crate_id="pcapfe#0.0"];
+#[crate_id="pcapfe"];
 #[crate_type="lib"];
-#[desc = "A Rust package wrapping libpcap (tested on Linux only)."];
-#[license = "MIT"]; // sure, why not?(
+#[desc = "A Rust package wrapping libpcap and providing packet decoding"];
+#[license = "MIT"];
 
 #[feature(globs)];
 
@@ -9,7 +9,7 @@ extern mod std;
 
 use std::io::net::ip;
 use std::io::net::ip::Ipv4Addr;
-use std::libc::{c_uint,c_schar};
+use std::libc::{c_uint,c_schar,c_void };
 use std::ptr;
 use std::str;
 use std::vec;
@@ -405,30 +405,31 @@ impl PcapDevice {
         }
     }
 
-/*    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
+    pub fn Inject(&self, pkt: DecodedPacket) -> Result<(), ()> {
         // TODO: Implement
         unsafe {
             match pkt {
                 TcpPacket(ehdr, ihdr, thdr, pkt) => {
                     println!("tcp, {:?}", pkt);
-                    let data: ~[u8] = ~[0x00, 0x01, 0x02]; // TODO: FIX
+                    //let data: ~[u8] = ehdr.as_bytes().append(ihdr.as_bytes().append(thdr.as_bytes()));
+                    let data: ~[u8] = ~[ 0x00, 0x01 ];
                     let data1 = unsafe { data.as_ptr() as *c_void };
                     let size1 = unsafe { data.len() as u64 };
                     let result = pcap_inject(self.pcap_dev, data1, size1);
                     match result {
-                        -1 => {}
-                        0 => {}
-                        1 => {}
+                        -1 => { fail!("shouldn't happen"); }
+                        0 => { fail!("shouldn't happen"); }
+                        1 => { fail!("shouldn't happen"); }
                         _ => { fail!("shouldn't happen"); }
                     }
                 }
                 _ => {
-
+                     fail!("can't inject this kind of packet");
                 }
             };
         }
         Ok(())
-    }*/
+    }
 
     // HELP: Should this be impl Drop for PcapDevice?
     pub fn Close(&mut self) {
