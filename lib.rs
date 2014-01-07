@@ -45,8 +45,8 @@ impl EthernetHeader {
         let mut res: ~[u8] = ~[];
         res = std::vec::append(res, self.DstMac);
         res = std::vec::append(res, self.SrcMac);
-        res = std::vec::append_one(res, (self.Ethertype as u16 >> 8) as u8) ;
-        res = std::vec::append_one(res, self.Ethertype as u8);
+        res.push( (self.Ethertype as u16 >> 8) as u8  );
+        res.push( self.Ethertype as u8 );
         res
     }
 }
@@ -79,19 +79,19 @@ impl Ipv4Header {
     pub fn len(&self) -> uint { self.Ihl as uint *4 }
     pub fn as_bytes(&self) -> ~[u8] {
         let mut res: ~[u8] = ~[];
-        res = std::vec::append_one(res, ((self.Version as u8) << 4) | self.Ihl as u8);
-        res = std::vec::append_one(res, (self.DiffServices as u8) << 6 | (self.Ecn) as u8);
-        res = std::vec::append_one(res, (self.TotalLength >> 8) as u8);
-        res = std::vec::append_one(res, self.TotalLength as u8);
-        res = std::vec::append_one(res, (self.Id >> 8) as u8);
-        res = std::vec::append_one(res, self.Id as u8);
+        res.push( ((self.Version as u8) << 4) | self.Ihl as u8 );
+        res.push( (self.DiffServices as u8) << 6 | (self.Ecn) as u8 );
+        res.push( (self.TotalLength >> 8) as u8 );
+        res.push( self.TotalLength as u8 );
+        res.push( (self.Id >> 8) as u8 );
+        res.push( self.Id as u8 );
 
-        res = std::vec::append_one(res, ((self.Flags as u8) << 5) | ((self.FragOffset >> 14) as u8));
-        res = std::vec::append_one(res, self.FragOffset as u8);
-        res = std::vec::append_one(res, self.Ttl as u8);
-        res = std::vec::append_one(res, self.Protocol as u8);
-        res = std::vec::append_one(res, (self.Checksum >> 8) as u8);
-        res = std::vec::append_one(res, self.Checksum as u8);
+        res.push( ((self.Flags as u8) << 5) | ((self.FragOffset >> 14) as u8) );
+        res.push( self.FragOffset as u8 );
+        res.push( self.Ttl as u8 );
+        res.push( self.Protocol as u8 );
+        res.push( (self.Checksum >> 8) as u8 );
+        res.push( self.Checksum as u8 );
 
         match (self.SrcIp, self.DstIp) {
             (Ipv4Addr(a,b,c,d), Ipv4Addr(g,h,i,j)) => {
@@ -148,20 +148,20 @@ impl TcpHeader {
     pub fn as_bytes(&self) -> ~[u8] {
         let mut res: ~[u8] = ~[];
 
-        res = std::vec::append_one(res, ((self.SrcPort as u16) >> 8) as u8);
-        res = std::vec::append_one(res, self.SrcPort as u8);
-        res = std::vec::append_one(res, ((self.DstPort as u16) >> 8) as u8);
-        res = std::vec::append_one(res, self.DstPort as u8);
+        res.push( ((self.SrcPort as u16) >> 8) as u8 );
+        res.push( self.SrcPort as u8 );
+        res.push( ((self.DstPort as u16) >> 8) as u8 );
+        res.push( self.DstPort as u8 );
 
-        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 24) as u8);
-        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 16) as u8);
-        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 8) as u8);
-        res = std::vec::append_one(res, ((self.SeqNum as u32) >> 0) as u8);
+        res.push( ((self.SeqNum as u32) >> 24) as u8 );
+        res.push( ((self.SeqNum as u32) >> 16) as u8 );
+        res.push( ((self.SeqNum as u32) >> 8) as u8 );
+        res.push( ((self.SeqNum as u32) >> 0) as u8 );
         
-        res = std::vec::append_one(res, ((self.AckNum as u32) >> 24) as u8);
-        res = std::vec::append_one(res, ((self.AckNum as u32) >> 16) as u8);
-        res = std::vec::append_one(res, ((self.AckNum as u32) >> 8) as u8);
-        res = std::vec::append_one(res, ((self.AckNum as u32) >> 0) as u8);
+        res.push( ((self.AckNum as u32) >> 24) as u8 );
+        res.push( ((self.AckNum as u32) >> 16) as u8 );
+        res.push( ((self.AckNum as u32) >> 8) as u8 );
+        res.push( ((self.AckNum as u32) >> 0) as u8 );
         
         let flags_byte = self.DataOffset << 4 | if self.Flags.ns { 0b00000001 } else { 0 };
 
@@ -175,15 +175,15 @@ impl TcpHeader {
         if self.Flags.syn { flags_byte2 += 0b00000010 };
         if self.Flags.fin { flags_byte2 += 0b00000001 };
 
-        res = std::vec::append_one(res, flags_byte as u8);
-        res = std::vec::append_one(res, flags_byte2 as u8);
+        res.push( flags_byte as u8 );
+        res.push( flags_byte2 as u8 );
 
-        res = std::vec::append_one(res, (self.WindowSize >> 8) as u8);
-        res = std::vec::append_one(res, (self.WindowSize >> 0) as u8);
-        res = std::vec::append_one(res, (self.Checksum >> 8) as u8);
-        res = std::vec::append_one(res, (self.Checksum >> 0) as u8);
-        res = std::vec::append_one(res, (self.UrgentPtr >> 8) as u8);
-        res = std::vec::append_one(res, (self.UrgentPtr >> 0) as u8);
+        res.push( (self.WindowSize >> 8) as u8 );
+        res.push( (self.WindowSize >> 0) as u8 );
+        res.push( (self.Checksum >> 8) as u8 );
+        res.push( (self.Checksum >> 0) as u8 );
+        res.push( (self.UrgentPtr >> 8) as u8 );
+        res.push( (self.UrgentPtr >> 0) as u8 );
 
         res = std::vec::append(res, self.Options);
 
@@ -201,16 +201,17 @@ impl UdpHeader {
     pub fn len(&self) -> uint { 8 }
     pub fn as_bytes(&self) -> ~[u8] {
         //let res: ~[u8] = ~[u8, ..8];
-        let mut res: ~[u8] = ~[];
-        res = std::vec::append_one(res, ((self.SrcPort as u16) >> 8) as u8);
-        res = std::vec::append_one(res, self.SrcPort as u8);
-        res = std::vec::append_one(res, ((self.DstPort as u16) >> 8) as u8);
-        res = std::vec::append_one(res, self.DstPort as u8);
-        res = std::vec::append_one(res, (self.Length >> 8) as u8);
-        res = std::vec::append_one(res, self.Length as u8);
-        res = std::vec::append_one(res, (self.Checksum >> 8) as u8);
-        res = std::vec::append_one(res, self.Checksum as u8);
 
+        let mut res: ~[u8] = ~[];
+        res.push( ((self.SrcPort as u16) >> 8) as u8 );
+        res.push( self.SrcPort as u8 );
+        res.push( ((self.DstPort as u16) >> 8) as u8 );
+        res.push( self.DstPort as u8 );
+        res.push( (self.Length >> 8) as u8 );
+        res.push( self.Length as u8 );
+        res.push( (self.Checksum >> 8) as u8 );
+        res.push( self.Checksum as u8 );
+        
         res
     }
 }
@@ -376,7 +377,7 @@ pub fn prettystr(p: &[u8]) -> ~str {
     str::from_utf8_owned(p)
 }
 
-pub fn DecodePacket<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
+pub fn decode_packet<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
     let mut payload = payload;
 
     match decode_ethernet_header(payload) {
@@ -426,11 +427,11 @@ pub struct PcapPacket {
     payload: ~[u8]
 }
 
-pub fn PcapOpenDevice(dev: &str) -> Result<PcapDevice, ~str> {
-    PcapOpenDeviceAdv(dev, 65536, 0, 1000)
+pub fn pcap_open_dev(dev: &str) -> Result<PcapDevice, ~str> {
+    pcap_open_dev_adv(dev, 65536, 0, 1000)
 }
 
-pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Result<PcapDevice, ~str> {
+pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<PcapDevice, ~str> {
     unsafe {
         let mut errbuf: ~[c_char] = vec::with_capacity(256);
         let c_dev = dev.to_c_str().unwrap();
@@ -447,7 +448,7 @@ pub fn PcapOpenDeviceAdv(dev: &str, size: int, flag: int, mtu: int) -> Result<Pc
 }
 
 impl PcapDevice {
-    pub fn SetFilter(&self, dev: &str, filter_str: &str) -> Result<(), PcapError> {
+    pub fn set_filter(&self, dev: &str, filter_str: &str) -> Result<(), PcapError> {
         unsafe {
             if self.closed {
                 return Err(Filter_DeviceClosed)
@@ -475,7 +476,7 @@ impl PcapDevice {
         }
     }
 
-    pub fn NextPacketEx(&self) -> Result<PcapPacket, PcapError> {
+    pub fn next_packet_ex(&self) -> Result<PcapPacket, PcapError> {
         if self.closed {
             Err(NextEx_BadState)
         } else {
@@ -512,7 +513,7 @@ impl PcapDevice {
         }
     }
 
-    pub fn Inject(&self, pkt: DecodedPacket) -> Option<uint> {
+    pub fn inject(&self, pkt: DecodedPacket) -> Option<uint> {
         unsafe {
             let mut data: ~[u8];
             match pkt {
@@ -550,7 +551,7 @@ impl PcapDevice {
     }
 
     // HELP: Should this be impl Drop for PcapDevice?
-    pub fn Close(&mut self) {
+    pub fn close(&mut self) {
         unsafe {
             self.closed = true;
             pcap_close(self.pcap_dev);

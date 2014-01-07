@@ -1,0 +1,397 @@
+----------------------------------------
+Error in processing of request from 66.235.53.194:34897
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 66.235.53.194:34898
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 66.235.53.194:34899
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39952
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39953
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39954
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39955
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39956
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39957
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39958
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39959
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39960
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39961
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:59125
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 66.235.53.194:34901
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39963
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39964
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39965
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 66.235.53.194:34903
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39966
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 192.168.1.20:39967
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+----------------------------------------
+Error in processing of request from 66.235.53.194:34904
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/site-packages/netlib/tcp.py", line 376, in request_thread
+    self.handle_connection(request, client_address)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 511, in handle_connection
+    h.handle()
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 175, in handle
+    while self.handle_request(cc) and not cc.close:
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 191, in handle_request
+    request = self.read_request(cc)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 437, in read_request
+    return self.read_request_transparent(client_conn)
+  File "/usr/lib/python2.7/site-packages/libmproxy/proxy.py", line 351, in read_request_transparent
+    content = http.read_http_body_request(
+AttributeError: 'module' object has no attribute 'read_http_body_request'
+
+----------------------------------------
+Shutting down...
