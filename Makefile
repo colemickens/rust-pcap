@@ -5,4 +5,5 @@ all:
 	mv *.so pktutil_test ./bin/
 	rustc examples/dump.rs -L ./bin/
 	rustc examples/tufe.rs -L ./bin/
+	mv examples/{dump,tufe} ./bin/
 	./bin/pktutil_test
