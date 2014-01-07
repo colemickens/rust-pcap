@@ -10,3 +10,9 @@ git clone http://github.com/colemickens/pcapfe
 cd pcapfe
 make # RIP rustpkg
 ```
+
+pcap.rs - generated
+pcapfe.rs - my wrapper for pcap
+
+pktutil.rs - decode
+pktutil_test.rs - a few tests for my decode/encode

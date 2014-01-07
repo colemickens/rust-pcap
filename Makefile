@@ -1,9 +1,8 @@
 all:
-	rustc --lib decode.rs
 	rustc --lib pcapfe.rs
-	mv *.so ./bin/
-
-test:
-	rustc --test test.rs -L ./bin/
-	./test
-	rm ./test
+	rustc --lib pktutil.rs
+	rustc --test pktutil_test.rs -L .
+	mv *.so pktutil_test ./bin/
+	rustc examples/dump.rs -L ./bin/
+	rustc examples/tufe.rs -L ./bin/
+	./bin/pktutil_test
