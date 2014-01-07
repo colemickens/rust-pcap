@@ -1,8 +1,10 @@
 all:
+	rm ./bin/*.so
 	rustc --lib decode.rs
 	rustc --lib pcapfe.rs
-	rustc --test test.rs -L .
-	rm -rf ./bin/
-	mkdir bin
-	mv *.so test ./bin/
-	./bin/test
+	mv *.so ./bin/
+
+test:
+	rustc --test test.rs -L ./bin/
+	./test
+	rm ./test
