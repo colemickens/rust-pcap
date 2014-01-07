@@ -35,18 +35,18 @@ pub enum PcapError {
 }
 
 pub struct EthernetHeader {
-    DstMac:     ~[u8],
-    SrcMac:     ~[u8],
-    Ethertype:  Ethertype,
+    dst_mac:    ~[u8],
+    src_mac:    ~[u8],
+    ethertype:  Ethertype,
 }
 impl EthernetHeader {
     pub fn len(&self) -> uint { 14 }
     pub fn as_bytes(&self) -> ~[u8] {
         let mut res: ~[u8] = ~[];
-        res = std::vec::append(res, self.DstMac);
-        res = std::vec::append(res, self.SrcMac);
-        res.push( (self.Ethertype as u16 >> 8) as u8  );
-        res.push( self.Ethertype as u8 );
+        res.push_all(self.dst_mac);
+        res.push_all(self.src_mac);
+        res.push( (self.ethertype as u16 >> 8) as u8  );
+        res.push( self.ethertype as u8 );
         res
     }
 }
@@ -60,58 +60,56 @@ pub enum Ethertype {
 }
 
 pub struct Ipv4Header {
-    Version:      u8,
-    Ihl:          u8,
-    DiffServices: u8,
-    Ecn:          u8,
-    TotalLength:  u16,
-    Id:           u16,
-    Flags:        u8,
-    FragOffset:   u16,
-    Ttl:          u8,
-    Protocol:     InternetProtocolNumbers,
-    Checksum:     u16,
-    SrcIp:        ip::IpAddr,
-    DstIp:        ip::IpAddr,
-    Options:     ~[u8],
+    version:       u8,
+    ihl:           u8,
+    diff_services: u8,
+    ecn:           u8,
+    total_len:     u16,
+    id:            u16,
+    flags:         u8,
+    frag_offset:   u16,
+    ttl:           u8,
+    protocol:      InternetprotocolNumbers,
+    checksum:      u16,
+    src_ip:        ip::IpAddr,
+    dst_ip:        ip::IpAddr,
+    options:       ~[u8],
 }
 impl Ipv4Header {
-    pub fn len(&self) -> uint { self.Ihl as uint *4 }
+    pub fn len(&self) -> uint { self.ihl as uint *4 }
     pub fn as_bytes(&self) -> ~[u8] {
-        let mut res: ~[u8] = ~[];
-        res.push( ((self.Version as u8) << 4) | self.Ihl as u8 );
-        res.push( (self.DiffServices as u8) << 6 | (self.Ecn) as u8 );
-        res.push( (self.TotalLength >> 8) as u8 );
-        res.push( self.TotalLength as u8 );
-        res.push( (self.Id >> 8) as u8 );
-        res.push( self.Id as u8 );
-
-        res.push( ((self.Flags as u8) << 5) | ((self.FragOffset >> 14) as u8) );
-        res.push( self.FragOffset as u8 );
-        res.push( self.Ttl as u8 );
-        res.push( self.Protocol as u8 );
-        res.push( (self.Checksum >> 8) as u8 );
-        res.push( self.Checksum as u8 );
-
-        match (self.SrcIp, self.DstIp) {
+        match (self.src_ip, self.dst_ip) {
             (Ipv4Addr(a,b,c,d), Ipv4Addr(g,h,i,j)) => {
-                res = std::vec::append(res, [a,b,c,d,g,h,i,j]);
+                let mut res: ~[u8] = ~[
+                    ((self.version as u8) << 4) | self.ihl as u8,
+                    (self.diff_services as u8) << 6 | (self.ecn) as u8,
+                    (self.total_len >> 8) as u8,
+                    self.total_len as u8,
+                    (self.id >> 8) as u8,
+                    self.id as u8,
+
+                    ((self.flags as u8) << 5) | ((self.frag_offset >> 14) as u8),
+                    self.frag_offset as u8,
+                    self.ttl as u8,
+                    self.protocol as u8,
+                    (self.checksum >> 8) as u8,
+                    self.checksum as u8,
+                ];
+                res.push_all([a,b,c,d,g,h,i,j]);
+                res.push_all(self.options);
+                return res
             }
             (_, _) => { fail!(); }
         }
-
-        res = std::vec::append(res, self.Options);
-
-        res
     }
 }
 
 pub struct Ipv6Header {
-    Temp:        uint,
+    temp:        uint,
 }
 
 #[deriving(Eq)]
-pub enum InternetProtocolNumbers {
+pub enum InternetprotocolNumbers {
     ICMP = 1,
     TCP = 6,
     UserDatagram = 17,
@@ -132,87 +130,84 @@ pub struct TcpFlags {
 
 // cast these to uints?
 pub struct TcpHeader {
-    SrcPort:     ip::Port,
-    DstPort:     ip::Port,
-    SeqNum:      u32,
-    AckNum:      u32,
-    DataOffset:  u8,
-    Flags:       TcpFlags,
-    WindowSize:  u16,
-    Checksum:    u16,
-    UrgentPtr:   u16,
-    Options:     ~[u8],
+    src_port:     ip::Port,
+    dst_port:     ip::Port,
+    seq_num:      u32,
+    ack_num:      u32,
+    data_offset:  u8,
+    flags:        TcpFlags,
+    window_size:  u16,
+    checksum:     u16,
+    urgent_ptr:   u16,
+    options:      ~[u8],
 }
 impl TcpHeader {
-    pub fn len(&self) -> uint { self.DataOffset as uint *4 }
+    pub fn len(&self) -> uint { self.data_offset as uint *4 }
     pub fn as_bytes(&self) -> ~[u8] {
-        let mut res: ~[u8] = ~[];
-
-        res.push( ((self.SrcPort as u16) >> 8) as u8 );
-        res.push( self.SrcPort as u8 );
-        res.push( ((self.DstPort as u16) >> 8) as u8 );
-        res.push( self.DstPort as u8 );
-
-        res.push( ((self.SeqNum as u32) >> 24) as u8 );
-        res.push( ((self.SeqNum as u32) >> 16) as u8 );
-        res.push( ((self.SeqNum as u32) >> 8) as u8 );
-        res.push( ((self.SeqNum as u32) >> 0) as u8 );
-        
-        res.push( ((self.AckNum as u32) >> 24) as u8 );
-        res.push( ((self.AckNum as u32) >> 16) as u8 );
-        res.push( ((self.AckNum as u32) >> 8) as u8 );
-        res.push( ((self.AckNum as u32) >> 0) as u8 );
-        
-        let flags_byte = self.DataOffset << 4 | if self.Flags.ns { 0b00000001 } else { 0 };
+        let flags_byte = self.data_offset << 4 | if self.flags.ns { 0b00000001 } else { 0 };
 
         let mut flags_byte2 = 0;        
-        if self.Flags.cwr { flags_byte2 += 0b10000000 };
-        if self.Flags.ece { flags_byte2 += 0b01000000 };
-        if self.Flags.urg { flags_byte2 += 0b00100000 };
-        if self.Flags.ack { flags_byte2 += 0b00010000 };
-        if self.Flags.psh { flags_byte2 += 0b00001000 };
-        if self.Flags.rst { flags_byte2 += 0b00000100 };
-        if self.Flags.syn { flags_byte2 += 0b00000010 };
-        if self.Flags.fin { flags_byte2 += 0b00000001 };
+        if self.flags.cwr { flags_byte2 += 0b10000000 };
+        if self.flags.ece { flags_byte2 += 0b01000000 };
+        if self.flags.urg { flags_byte2 += 0b00100000 };
+        if self.flags.ack { flags_byte2 += 0b00010000 };
+        if self.flags.psh { flags_byte2 += 0b00001000 };
+        if self.flags.rst { flags_byte2 += 0b00000100 };
+        if self.flags.syn { flags_byte2 += 0b00000010 };
+        if self.flags.fin { flags_byte2 += 0b00000001 };
 
-        res.push( flags_byte as u8 );
-        res.push( flags_byte2 as u8 );
+        let mut res: ~[u8] = ~[
+            ((self.src_port as u16) >> 8) as u8,
+            self.src_port as u8,
+            ((self.dst_port as u16) >> 8) as u8,
+            self.dst_port as u8,
 
-        res.push( (self.WindowSize >> 8) as u8 );
-        res.push( (self.WindowSize >> 0) as u8 );
-        res.push( (self.Checksum >> 8) as u8 );
-        res.push( (self.Checksum >> 0) as u8 );
-        res.push( (self.UrgentPtr >> 8) as u8 );
-        res.push( (self.UrgentPtr >> 0) as u8 );
+            ((self.seq_num as u32) >> 24) as u8,
+            ((self.seq_num as u32) >> 16) as u8,
+            ((self.seq_num as u32) >> 8) as u8,
+            ((self.seq_num as u32) >> 0) as u8,
+        
+            ((self.ack_num as u32) >> 24) as u8,
+            ((self.ack_num as u32) >> 16) as u8,
+            ((self.ack_num as u32) >> 8) as u8,
+            ((self.ack_num as u32) >> 0) as u8,
+            
+            flags_byte,
+            flags_byte2,
 
-        res = std::vec::append(res, self.Options);
+            (self.window_size >> 8) as u8,
+            (self.window_size >> 0) as u8,
+            (self.checksum >> 8) as u8,
+            (self.checksum >> 0) as u8,
+            (self.urgent_ptr >> 8) as u8,
+            (self.urgent_ptr >> 0) as u8,
+        ];
+
+        res.push_all(self.options);
 
         res
     }
 }
 
 pub struct UdpHeader {
-    SrcPort:     ip::Port,
-    DstPort:     ip::Port,
-    Length:      uint,
-    Checksum:    uint,
+    src_port:     ip::Port,
+    dst_port:     ip::Port,
+    length:       uint,
+    checksum:     uint,
 }
 impl UdpHeader {
     pub fn len(&self) -> uint { 8 }
     pub fn as_bytes(&self) -> ~[u8] {
-        //let res: ~[u8] = ~[u8, ..8];
-
-        let mut res: ~[u8] = ~[];
-        res.push( ((self.SrcPort as u16) >> 8) as u8 );
-        res.push( self.SrcPort as u8 );
-        res.push( ((self.DstPort as u16) >> 8) as u8 );
-        res.push( self.DstPort as u8 );
-        res.push( (self.Length >> 8) as u8 );
-        res.push( self.Length as u8 );
-        res.push( (self.Checksum >> 8) as u8 );
-        res.push( self.Checksum as u8 );
-        
-        res
+        ~[
+            ((self.src_port as u16) >> 8) as u8,
+            self.src_port as u8,
+            ((self.dst_port as u16) >> 8) as u8,
+            self.dst_port as u8,
+            (self.length >> 8) as u8,
+            self.length as u8,
+            (self.checksum >> 8) as u8,
+            self.checksum as u8,
+        ]
     }
 }
 
@@ -240,9 +235,9 @@ pub fn decode_ethernet_header(h: &[u8]) -> Option<EthernetHeader> {
     };
 
     Some(EthernetHeader{
-        DstMac: dst_mac,
-        SrcMac: src_mac,
-        Ethertype: ethertype,
+        dst_mac:    dst_mac,
+        src_mac:    src_mac,
+        ethertype:  ethertype,
     })
 }
 
@@ -281,20 +276,20 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
     let options = h.slice(20, 20+(4*(ihl as uint - 5))).to_owned();
 
     Some(Ipv4Header{
-        Version:      version,
-        Ihl:          ihl,
-        DiffServices: dscp,
-        Ecn:          ecn,
-        TotalLength:  total_len,
-        Id:           id,
-        Flags:        flags,
-        FragOffset:   frag_offset,
-        Ttl:          ttl,
-        Protocol:     match(proto) { 0x06 => { TCP }, _ => { UserDatagram } },
-        Checksum:     checksum,
-        SrcIp:        src_ip,
-        DstIp:        dst_ip,
-        Options:      options,
+        version:       version,
+        ihl:           ihl,
+        diff_services: dscp,
+        ecn:           ecn,
+        total_len:     total_len,
+        id:            id,
+        flags:         flags,
+        frag_offset:   frag_offset,
+        ttl:           ttl,
+        protocol:      match(proto) { 0x06 => { TCP }, _ => { UserDatagram } },
+        checksum:      checksum,
+        src_ip:        src_ip,
+        dst_ip:        dst_ip,
+        options:       options,
     })
 }
 
@@ -332,12 +327,12 @@ pub fn decode_tcp_header(h: &[u8]) -> Option<TcpHeader> {
     let options: ~[u8] = h.slice(20, (data_offset as uint)*4).to_owned();
 
     Some(TcpHeader{
-        SrcPort:     src_port,
-        DstPort:     dst_port,
-        SeqNum:      seq_num,
-        AckNum:      ack_num,
-        DataOffset:  data_offset,
-        Flags:       TcpFlags{
+        src_port:     src_port,
+        dst_port:     dst_port,
+        seq_num:      seq_num,
+        ack_num:      ack_num,
+        data_offset:  data_offset,
+        flags:       TcpFlags{
             ns: ns,
             cwr: cwr,
             ece: ece,
@@ -348,10 +343,10 @@ pub fn decode_tcp_header(h: &[u8]) -> Option<TcpHeader> {
             syn: syn,
             fin: fin,
         },
-        WindowSize:  window_size,
-        Checksum:    checksum,
-        UrgentPtr:   urgent_ptr,
-        Options:     options,
+        window_size:  window_size,
+        checksum:     checksum,
+        urgent_ptr:   urgent_ptr,
+        options:      options,
     })
 }
 
@@ -365,16 +360,11 @@ pub fn decode_udp_header(h: &[u8]) -> Option<UdpHeader> {
     let checksum: u16 = h[6] as u16 << 8 | h[7] as u16;
 
     Some(UdpHeader{
-        SrcPort:  src_port as ip::Port,
-        DstPort:  dst_port as ip::Port,
-        Length:   length   as uint,
-        Checksum: checksum as uint,
+        src_port:  src_port as ip::Port,
+        dst_port:  dst_port as ip::Port,
+        length:   length   as uint,
+        checksum: checksum as uint,
     })
-}
-
-pub fn prettystr(p: &[u8]) -> ~str {
-    let p = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
-    str::from_utf8_owned(p)
 }
 
 pub fn decode_packet<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
@@ -383,11 +373,11 @@ pub fn decode_packet<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
     match decode_ethernet_header(payload) {
         Some(ether_hdr) => {
             payload = payload.slice_from(ether_hdr.len());
-            match ether_hdr.Ethertype {
+            match ether_hdr.ethertype {
                 Ethertype_IP => match decode_ipv4_header(payload) {
                     Some(ip_hdr) => {
                         payload = payload.slice_from(ip_hdr.len());
-                        match ip_hdr.Protocol {
+                        match ip_hdr.protocol {
                             TCP => match decode_tcp_header(payload) {
                                 Some(tcp_hdr) => {
                                     payload = payload.slice_from(tcp_hdr.len());
@@ -415,6 +405,10 @@ pub fn decode_packet<'r>(payload: &'r [u8]) -> DecodedPacket<'r> {
         }
     }
 }
+
+//
+// HELP: Should I split the above (packet decoding) into a separate lib? from the pcap binding wrapper?
+//
 
 pub struct PcapDevice {
     pcap_dev: *mut pcap_t,
@@ -557,4 +551,11 @@ impl PcapDevice {
             pcap_close(self.pcap_dev);
         }
     }
+}
+
+// Doesn't belong:
+
+pub fn prettystr(p: &[u8]) -> ~str {
+    let p = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
+    str::from_utf8_owned(p)
 }

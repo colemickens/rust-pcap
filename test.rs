@@ -30,26 +30,26 @@ fn test_decode_udp_packet() {
         UdpPacket(eth_hdr, ip_hdr,  udp_hdr,  payload) => {
             let dst_mac = ~[0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
             let src_mac = ~[0x30, 0x85, 0xa9, 0x40, 0x09, 0x35];
-            assert_eq!(eth_hdr.DstMac, dst_mac);
-            assert_eq!(eth_hdr.SrcMac, src_mac);
-            assert_eq!(eth_hdr.Ethertype, Ethertype_IP);
+            assert_eq!(eth_hdr.dst_mac, dst_mac);
+            assert_eq!(eth_hdr.src_mac, src_mac);
+            assert_eq!(eth_hdr.ethertype, Ethertype_IP);
 
-            assert_eq!(ip_hdr.Version, 4);
-            assert_eq!(ip_hdr.DiffServices, 0x00);
-            assert_eq!(ip_hdr.TotalLength, 49);
-            assert_eq!(ip_hdr.Id, 0x2733);
-            assert_eq!(ip_hdr.Flags, 0x02);            
-            assert_eq!(ip_hdr.FragOffset, 0);
-            assert_eq!(ip_hdr.Ttl, 64);
-            assert_eq!(ip_hdr.Protocol, UserDatagram);
-            assert_eq!(ip_hdr.Checksum, 0x8f37);
-            assert_eq!(ip_hdr.SrcIp, Ipv4Addr(192, 168, 1, 2));
-            assert_eq!(ip_hdr.DstIp, Ipv4Addr(192, 168, 1, 255));
+            assert_eq!(ip_hdr.version, 4);
+            assert_eq!(ip_hdr.diff_services, 0x00);
+            assert_eq!(ip_hdr.total_len, 49);
+            assert_eq!(ip_hdr.id, 0x2733);
+            assert_eq!(ip_hdr.flags, 0x02);            
+            assert_eq!(ip_hdr.frag_offset, 0);
+            assert_eq!(ip_hdr.ttl, 64);
+            assert_eq!(ip_hdr.protocol, UserDatagram);
+            assert_eq!(ip_hdr.checksum, 0x8f37);
+            assert_eq!(ip_hdr.src_ip, Ipv4Addr(192, 168, 1, 2));
+            assert_eq!(ip_hdr.dst_ip, Ipv4Addr(192, 168, 1, 255));
             
-            assert_eq!(udp_hdr.SrcPort, 48301);
-            assert_eq!(udp_hdr.DstPort, 32412);
-            assert_eq!(udp_hdr.Length, 29);
-            assert_eq!(udp_hdr.Checksum, 0x0c9d9);
+            assert_eq!(udp_hdr.src_port, 48301);
+            assert_eq!(udp_hdr.dst_port, 32412);
+            assert_eq!(udp_hdr.length, 29);
+            assert_eq!(udp_hdr.checksum, 0x0c9d9);
             
             assert_eq!(payload.len(), 21);
             assert_eq!(payload, expected_payload);
@@ -83,43 +83,43 @@ fn test_decode_tcp_packet() {
         TcpPacket(eth_hdr, ip_hdr,  tcp_hdr,  payload) => {
             let dst_mac = ~[0xd0, 0xe7, 0x82, 0x7b, 0x3d, 0x8c];
             let src_mac = ~[0x30, 0x85, 0xa9, 0x40, 0x09, 0x35];
-            assert_eq!(eth_hdr.DstMac, dst_mac);
-            assert_eq!(eth_hdr.SrcMac, src_mac);
-            assert_eq!(eth_hdr.Ethertype, Ethertype_IP);
+            assert_eq!(eth_hdr.dst_mac, dst_mac);
+            assert_eq!(eth_hdr.src_mac, src_mac);
+            assert_eq!(eth_hdr.ethertype, Ethertype_IP);
 
-            assert_eq!(ip_hdr.Version, 4);
-            assert_eq!(ip_hdr.DiffServices, 0x00);
-            assert_eq!(ip_hdr.Ecn, 0x00);
-            assert_eq!(ip_hdr.TotalLength, 167);
-            assert_eq!(ip_hdr.Id, 0xefbd);
-            assert_eq!(ip_hdr.Flags, 0x02);            
-            assert_eq!(ip_hdr.FragOffset, 0);
-            assert_eq!(ip_hdr.Ttl, 64);
-            assert_eq!(ip_hdr.Protocol, TCP);
-            assert_eq!(ip_hdr.Checksum, 0xc73c);
-            assert_eq!(ip_hdr.SrcIp, Ipv4Addr(192, 168, 1, 2));
-            assert_eq!(ip_hdr.DstIp, Ipv4Addr(192, 168, 1, 4));
+            assert_eq!(ip_hdr.version, 4);
+            assert_eq!(ip_hdr.diff_services, 0x00);
+            assert_eq!(ip_hdr.ecn, 0x00);
+            assert_eq!(ip_hdr.total_len, 167);
+            assert_eq!(ip_hdr.id, 0xefbd);
+            assert_eq!(ip_hdr.flags, 0x02);            
+            assert_eq!(ip_hdr.frag_offset, 0);
+            assert_eq!(ip_hdr.ttl, 64);
+            assert_eq!(ip_hdr.protocol, TCP);
+            assert_eq!(ip_hdr.checksum, 0xc73c);
+            assert_eq!(ip_hdr.src_ip, Ipv4Addr(192, 168, 1, 2));
+            assert_eq!(ip_hdr.dst_ip, Ipv4Addr(192, 168, 1, 4));
             
-            assert_eq!(tcp_hdr.SrcPort, 56328);
-            assert_eq!(tcp_hdr.DstPort, 8008);
-            assert_eq!(tcp_hdr.SeqNum, 4002971569);
-            assert_eq!(tcp_hdr.AckNum, 518886842);
-            assert_eq!(tcp_hdr.DataOffset, 8);
+            assert_eq!(tcp_hdr.src_port, 56328);
+            assert_eq!(tcp_hdr.dst_port, 8008);
+            assert_eq!(tcp_hdr.seq_num, 4002971569);
+            assert_eq!(tcp_hdr.ack_num, 518886842);
+            assert_eq!(tcp_hdr.data_offset, 8);
 
-            assert_eq!(tcp_hdr.Flags.ns, false);
-            assert_eq!(tcp_hdr.Flags.cwr, false);
-            assert_eq!(tcp_hdr.Flags.ece, false);
-            assert_eq!(tcp_hdr.Flags.urg, false);
-            assert_eq!(tcp_hdr.Flags.ack, true);
-            assert_eq!(tcp_hdr.Flags.psh, true);
-            assert_eq!(tcp_hdr.Flags.rst, false);
-            assert_eq!(tcp_hdr.Flags.syn, false);
-            assert_eq!(tcp_hdr.Flags.fin, false);
+            assert_eq!(tcp_hdr.flags.ns, false);
+            assert_eq!(tcp_hdr.flags.cwr, false);
+            assert_eq!(tcp_hdr.flags.ece, false);
+            assert_eq!(tcp_hdr.flags.urg, false);
+            assert_eq!(tcp_hdr.flags.ack, true);
+            assert_eq!(tcp_hdr.flags.psh, true);
+            assert_eq!(tcp_hdr.flags.rst, false);
+            assert_eq!(tcp_hdr.flags.syn, false);
+            assert_eq!(tcp_hdr.flags.fin, false);
 
-            assert_eq!(tcp_hdr.WindowSize, 353);
-            assert_eq!(tcp_hdr.Checksum, 0x6603);
-            assert_eq!(tcp_hdr.UrgentPtr, 0x0000);
-            assert_eq!(tcp_hdr.Options, ~[1u8, 1u8, 8u8, 10u8, 4u8, 170u8, 231u8, 66u8, 0u8, 83u8, 212u8, 191u8]);
+            assert_eq!(tcp_hdr.window_size, 353);
+            assert_eq!(tcp_hdr.checksum, 0x6603);
+            assert_eq!(tcp_hdr.urgent_ptr, 0x0000);
+            assert_eq!(tcp_hdr.options, ~[1u8, 1u8, 8u8, 10u8, 4u8, 170u8, 231u8, 66u8, 0u8, 83u8, 212u8, 191u8]);
             
             assert_eq!(payload.len(), 115);
             assert_eq!(payload, expected_payload);
@@ -135,33 +135,33 @@ fn test_encode_udp() {
     let payload = [0x4d, 0x2d, 0x53, 0x45, 0x41, 0x52, 0x43, 0x48, 0x20, 0x2a, 0x20, 0x48, 0x54, 0x54, 0x50, 0x2f, 0x31, 0x2e, 0x31, 0x0d, 0x0a];
 
     let eth_hdr = EthernetHeader{
-        DstMac: ~[0xff, 0xff, 0xff, 0xff, 0xff, 0xff],
-        SrcMac: ~[0x30, 0x85, 0xa9, 0x40, 0x09, 0x35],
-        Ethertype: Ethertype_IP,
+        dst_mac:   ~[0xff, 0xff, 0xff, 0xff, 0xff, 0xff],
+        src_mac:   ~[0x30, 0x85, 0xa9, 0x40, 0x09, 0x35],
+        ethertype: Ethertype_IP,
     };
 
     let ip_hdr = Ipv4Header{
-        Version:      4,
-        DiffServices: 0x00,
-        Ecn:          0x00,
-        TotalLength:  49,
-        Id:           0x2733,
-        Flags:        0x02,
-        FragOffset:   0,
-        Ttl:          64,
-        Checksum:     0x8f37, // remove this cheat
-        SrcIp:        Ipv4Addr(192, 168, 1, 2),
-        DstIp:        Ipv4Addr(192, 168, 1, 255),
-        Ihl:          5,
-        Protocol:     UserDatagram,
-        Options:      ~[],
+        version:       4,
+        diff_services: 0x00,
+        ecn:           0x00,
+        total_len:     49,
+        id:            0x2733,
+        flags:         0x02,
+        frag_offset:   0,
+        ttl:           64,
+        checksum:      0x8f37, // remove this cheat
+        src_ip:        Ipv4Addr(192, 168, 1, 2),
+        dst_ip:        Ipv4Addr(192, 168, 1, 255),
+        ihl:           5,
+        protocol:      UserDatagram,
+        options:       ~[],
     };
 
     let udp_hdr = UdpHeader{
-        SrcPort:    48301,
-        DstPort:    32412,
-        Length:     29,
-        Checksum:   0x0c9d9, // remove this cheat
+        src_port:  48301,
+        dst_port:  32412,
+        length:    29,
+        checksum:  0x0c9d9, // remove this cheat
     };
     
     let mut raw_bytes: ~[u8] = eth_hdr.as_bytes();
@@ -180,26 +180,26 @@ fn test_encode_tcp() {
     let payload: ~[u8] = ~[0x47, 0x45, 0x54, 0x20, 0x2f, 0x73, 0x73, 0x64, 0x70, 0x2f, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x2d, 0x64, 0x65, 0x73, 0x63, 0x2e, 0x78, 0x6d, 0x6c, 0x20, 0x48, 0x54, 0x54, 0x50, 0x2f, 0x31, 0x2e, 0x31, 0x0d, 0x0a, 0x55, 0x73, 0x65, 0x72, 0x2d, 0x41, 0x67, 0x65, 0x6e, 0x74, 0x3a, 0x20, 0x55, 0x50, 0x6e, 0x50, 0x2f, 0x31, 0x2e, 0x30, 0x20, 0x44, 0x4c, 0x4e, 0x41, 0x44, 0x4f, 0x43, 0x2f, 0x31, 0x2e, 0x35, 0x30, 0x20, 0x50, 0x6c, 0x61, 0x74, 0x69, 0x6e, 0x75, 0x6d, 0x2f, 0x31, 0x2e, 0x30, 0x2e, 0x34, 0x2e, 0x31, 0x31, 0x0d, 0x0a, 0x48, 0x6f, 0x73, 0x74, 0x3a, 0x20, 0x31, 0x39, 0x32, 0x2e, 0x31, 0x36, 0x38, 0x2e, 0x31, 0x2e, 0x34, 0x3a, 0x38, 0x30, 0x30, 0x38, 0x0d, 0x0a, 0x0d, 0x0a];
 
     let eth_hdr = EthernetHeader{
-        DstMac: ~[0xd0, 0xe7, 0x82, 0x7b, 0x3d, 0x8c],
-        SrcMac: ~[0x30, 0x85, 0xa9, 0x40, 0x09, 0x35],
-        Ethertype: Ethertype_IP,
+        dst_mac: ~[0xd0, 0xe7, 0x82, 0x7b, 0x3d, 0x8c],
+        src_mac: ~[0x30, 0x85, 0xa9, 0x40, 0x09, 0x35],
+        ethertype: Ethertype_IP,
     };
 
     let ip_hdr = Ipv4Header{
-        Version:      4,
-        DiffServices: 0x00,
-        Ecn:          0x00,
-        TotalLength:  167,
-        Id:           0xefbd,
-        Flags:        0x02,
-        FragOffset:   0,
-        Ttl:          64,
-        Checksum:     0xc73c, // remove this cheat
-        SrcIp:        Ipv4Addr(192, 168, 1, 2),
-        DstIp:        Ipv4Addr(192, 168, 1, 4),
-        Ihl:          5,
-        Protocol:     TCP,
-        Options:      ~[],
+        version:       4,
+        diff_services: 0x00,
+        ecn:           0x00,
+        total_len:     167,
+        id:            0xefbd,
+        flags:         0x02,
+        frag_offset:   0,
+        ttl:           64,
+        checksum:      0xc73c, // remove this cheat
+        src_ip:        Ipv4Addr(192, 168, 1, 2),
+        dst_ip:        Ipv4Addr(192, 168, 1, 4),
+        ihl:           5,
+        protocol:      TCP,
+        options:       ~[],
     };
 
     let tcp_flags = TcpFlags{
@@ -215,16 +215,16 @@ fn test_encode_tcp() {
     };
 
     let tcp_hdr = TcpHeader{
-        SrcPort:     56328 as ip::Port,
-        DstPort:     8008 as ip::Port,
-        SeqNum:      4002971569,
-        AckNum:      518886842,
-        DataOffset:  8,
-        Flags:       tcp_flags,
-        WindowSize:  353,
-        Checksum:    0x6603,
-        UrgentPtr:   0x0000,
-        Options:     ~[1u8, 1u8, 8u8, 10u8, 4u8, 170u8, 231u8, 66u8, 0u8, 83u8, 212u8, 191u8],
+        src_port:     56328 as ip::Port,
+        dst_port:     8008 as ip::Port,
+        seq_num:       4002971569,
+        ack_num:       518886842,
+        data_offset:   8,
+        flags:        tcp_flags,
+        window_size:  353,
+        checksum:     0x6603,
+        urgent_ptr:   0x0000,
+        options:      ~[1u8, 1u8, 8u8, 10u8, 4u8, 170u8, 231u8, 66u8, 0u8, 83u8, 212u8, 191u8],
     };
 
     let mut raw_bytes: ~[u8] = eth_hdr.as_bytes();
