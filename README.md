@@ -5,7 +5,7 @@ libpcap bindings for Rust. This probably only works under Linux under a recent k
 
 Thanks to all in #rust.
 
-```rust
+```shell
 git clone http://github.com/colemickens/pcapfe
 cd pcapfe
 make # RIP rustpkg
