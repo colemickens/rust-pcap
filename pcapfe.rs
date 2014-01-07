@@ -7,9 +7,7 @@
 
 extern mod std;
 
-use std::io::net::ip;
-use std::io::net::ip::Ipv4Addr;
-use std::libc::{c_uint,c_char,c_schar,c_void };
+use std::libc::{c_uint,c_char,c_void };
 use std::ptr;
 use std::str;
 use std::vec;
