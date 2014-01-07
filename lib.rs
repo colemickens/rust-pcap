@@ -94,8 +94,8 @@ impl Ipv4Header {
                     self.protocol as u8,
                     (self.checksum >> 8) as u8,
                     self.checksum as u8,
+                    a, b, c, d, g, h, i, j
                 ];
-                res.push_all([a,b,c,d,g,h,i,j]);
                 res.push_all(self.options);
                 return res
             }
