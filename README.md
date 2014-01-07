@@ -8,6 +8,5 @@ Thanks to all in #rust.
 ```rust
 git clone http://github.com/colemickens/pcapfe
 cd pcapfe
-rustpkg build
-rustpkg test
+make # RIP rustpkg
 ```
