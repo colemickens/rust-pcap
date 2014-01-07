@@ -165,13 +165,12 @@ fn test_encode_udp() {
         checksum:  0x0c9d9, // remove this cheat
     };
     
-    let mut raw_bytes: ~[u8] = eth_hdr.as_bytes();
-    raw_bytes = std::vec::append(raw_bytes, ip_hdr.as_bytes());
-    raw_bytes = std::vec::append(raw_bytes, udp_hdr.as_bytes());
+    let mut res_bytes = eth_hdr.as_bytes();
+    res_bytes.push_all(ip_hdr.as_bytes());
+    res_bytes.push_all(udp_hdr.as_bytes());
+    res_bytes.push_all(payload);
 
-    raw_bytes = std::vec::append(raw_bytes, payload);
-
-    assert_eq!(raw_bytes, expected); // make expected &[u8] and then what here?
+    assert_eq!(res_bytes, expected); // make expected &[u8] and then what here?
 }
 
 #[test]
@@ -228,11 +227,10 @@ fn test_encode_tcp() {
         options:      ~[1u8, 1u8, 8u8, 10u8, 4u8, 170u8, 231u8, 66u8, 0u8, 83u8, 212u8, 191u8],
     };
 
-    let mut raw_bytes: ~[u8] = eth_hdr.as_bytes();
-    raw_bytes = std::vec::append(raw_bytes, ip_hdr.as_bytes());
-    raw_bytes = std::vec::append(raw_bytes, tcp_hdr.as_bytes());
+    let mut res_bytes = eth_hdr.as_bytes();
+    res_bytes.push_all(ip_hdr.as_bytes());
+    res_bytes.push_all(tcp_hdr.as_bytes());
+    res_bytes.push_all(payload);
 
-    raw_bytes = std::vec::append(raw_bytes, payload);
-
-    assert_eq!(raw_bytes, expected); // make expected &[u8] and then what here?
+    assert_eq!(res_bytes, expected); // make expected &[u8] and then what here?
 }
