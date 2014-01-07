@@ -167,8 +167,8 @@ impl TcpHeader {
 pub struct UdpHeader {
     src_port:     ip::Port,
     dst_port:     ip::Port,
-    length:       uint,
-    checksum:     uint,
+    length:       u16,
+    checksum:     u16,
 }
 impl UdpHeader {
     pub fn len(&self) -> uint { 8 }
@@ -221,50 +221,27 @@ pub fn decode_ipv4_header(h: &[u8]) -> Option<Ipv4Header> {
         return None
     }
 
-    let version = (h[0] & 0b11110000) >> 4;
     let ihl = h[0] & 0b00001111;
-
-    let dscp = h[1] >> 2;
-    let ecn = h[1] & 0b00000011;
-
-    let total_len: u16 = h[2] as u16 << 8 | h[3] as u16;
-    let id: u16 = h[4] as u16 << 8 | h[5] as u16;
-
-    let flags = (h[6] >> 5) & 0b00000111;
-
-    let frag_offset: u16 = h[6] as u16 << 8 | h[7] as u16;
-    let frag_offset = frag_offset & 0b0001111111111111;
-
-    let ttl = h[8];
-    let proto = h[9];
-
-    let checksum: u16 = h[10] as u16 << 8 | h[11] as u16;
-
-    let src_ip = Ipv4Addr(h[12], h[13], h[14], h[15]);
-    let dst_ip = Ipv4Addr(h[16], h[17], h[18], h[19]);
-
 
     if ihl > 15 {
         return None
     }
-    
-    let options = h.slice(20, 20+(4*(ihl as uint - 5))).to_owned();
 
     Some(Ipv4Header{
-        version:       version,
-        ihl:           ihl,
-        diff_services: dscp,
-        ecn:           ecn,
-        total_len:     total_len,
-        id:            id,
-        flags:         flags,
-        frag_offset:   frag_offset,
-        ttl:           ttl,
-        protocol:      match(proto) { 0x06 => { TCP }, _ => { UserDatagram } },
-        checksum:      checksum,
-        src_ip:        src_ip,
-        dst_ip:        dst_ip,
-        options:       options,
+        version:        (h[0] & 0b11110000) >> 4,
+        ihl:            ihl,
+        diff_services:  h[1] >> 2,
+        ecn:            h[1] & 0b00000011,
+        total_len:      h[2] as u16 << 8 | h[3] as u16,
+        id:             h[4] as u16 << 8 | h[5] as u16,
+        flags:          (h[6] >> 5) & 0b00000111,
+        frag_offset:    (h[6] as u16 << 8 | h[7] as u16) & 0b0001111111111111,
+        ttl:            h[8],
+        protocol:       match(h[9]) { 0x06 => { TCP }, _ => { UserDatagram } },
+        checksum:       h[10] as u16 << 8 | h[11] as u16,
+        src_ip:         Ipv4Addr(h[12], h[13], h[14], h[15]),
+        dst_ip:         Ipv4Addr(h[16], h[17], h[18], h[19]),
+        options:        h.slice(20, 20+(4*(ihl as uint - 5))).to_owned(),
     })
 }
 
@@ -276,52 +253,29 @@ pub fn decode_tcp_header(h: &[u8]) -> Option<TcpHeader> {
     if h.len() < 20 {
         return None
     }
-
-    let src_port: u16 = h[0] as u16 << 8 | h[1] as u16;
-    let dst_port: u16 = h[2] as u16 << 8 | h[3] as u16;
-
-    let seq_num: u32 = h[4] as u32 << 24 | h[5] as u32 << 16 | h[6] as u32 << 8 | h[7] as u32;
-    let ack_num: u32 = h[8] as u32 << 24 | h[9] as u32 << 16 | h[10] as u32 << 8 | h[11] as u32;
-
     let data_offset = h[12] >> 4;
 
-    let  ns: bool = (h[12] & 0b00000001) != 0;
-    let cwr: bool = (h[13] >> 7 & 0b00000001) != 0;
-    let ece: bool = (h[13] >> 6 & 0b00000001) != 0;
-    let urg: bool = (h[13] >> 5 & 0b00000001) != 0;
-    let ack: bool = (h[13] >> 4 & 0b00000001) != 0;
-    let psh: bool = (h[13] >> 3 & 0b00000001) != 0;
-    let rst: bool = (h[13] >> 2 & 0b00000001) != 0;
-    let syn: bool = (h[13] >> 1 & 0b00000001) != 0;
-    let fin: bool = (h[13] >> 0 & 0b00000001) != 0;
-
-    let window_size: u16 = h[14] as u16 << 8 | h[15] as u16;
-    let checksum: u16 = h[16] as u16 << 8 | h[17] as u16;
-    let urgent_ptr: u16 = h[18] as u16 << 8 | h[19] as u16;
-
-    let options: ~[u8] = h.slice(20, (data_offset as uint)*4).to_owned();
-
     Some(TcpHeader{
-        src_port:     src_port,
-        dst_port:     dst_port,
-        seq_num:      seq_num,
-        ack_num:      ack_num,
+        src_port:     h[0] as u16 << 8 | h[1] as u16,
+        dst_port:     h[2] as u16 << 8 | h[3] as u16,
+        seq_num:      h[4] as u32 << 24 | h[5] as u32 << 16 | h[6] as u32 << 8 | h[7] as u32,
+        ack_num:      h[8] as u32 << 24 | h[9] as u32 << 16 | h[10] as u32 << 8 | h[11] as u32,
         data_offset:  data_offset,
-        flags:       TcpFlags{
-            ns: ns,
-            cwr: cwr,
-            ece: ece,
-            urg: urg,
-            ack: ack,
-            psh: psh,
-            rst: rst,
-            syn: syn,
-            fin: fin,
+        flags: TcpFlags{
+            ns: (h[12] & 0b00000001) != 0,
+            cwr: (h[13] >> 7 & 0b00000001) != 0,
+            ece: (h[13] >> 6 & 0b00000001) != 0,
+            urg: (h[13] >> 5 & 0b00000001) != 0,
+            ack: (h[13] >> 4 & 0b00000001) != 0,
+            psh: (h[13] >> 3 & 0b00000001) != 0,
+            rst: (h[13] >> 2 & 0b00000001) != 0,
+            syn: (h[13] >> 1 & 0b00000001) != 0,
+            fin: (h[13] >> 0 & 0b00000001) != 0,
         },
-        window_size:  window_size,
-        checksum:     checksum,
-        urgent_ptr:   urgent_ptr,
-        options:      options,
+        window_size:  h[14] as u16 << 8 | h[15] as u16,
+        checksum:     h[16] as u16 << 8 | h[17] as u16,
+        urgent_ptr:   h[18] as u16 << 8 | h[19] as u16,
+        options:      h.slice(20, (data_offset as uint)*4).to_owned(),
     })
 }
 
@@ -329,16 +283,11 @@ pub fn decode_udp_header(h: &[u8]) -> Option<UdpHeader> {
     if h.len() < 8 {
         return None
     }
-    let src_port: u16 = h[0] as u16 << 8 | h[1] as u16;
-    let dst_port: u16 = h[2] as u16 << 8 | h[3] as u16;
-    let length: u16   = h[4] as u16 << 8 | h[5] as u16;
-    let checksum: u16 = h[6] as u16 << 8 | h[7] as u16;
-
     Some(UdpHeader{
-        src_port:  src_port as ip::Port,
-        dst_port:  dst_port as ip::Port,
-        length:   length   as uint,
-        checksum: checksum as uint,
+        src_port:  (h[0] as u16 << 8 | h[1] as u16) as ip::Port,
+        dst_port:  (h[2] as u16 << 8 | h[3] as u16) as ip::Port,
+        length:   h[4] as u16 << 8 | h[5] as u16,
+        checksum: h[6] as u16 << 8 | h[7] as u16,
     })
 }
 
