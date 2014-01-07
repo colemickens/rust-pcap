@@ -1,16 +1,17 @@
 #[feature(globs)];
 
 extern mod pcapfe;
+extern mod pktdecode;
 
 use std::io::net::ip::Ipv4Addr;
 use std::io::net::ip;
 
-use pcapfe::decode_packet;
-use pcapfe::{UdpPacket,TcpPacket};
-use pcapfe::{EthernetHeader,Ipv4Header,UdpHeader,TcpFlags,TcpHeader};
+use pktdecode::decode_packet;
+use pktdecode::{UdpPacket,TcpPacket};
+use pktdecode::{EthernetHeader,Ipv4Header,UdpHeader,TcpFlags,TcpHeader};
 
-use pcapfe::{UserDatagram,TCP};
-use pcapfe::{Ethertype_IP};
+use pktdecode::{UserDatagram,TCP};
+use pktdecode::{Ethertype_IP};
 
 #[test]
 fn test_decode_udp_packet() {
