@@ -5,9 +5,7 @@
 
 #[feature(globs)];
 
-extern mod std;
-
-use std::libc::{c_uint,c_char,c_void };
+use std::libc::{c_uint,c_char,c_void,c_int};
 use std::ptr;
 use std::str;
 use std::vec;
@@ -23,15 +21,18 @@ pub enum PcapError {
     Filter_DeviceClosed,
     Filter_CompileError,
     Filter_SetError,
+    Datalink_SetError,
     Unknown
 }
 
-//
-// HELP: Should I split the above (packet decoding) into a separate lib? from the pcap binding wrapper?
-//
+// turn this into an enum?
+type DataLinkType = u8;
+pub static DLT_NULL: DataLinkType = 0;
+pub static DLT_ETHERNET: DataLinkType = 1;
+pub static DLT_IEEE802_11_RADIO: DataLinkType = 127;
 
 pub struct PcapDevice {
-    pcap_dev: *mut pcap_t,
+    dev: *mut pcap_t,
     closed: bool
 }
 
@@ -53,15 +54,45 @@ pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<Pc
         
         let errbuf_f: ~[u8] = std::cast::transmute(errbuf);
         if handle == ptr::mut_null() {
-            Err(prettystr(errbuf_f)) // TODO: fix [this is always empty]
+            //Err(prettystr(errbuf_f)) // TODO: fix [this is always empty]
+            Err(~"err")
         } else {
-            let pd: PcapDevice = PcapDevice { pcap_dev: handle, closed: false };
+            let pd: PcapDevice = PcapDevice { dev: handle, closed: false };
             Ok(pd)
         }
     }
 }
 
 impl PcapDevice {
+    pub fn get_datalink(&self) -> Option<DataLinkType> {
+        unsafe {
+            match pcap_datalink(self.dev) {
+                n if n < 0 => { None }
+                m => { Some(m as u8) }
+            }
+        }
+    }
+
+    pub fn set_datalink(&self, dlt: DataLinkType) -> Result<(),PcapError> {
+        unsafe {
+            match pcap_set_datalink(self.dev, dlt as i32) {
+                -1 => { Err(Datalink_SetError) }
+                0 => { Ok(()) }
+                _ => { Err(Unknown) }
+            }
+        }
+    }
+
+    pub fn list_datalinks(&self) -> ~[DataLinkType] {
+        unsafe {
+            let mut dlt_buf: *mut c_int = ptr::mut_null();
+            let sz = pcap_list_datalinks(self.dev, &mut dlt_buf);
+            let out: ~[u8] = vec::raw::from_buf_raw(dlt_buf as *u8, sz as uint);
+            pcap_free_datalinks(dlt_buf);
+            return out;
+        }
+    }
+
     pub fn set_filter(&self, dev: &str, filter_str: &str) -> Result<(), PcapError> {
         unsafe {
             if self.closed {
@@ -76,11 +107,11 @@ impl PcapDevice {
             let c_filter_str = filter_str.to_c_str().unwrap();
             
             pcap_lookupnet(c_dev, &mut netp, &mut maskp, errbuf.as_mut_ptr());
-            let res = pcap_compile(self.pcap_dev, &mut filter_program, c_filter_str, 0, netp);
+            let res = pcap_compile(self.dev, &mut filter_program, c_filter_str, 0, netp);
             if res != 0 {
                 Err(Filter_CompileError)
             } else {
-                let res = pcap_setfilter(self.pcap_dev, &mut filter_program);
+                let res = pcap_setfilter(self.dev, &mut filter_program);
                 if res != 0 {
                     Err(Filter_SetError)
                 } else {
@@ -88,6 +119,10 @@ impl PcapDevice {
                 }
             }
         }
+    }
+
+    pub fn capture_loop<C>(&self, ctx: ~C, hndlr: pcap_handler) {
+        unsafe { pcap_loop(self.dev, -1, hndlr, ptr::to_unsafe_ptr(ctx) as *mut u8); }
     }
 
     pub fn next_packet_ex(&self) -> Result<PcapPacket, PcapError> {
@@ -98,7 +133,7 @@ impl PcapDevice {
                 let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
                 let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
 
-                let result = pcap_next_ex(self.pcap_dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
+                let result = pcap_next_ex(self.dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
 
                 let pkt_len: uint = (*pkthdr_ptr).len as uint;
                 match result {
@@ -129,7 +164,7 @@ impl PcapDevice {
         unsafe {
             let data1 = pkt.as_ptr() as *c_void;
             let size1 = pkt.len() as u64;
-            let result = pcap_inject(self.pcap_dev, data1, size1);
+            let result = pcap_inject(self.dev, data1, size1);
             if result < 0 {
                 None
             } else {
@@ -143,14 +178,7 @@ impl Drop for PcapDevice {
     fn drop(&mut self) {
         unsafe {
             self.closed = true;
-            pcap_close(self.pcap_dev);
+            pcap_close(self.dev);
         }
     }
-}
-
-// Doesn't belong:
-
-pub fn prettystr(p: &[u8]) -> ~str {
-    let p = p.map(|&e| if e > 31 && e < 127 { e } else { '.' as u8 });
-    str::from_utf8_owned(p)
 }

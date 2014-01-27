@@ -1,18 +1,26 @@
-pcapfe
-======
+pktutil
+=======
 
-libpcap bindings for Rust. This probably only works under Linux under a recent kernel.
-
-Thanks to all in #rust.
+Build
+-----
 
 ```shell
 git clone http://github.com/colemickens/pcapfe
 cd pcapfe
-make # RIP rustpkg
+rustpkg build
 ```
 
-pcap.rs - generated
-pcapfe.rs - my wrapper for pcap
+Bindgen
+-------
 
-pktutil.rs - decode
-pktutil_test.rs - a few tests for my decode/encode
+Generating the c-bindings via rust-bindgen:
+
+```shell
+../../../crabtw/src/rust-bindgen/bindgen \
+  -builtins \
+  -l pcap \
+  -o pcap.rs \
+  /usr/include/pcap/pcap.h \
+  -I/usr/lib/clang/3.4/include/
+```
+
