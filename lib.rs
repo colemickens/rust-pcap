@@ -7,7 +7,6 @@
 
 use std::libc::{c_uint,c_char,c_void,c_int};
 use std::ptr;
-use std::str;
 use std::vec;
 
 use pcap::*;
@@ -26,10 +25,18 @@ pub enum PcapError {
 }
 
 // turn this into an enum?
-type DataLinkType = u8;
-pub static DLT_NULL: DataLinkType = 0;
-pub static DLT_ETHERNET: DataLinkType = 1;
-pub static DLT_IEEE802_11_RADIO: DataLinkType = 127;
+/*
+pub enum DatalinkType {
+    Datalink_Other,
+    DatalinkType_Ethernet = 1,
+    DatalinkType_IEEE802_11_RADIO = 127,
+}
+*/
+
+type DatalinkType = u8;
+pub static DLT_NULL: DatalinkType = 0;
+pub static DLT_ETHERNET: DatalinkType = 1;
+pub static DLT_IEEE802_11_RADIO: DatalinkType = 127;
 
 pub struct PcapDevice {
     dev: *mut pcap_t,
@@ -52,7 +59,7 @@ pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<Pc
         let c_dev = dev.to_c_str().unwrap();
         let handle = pcap_open_live(c_dev, size as i32, flag as i32, mtu as i32, errbuf.as_mut_ptr());
         
-        let errbuf_f: ~[u8] = std::cast::transmute(errbuf);
+        let _errbuf_f: ~[u8] = std::cast::transmute(errbuf);
         if handle == ptr::mut_null() {
             //Err(prettystr(errbuf_f)) // TODO: fix [this is always empty]
             Err(~"err")
@@ -64,7 +71,7 @@ pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<Pc
 }
 
 impl PcapDevice {
-    pub fn get_datalink(&self) -> Option<DataLinkType> {
+    pub fn get_datalink(&self) -> Option<DatalinkType> {
         unsafe {
             match pcap_datalink(self.dev) {
                 n if n < 0 => { None }
@@ -73,7 +80,7 @@ impl PcapDevice {
         }
     }
 
-    pub fn set_datalink(&self, dlt: DataLinkType) -> Result<(),PcapError> {
+    pub fn set_datalink(&self, dlt: DatalinkType) -> Result<(),PcapError> {
         unsafe {
             match pcap_set_datalink(self.dev, dlt as i32) {
                 -1 => { Err(Datalink_SetError) }
@@ -83,13 +90,17 @@ impl PcapDevice {
         }
     }
 
-    pub fn list_datalinks(&self) -> ~[DataLinkType] {
+    pub fn list_datalinks(&self) -> ~[DatalinkType] {
         unsafe {
             let mut dlt_buf: *mut c_int = ptr::mut_null();
             let sz = pcap_list_datalinks(self.dev, &mut dlt_buf);
             let out: ~[u8] = vec::raw::from_buf_raw(dlt_buf as *u8, sz as uint);
             pcap_free_datalinks(dlt_buf);
-            return out;
+            let mut out2: ~[DatalinkType] = ~[];
+            for t in out.iter() {
+                out2.push(*t as DatalinkType);
+            }
+            out2
         }
     }
 
