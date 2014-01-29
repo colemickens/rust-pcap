@@ -1,7 +1,7 @@
 pcapfe
 ======
 
-![travis-ci status](https://api.travis-ci.org/colemickens/pcapfe.png)
+[![Build Status](https://secure.travis-ci.org/colemickens/pcapfe.png)](http://travis-ci.org/colemickens/pcapfe)
 
 Build
 -----
@@ -25,4 +25,3 @@ Generating the c-bindings via rust-bindgen:
   /usr/include/pcap/pcap.h \
   -I/usr/lib/clang/3.4/include/
 ```
-
