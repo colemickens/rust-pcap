@@ -1,6 +1,8 @@
 pcapfe
 ======
 
+![travis-ci status](https://api.travis-ci.org/colemickens/pcapfe.png)
+
 Build
 -----
 
