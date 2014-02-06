@@ -1,14 +1,14 @@
-pcapfe
-======
+rust-pcap
+=========
 
-[![Build Status](https://secure.travis-ci.org/colemickens/pcapfe.png)](http://travis-ci.org/colemickens/pcapfe)
+[![Build Status](https://secure.travis-ci.org/colemickens/rust-pcap.png)](http://travis-ci.org/colemickens/rust-pcap)
 
 Build
 -----
 
 ```shell
-git clone http://github.com/colemickens/pcapfe
-cd pcapfe
+git clone http://github.com/colemickens/rust-pcap
+cd rust-pcap
 rustpkg build
 ```
 

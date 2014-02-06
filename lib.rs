@@ -1,4 +1,4 @@
-#[crate_id="pcapfe"];
+#[crate_id="pcap"];
 #[crate_type="lib"];
 #[desc = "A Rust package wrapping libpcap"];
 #[license = "MIT"];
