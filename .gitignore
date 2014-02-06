@@ -1,3 +1,4 @@
 .rust
 *.so
 bin/
+*.rlib
