@@ -5,7 +5,7 @@
 
 #[feature(globs)];
 
-use std::libc::{c_uint,c_char,c_void,c_int};
+use std::libc::{c_uint,c_char,c_int};
 use std::ptr;
 use std::vec;
 
@@ -173,9 +173,9 @@ impl PcapDevice {
 
     pub fn inject(&self, pkt: ~[u8]) -> Option<uint> {
         unsafe {
-            let data1 = pkt.as_ptr() as *c_void;
-            let size1 = pkt.len() as u64;
-            let result = pcap_inject(self.dev, data1, size1);
+            let data1 = pkt.as_ptr() as *u8;
+            let size1 = pkt.len() as i32;
+            let result = pcap_sendpacket(self.dev, data1, size1);
             if result < 0 {
                 None
             } else {

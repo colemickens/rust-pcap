@@ -2,3 +2,5 @@
 *.so
 bin/
 *.rlib
+*.dll
+*.exe
