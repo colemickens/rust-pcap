@@ -9,7 +9,7 @@ Build
 ```shell
 git clone http://github.com/colemickens/rust-pcap
 cd rust-pcap
-rustpkg build
+make
 ```
 
 Bindgen
