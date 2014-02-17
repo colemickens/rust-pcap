@@ -9,7 +9,7 @@ gen:
 		/usr/include/pcap/pcap.h \
 		-I/usr/lib/clang/3.4/include/
 
-	echo '#[ignore(dead_code)]' | cat - pcap.rs > pcap.rs-temp && mv pcap.rs-temp pcap.rs
+	echo '#[allow(dead_code)];' | cat - pcap.rs > pcap.rs-temp && mv pcap.rs-temp pcap.rs
 
 	echo ''									        >> pcap.rs
 	echo '#[cfg(windows)]'          >> pcap.rs
