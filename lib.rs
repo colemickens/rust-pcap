@@ -133,7 +133,9 @@ impl PcapDevice {
     }
 
     pub fn capture_loop<C>(&self, ctx: ~C, hndlr: pcap_handler) {
-        unsafe { pcap_loop(self.dev, -1, hndlr, ptr::to_unsafe_ptr(ctx) as *mut u8); }
+        // credit to huon (PST TIME #rust on mozilla.org)
+        // [01:55:13] <huon> geomyidae: &*ctx as *C as *u8
+        unsafe { pcap_loop(self.dev, -1, hndlr, &*ctx as *C as *mut u8); }
     }
 
     pub fn next_packet_ex(&self) -> Result<PcapPacket, PcapError> {
