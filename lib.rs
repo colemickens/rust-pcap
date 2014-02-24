@@ -12,6 +12,7 @@ use std::vec;
 use pcap::*;
 mod pcap;
 
+#[allow(non_camel_case_types)]
 pub enum PcapError {
     NextEx_BadState,
     NextEx_ReadError,
@@ -112,7 +113,7 @@ impl PcapDevice {
             let mut errbuf: ~[c_char] = vec::with_capacity(256);
             let mut netp: c_uint = 0;
             let mut maskp: c_uint = 0;
-            let mut filter_program: Struct_bpf_program = std::unstable::intrinsics::uninit();
+            let mut filter_program: Struct_bpf_program = std::intrinsics::uninit();
 
             let c_dev = dev.to_c_str().unwrap();
             let c_filter_str = filter_str.to_c_str().unwrap();
@@ -143,8 +144,8 @@ impl PcapDevice {
             Err(NextEx_BadState)
         } else {
             unsafe {
-                let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::unstable::intrinsics::uninit();
-                let mut pkt_data_ptr: *u8 = std::unstable::intrinsics::uninit();
+                let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::intrinsics::uninit();
+                let mut pkt_data_ptr: *u8 = std::intrinsics::uninit();
 
                 let result = pcap_next_ex(self.dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
 
