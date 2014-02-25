@@ -10,7 +10,7 @@ bindgen:
 		-I/usr/lib/clang/3.4/include/
 
 	echo '#[allow(dead_code)];' | cat - pcap.rs > pcap.rs-temp && mv pcap.rs-temp pcap.rs
-	echo '#[warn(non_camel_case_types)];' | cat - pcap.rs > pcap.rs-temp && mv pcap.rs-temp pcap.rs
+	echo '#[allow(non_camel_case_types)];' | cat - pcap.rs > pcap.rs-temp && mv pcap.rs-temp pcap.rs
 
 	echo ''									        >> pcap.rs
 	echo '#[cfg(windows)]'          >> pcap.rs
