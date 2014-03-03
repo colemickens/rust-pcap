@@ -422,8 +422,9 @@ pub struct Struct_pcap_addr {
 }
 pub type Struct_sockaddr = c_void;
 pub type pcap_handler =
-    extern "C" fn
-        (arg1: *mut u_char, arg2: *Struct_pcap_pkthdr, arg3: *u_char);
+    ::std::option::Option<extern "C" fn
+                              (arg1: *mut u_char, arg2: *Struct_pcap_pkthdr,
+                               arg3: *u_char)>;
 pub type __va_list_tag = Struct___va_list_tag;
 pub struct Struct___va_list_tag {
     gp_offset: c_uint,
