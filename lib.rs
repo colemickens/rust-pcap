@@ -7,7 +7,7 @@
 
 use std::libc::{c_uint,c_char,c_int};
 use std::ptr;
-use std::vec;
+use std::vec::Vec;
 
 use pcap::*;
 mod pcap;
@@ -34,7 +34,7 @@ pub enum DatalinkType {
 }
 */
 
-type DatalinkType = u8;
+pub type DatalinkType = u8;
 pub static DLT_NULL: DatalinkType = 0;
 pub static DLT_ETHERNET: DatalinkType = 1;
 pub static DLT_IEEE802_11_RADIO: DatalinkType = 127;
@@ -56,11 +56,14 @@ pub fn pcap_open_dev(dev: &str) -> Result<PcapDevice, ~str> {
 
 pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<PcapDevice, ~str> {
     unsafe {
-        let mut errbuf: ~[c_char] = vec::with_capacity(256);
+        let mut errbuf: Vec<c_char> = Vec::with_capacity(256);
         let c_dev = dev.to_c_str().unwrap();
         let handle = pcap_open_live(c_dev, size as i32, flag as i32, mtu as i32, errbuf.as_mut_ptr());
         
+        /*
+        TODO:restore
         let _errbuf_f: ~[u8] = std::cast::transmute(errbuf);
+        */
         if handle == ptr::mut_null() {
             //Err(prettystr(errbuf_f)) // TODO: fix [this is always empty]
             Err(~"err")
@@ -95,7 +98,9 @@ impl PcapDevice {
         unsafe {
             let mut dlt_buf: *mut c_int = ptr::mut_null();
             let sz = pcap_list_datalinks(self.dev, &mut dlt_buf);
-            let out: ~[u8] = vec::raw::from_buf_raw(dlt_buf as *u8, sz as uint);
+            // let out: ~[u8] = Vec::raw::from_buf_raw(dlt_buf as *u8, sz as uint);
+            // TODO is this correct
+            let out: Vec<u8> = Vec::from_raw_parts(sz as uint, sz as uint, dlt_buf as *mut u8);
             pcap_free_datalinks(dlt_buf);
             let mut out2: ~[DatalinkType] = ~[];
             for t in out.iter() {
@@ -110,7 +115,7 @@ impl PcapDevice {
             if self.closed {
                 return Err(Filter_DeviceClosed)
             }
-            let mut errbuf: ~[c_char] = vec::with_capacity(256);
+            let mut errbuf: Vec<c_char> = Vec::with_capacity(256);
             let mut netp: c_uint = 0;
             let mut maskp: c_uint = 0;
             let mut filter_program: Struct_bpf_program = std::intrinsics::uninit();
@@ -145,11 +150,16 @@ impl PcapDevice {
         } else {
             unsafe {
                 let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::intrinsics::uninit();
-                let mut pkt_data_ptr: *u8 = std::intrinsics::uninit();
+                
+                // const u_char*
+                let mut pkt_data_ptr: *mut u8 = std::intrinsics::uninit();
 
-                let result = pcap_next_ex(self.dev, &mut pkthdr_ptr, &mut pkt_data_ptr);
+                let result = pcap_next_ex(self.dev, &mut pkthdr_ptr, &mut(pkt_data_ptr as *u8));
 
                 let pkt_len: uint = (*pkthdr_ptr).len as uint;
+
+                println!("{}", pkt_len);
+
                 match result {
                     -2 => { Err(NextEx_EndOfCaptureFile) }
                     -1 => { Err(NextEx_ReadError) } // call pcap_getErr(NextEx_) or pcap_perror() (ret Result instead)
@@ -159,10 +169,21 @@ impl PcapDevice {
                             println!("ignoring zero length packet"); 
                             Err(Unknown)
                         } else {
-                            let payload = std::vec::from_buf(pkt_data_ptr, pkt_len);                            
+                            // let payload = std::vec::Vec::from_buf(pkt_data_ptr, pkt_len);
+                            println!("payload");
+                            
+                            let payload: Vec<u8> = std::vec::Vec::from_raw_parts(pkt_len, pkt_len, pkt_data_ptr);
+                            println!("payload2");
+                            println!("{}", payload);
+                            
+                            let payload = payload.as_slice().to_owned();
+                            println!("payload3");
+                            println!("{}", payload);
+
                             let pkt = PcapPacket{
                                 timestamp: (*pkthdr_ptr).ts,
                                 len: pkt_len,
+                                // is this the best way?
                                 payload: payload
                             };
                             Ok(pkt)

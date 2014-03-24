@@ -1,5 +1,6 @@
 all:
 	rustc lib.rs
+	rustc example/simple.rs -L . -o example/simple
 
 bindgen:
 	../../crabtw/rust-bindgen/bindgen \

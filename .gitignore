@@ -1,6 +1,6 @@
 .rust
 *.so
-bin/
+example/simple
 *.rlib
 *.dll
 *.exe
