@@ -1,9 +1,4 @@
-#[crate_id="pcap"];
-#[crate_type="lib"];
-#[desc = "A Rust package wrapping libpcap"];
-#[license = "MIT"];
-
-#[feature(globs)];
+#![feature(globs)]
 
 use std::libc::{c_uint,c_char,c_int};
 use std::ptr;
@@ -47,7 +42,7 @@ pub struct PcapDevice {
 pub struct PcapPacket {
     timestamp: Struct_timeval,
     len: uint,
-    payload: ~[u8]
+    payload: Vec<u8>
 }
 
 pub fn pcap_open_dev(dev: &str) -> Result<PcapDevice, ~str> {
@@ -169,10 +164,10 @@ impl PcapDevice {
                             println!("ignoring zero length packet"); 
                             Err(Unknown)
                         } else {
-                            // let payload = std::vec::Vec::from_buf(pkt_data_ptr, pkt_len);
+                            // let payload = Vec::from_buf(pkt_data_ptr, pkt_len);
                             println!("payload");
                             
-                            let payload: Vec<u8> = std::vec::Vec::from_raw_parts(pkt_len, pkt_len, pkt_data_ptr);
+                            let payload: Vec<u8> = Vec::from_raw_parts(pkt_len, pkt_len, pkt_data_ptr);
                             println!("payload2");
                             println!("{}", payload);
                             

@@ -1,6 +1,1 @@
-.rust
-*.so
-example/simple
-*.rlib
-*.dll
-*.exe
+target/

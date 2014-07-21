@@ -1,0 +1,12 @@
+[package]
+
+name = "rust-pcap"
+version = "0.0.0"
+authors = [ "cole.mickens@gmail.com" ]
+
+build = "./bindgen.sh"
+
+[[lib]]
+
+name = "pcap"
+crate-type = ["dylib", "rlib"]
