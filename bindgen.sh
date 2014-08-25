@@ -1,6 +1,7 @@
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../crabtw/rust-bindgen
 
-../../crabtw/rust-bindgen/bindgen \
+LD_PRELOAD=/usr/lib/libclang.so \
+  ../../crabtw/rust-bindgen/bindgen \
 	-builtins \
 	-l pcap \
 	-o pcap.rs \

@@ -9,11 +9,9 @@ mod pcap;
 
 #[allow(non_camel_case_types)]
 pub enum PcapError {
-    NextEx_BadState,
     NextEx_ReadError,
     NextEx_Timeout,
     NextEx_EndOfCaptureFile,
-    Filter_DeviceClosed,
     Filter_CompileError,
     Filter_SetError,
     Datalink_SetError,
@@ -45,11 +43,11 @@ pub struct PcapPacket {
     payload: Vec<u8>
 }
 
-pub fn pcap_open_dev(dev: &str) -> Result<PcapDevice, ~str> {
+pub fn pcap_open_dev(dev: &str) -> Result<PcapDevice, String> {
     pcap_open_dev_adv(dev, 65536, 0, 1000)
 }
 
-pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<PcapDevice, ~str> {
+pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<PcapDevice, String> {
     unsafe {
         let mut errbuf: Vec<c_char> = Vec::with_capacity(256);
         let c_dev = dev.to_c_str().unwrap();
@@ -61,7 +59,7 @@ pub fn pcap_open_dev_adv(dev: &str, size: int, flag: int, mtu: int) -> Result<Pc
         */
         if handle == ptr::mut_null() {
             //Err(prettystr(errbuf_f)) // TODO: fix [this is always empty]
-            Err(~"err")
+            Err("err".to_string())
         } else {
             let pd: PcapDevice = PcapDevice { dev: handle, closed: false };
             Ok(pd)
@@ -89,27 +87,28 @@ impl PcapDevice {
         }
     }
 
-    pub fn list_datalinks(&self) -> ~[DatalinkType] {
+    pub fn list_datalinks(&self) -> Vec<DatalinkType> {
+        let mut out: Vec<DatalinkType> = Vec::new();
+
         unsafe {
             let mut dlt_buf: *mut c_int = ptr::mut_null();
             let sz = pcap_list_datalinks(self.dev, &mut dlt_buf);
-            // let out: ~[u8] = Vec::raw::from_buf_raw(dlt_buf as *u8, sz as uint);
-            // TODO is this correct
-            let out: Vec<u8> = Vec::from_raw_parts(sz as uint, sz as uint, dlt_buf as *mut u8);
-            pcap_free_datalinks(dlt_buf);
-            let mut out2: ~[DatalinkType] = ~[];
-            for t in out.iter() {
-                out2.push(*t as DatalinkType);
+            
+            let mut dlt_buf_cur: *mut c_int = dlt_buf;
+
+            
+            for i in range(0u, sz as uint) {
+                dlt_buf_cur = dlt_buf_cur + 1;
+                out.push(*t as DatalinkType);
             }
-            out2
+            pcap_free_datalinks(dlt_buf);
         }
+
+        out
     }
 
     pub fn set_filter(&self, dev: &str, filter_str: &str) -> Result<(), PcapError> {
         unsafe {
-            if self.closed {
-                return Err(Filter_DeviceClosed)
-            }
             let mut errbuf: Vec<c_char> = Vec::with_capacity(256);
             let mut netp: c_uint = 0;
             let mut maskp: c_uint = 0;
@@ -140,52 +139,48 @@ impl PcapDevice {
     }
 
     pub fn next_packet_ex(&self) -> Result<PcapPacket, PcapError> {
-        if self.closed {
-            Err(NextEx_BadState)
-        } else {
-            unsafe {
-                let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::intrinsics::uninit();
-                
-                // const u_char*
-                let mut pkt_data_ptr: *mut u8 = std::intrinsics::uninit();
+        unsafe {
+            let mut pkthdr_ptr: *mut Struct_pcap_pkthdr = std::intrinsics::uninit();
+            
+            // const u_char*
+            let mut pkt_data_ptr: *mut u8 = std::intrinsics::uninit();
 
-                let result = pcap_next_ex(self.dev, &mut pkthdr_ptr, &mut(pkt_data_ptr as *u8));
+            let result = pcap_next_ex(self.dev, &mut pkthdr_ptr, &mut(pkt_data_ptr as *u8));
 
-                let pkt_len: uint = (*pkthdr_ptr).len as uint;
+            let pkt_len: uint = (*pkthdr_ptr).len as uint;
 
-                println!("{}", pkt_len);
+            println!("{}", pkt_len);
 
-                match result {
-                    -2 => { Err(NextEx_EndOfCaptureFile) }
-                    -1 => { Err(NextEx_ReadError) } // call pcap_getErr(NextEx_) or pcap_perror() (ret Result instead)
-                    0 => { Err(NextEx_Timeout) }
-                    1 => {
-                        if pkt_len == 0 {
-                            println!("ignoring zero length packet"); 
-                            Err(Unknown)
-                        } else {
-                            // let payload = Vec::from_buf(pkt_data_ptr, pkt_len);
-                            println!("payload");
-                            
-                            let payload: Vec<u8> = Vec::from_raw_parts(pkt_len, pkt_len, pkt_data_ptr);
-                            println!("payload2");
-                            println!("{}", payload);
-                            
-                            let payload = payload.as_slice().to_owned();
-                            println!("payload3");
-                            println!("{}", payload);
+            match result {
+                -2 => { Err(NextEx_EndOfCaptureFile) }
+                -1 => { Err(NextEx_ReadError) } // call pcap_getErr(NextEx_) or pcap_perror() (ret Result instead)
+                0 => { Err(NextEx_Timeout) }
+                1 => {
+                    if pkt_len == 0 {
+                        println!("ignoring zero length packet"); 
+                        Err(Unknown)
+                    } else {
+                        // let payload = Vec::from_buf(pkt_data_ptr, pkt_len);
+                        println!("payload");
+                        
+                        let payload: Vec<u8> = Vec::from_raw_parts(pkt_len, pkt_len, pkt_data_ptr);
+                        println!("payload2");
+                        println!("{}", payload);
+                        
+                        let payload = payload.as_slice().to_owned();
+                        println!("payload3");
+                        println!("{}", payload);
 
-                            let pkt = PcapPacket{
-                                timestamp: (*pkthdr_ptr).ts,
-                                len: pkt_len,
-                                // is this the best way?
-                                payload: payload
-                            };
-                            Ok(pkt)
-                        }
+                        let pkt = PcapPacket{
+                            timestamp: (*pkthdr_ptr).ts,
+                            len: pkt_len,
+                            // is this the best way?
+                            payload: payload
+                        };
+                        Ok(pkt)
                     }
-                    _ => { Err(Unknown) }
                 }
+                _ => { Err(Unknown) }
             }
         }
     }
