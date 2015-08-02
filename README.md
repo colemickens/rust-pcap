@@ -1,3 +1,6 @@
+**NOTE**: This repository and project is abandoned.
+You should probably use: https://github.com/ebfull/pcap
+
 rust-pcap
 =========
 
@@ -9,5 +12,4 @@ git clone http://github.com/colemickens/rust-pcap
 cargo build
 ```
 
-You should probably use:
-https://github.com/jfager/d3cap
+**NOTE**: You should probably use: https://github.com/ebfull/pcap
